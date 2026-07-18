@@ -366,6 +366,7 @@ def update_my_email():
 #  User Forms API
 # ================================
 
+#Saving data into the sace
 @api_handles.route('/save_purchase_request', methods=['POST'])
 @login_required
 def save_purchase_request():
@@ -408,8 +409,35 @@ def save_purchase_request():
 
 
 
+#Retriving Data of a purcahse request
+@api_handles.route('/get_purchase_request_by_id', methods=['POST', 'GET'])
+@login_required
+def get_purchase_request_by_id():
+    try:
+        purchase_id = request.form.get("purchase_id") or request.args.get("purchase_id")
+        if not purchase_id:
+            return {"type": "error", "message": "Missing purchase_id"}
 
+        purchase = PurchaseRequests.query.get(int(purchase_id))
+        if not purchase:
+            return {"type": "error", "message": "Purchase request not found"}
 
+        purchase_data = {
+            "purchase_id":          purchase.purchase_id,
+            "user_id":              purchase.user_id,
+            "type":                 purchase.type,
+            "items":                purchase.items,
+            "purpose_of_request":   purchase.purpose_of_request,
+            "misc":                 purchase.misc,
+            "department_id":        purchase.department_id,
+            "date_required":        purchase.date_required,
+            "date":                 purchase.date.strftime("%Y-%m-%d %H:%M:%S") if purchase.date else None,
+        }
+
+        return {"type": "success", "purchase": purchase_data}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
 
 
 
