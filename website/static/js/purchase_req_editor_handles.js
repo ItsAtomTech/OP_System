@@ -1,11 +1,11 @@
 
 
 //For Saving User
-function saveStudent(){
+function submitForm(){
 	let values = formMaker.retriveFormInput(true);
 	let params = [
 		{
-		"name": "student_data",
+		"name": "purchase_data",
 		"value": JSON.stringify(values),
 		}
 	
@@ -16,14 +16,14 @@ function saveStudent(){
 	};
 	
 	//for updating
-	if(pageType == "edit_student"){
+	if(pageType == "edit_request"){
 		let custom_params = {
-		"name": "student_id",
-		"value": getparam('id'),
+		"name": "request_id",
+		"value": getparam('request_id'),
 		}
 		
 		params.push(custom_params);
-		qBuilder.sendQuery(feedBackSaving,"save_student_update", params);
+		qBuilder.sendQuery(feedBackSaving,"update_purchase_request", params);
 		createDialogue("wait");
 		return;
 	}
@@ -31,7 +31,7 @@ function saveStudent(){
 	
 	console.log(params);
 	
-	qBuilder.sendQuery(feedBackSaving,"save_student", params);
+	qBuilder.sendQuery(feedBackSaving,"save_purchase_request", params);
 	createDialogue("wait");
 
 }
@@ -43,54 +43,17 @@ function saveStudent(){
 function feedBackSaving(){
 	let res_data = (JSON.parse(event.target.responseText));
 	createDialogue("info", res_data.message);
-	if(res_data.type == "success" && pageType != "edit_student"){
+	if(res_data.type == "success" && pageType != "edit_purchase_request"){
 		window.setTimeout(close, 1000);
 	}
 	function close(){
 		postMessageToParent("close");
 	}
-	localStorage.setItem("shouldReloadStudents","true");
+	localStorage.setItem("shouldReloadRequests","true");
 	hasChanges = false;
 }
 
 
-
-//Load the Instructors List
-function loadInstructorsData(){
-
-    let params = [];
-    qBuilder.sendQuery(process, 'get_instructors', params);
-
-    function process(data){
-        loadInstructors(data);
-    };
-}
-
-
-function loadInstructors(data){
-	let setdata = JSON.parse(event.target.responseText);
-	
-	
-	if(setdata.type != "success"){
-		return false;
-	}
-	
-	_("instructor_id").innerHTML = "";
-	
-	_("instructor_id").appendChild(make("option"));
-	
-	for(each of setdata.instructors){
-		let option = make("option");
-			option.value = each.user_id;
-			option.innerText = each.instructor_name;
-		
-		_("instructor_id").appendChild(option);
-	}
-	
-	
-	
-}
-loadInstructorsData();
 
 
 
@@ -101,13 +64,13 @@ loadInstructorsData();
 function loadForEdit(){
 	let params = [
 		{
-		"name": "student_id",
+		"name": "request_id",
 		"data": getparam('id'),
 		}
 	];
-	qBuilder.sendQuery(loadIntoForms,"get_student_by_id", params);
+	qBuilder.sendQuery(loadIntoForms,"get_purchase_request", params);
 	
-	_("_0").value = "Update On Probation Student";
+	//_("_0").value = "Update On Probation Student";
 	
 }
 

@@ -25,8 +25,22 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
-            "id": "date_required_1",
+            "id": "date_required",
             "index": 1
+        },
+        {
+            "type": "select",
+            "value": "",
+            "label": "Requesting Department",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "department_id",
+            "index": 4
         },
         {
             "type": "table",
@@ -56,7 +70,7 @@ let formStructure = {
                         "attributes": {}
                     },
                     {
-                        "type": "text",
+                        "type": "textarea",
                         "attributes": {}
                     },
                     {
@@ -85,7 +99,7 @@ let formStructure = {
             "row_span": 0,
             "col_span": 2,
             "span_column": false,
-            "id": "item_lists_2",
+            "id": "items",
             "index": 2
         },
         {
@@ -99,22 +113,8 @@ let formStructure = {
             "row_span": null,
             "col_span": 2,
             "span_column": false,
-            "id": "purpose_of_request_3",
+            "id": "purpose_of_request",
             "index": 3
-        },
-        {
-            "type": "select",
-            "value": "",
-            "label": "Requesting Department",
-            "fancy": true,
-            "required": true,
-            "description": "",
-            "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
-            "row_span": null,
-            "col_span": null,
-            "span_column": false,
-            "id": "requesting_department_4",
-            "index": 4
         }
     ],
     "groups": [
