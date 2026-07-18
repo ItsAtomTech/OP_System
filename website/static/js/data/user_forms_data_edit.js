@@ -1,0 +1,120 @@
+let configForm = {
+    "forms": [
+        {
+            "type": "header",
+            "events": {},
+            "value": "New User",
+            "label": "",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "_0",
+            "index": 0
+        },
+        {
+            "type": "text",
+            "events": {},
+            "value": "",
+            "label": "Username",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
+            "row_span": null,
+            "col_span": 2,
+            "span_column": false,
+            "onchange": "updatesOn(this)",
+            "id": "username",
+            "index": 1
+        },
+        {
+            "type": "text",
+            "events": {},
+            "value": "",
+            "label": "Email",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
+            "row_span": null,
+            "col_span": 2,
+            "span_column": false,
+            "onchange": "updatesOn(this)",
+            "id": "email",
+            "index": 2
+        },
+        {
+            "type": "select",
+            "events": {},
+            "value": "",
+            "label": "User Type",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "list": "usertype",
+            "id": "type",
+            "onchange": "updatesOn(this),toggleDepColFields(this)",
+            "index": 3,
+            "eventlist": [
+                null
+            ]
+        },
+        {
+            "type": "select",
+            "events": {},
+            "value": "",
+            "label": "Department",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "list": "programs",
+            "id": "department",
+            "onchange": "updatesOn(this)",
+            "index": 4
+        },
+        {
+            "type": "select",
+            "events": {
+                "targetIndex": "none",
+                "type": "none",
+                "value": "3",
+                "condition": ""
+            },
+            "value": "",
+            "label": "College",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "college",
+            "list": "college_list",
+            "index": 5
+        }
+
+
+    ],
+    "groups": [
+        {
+            "name": "User Detials",
+            "type": "default",
+            "column_count": "2",
+            "row_view": true,
+            "id": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a"
+        }
+    ]
+}

@@ -1,0 +1,122 @@
+{% extends "base_headless.html" %}
+
+{% block title%}Config Editor {% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_fancylabel.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_formeditor.css') }}">	
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_editor.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_form_styles.css') }}">
+
+
+
+<!-- Advance Editor Styling -->
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/codemirror.css') }}"> -->
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/dracula.css') }}"> -->
+
+
+
+{% endblock %}
+
+{% block contents %}
+
+<div class="editor_main_con"> 
+	<div class="formclass_con" id="main_form_container">
+
+
+
+	</div>
+	
+	
+		<div class="bottom_toolbar ">
+		
+			<button class="df_button secondary_background primary_color_invert small" onclick="saveStudent()" ><span class="fa fa-save"></span> Submit</button>
+			
+			<button class="df_button_flat primary_background_darker primary_color small" onclick="cancelEditor(this)"> Close </button>
+
+
+
+		</div>
+
+
+		</div>
+
+</div>
+
+
+
+
+
+
+<datalist id="reasons" value="" required class="fancy_form_df form_display">
+
+</datalist>
+
+
+
+<datalist id="type_list">
+
+
+</datalist>
+
+
+
+<script>
+let hasChanges = false;
+function updatesOn(elm){
+	if(event.type == "change"){
+		hasChanges = true;
+	}
+}
+</script>
+
+
+<script src="{{ url_for('static', filename='js/lib/signature_pad.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/data/purchase_request_form.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/form_libs.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lib/daimofuu_fancylabel.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
+<!-- <script defer src="{{ url_for('static', filename='js/student_editor_handles.js') }}"></script> -->
+<script defer src="{{ url_for('static', filename='js/modalizer.js') }}"></script>
+
+
+
+<!-- <script defer src="{{ url_for('static', filename='js/activity_handles.js') }}"></script> -->
+
+
+
+
+<script>
+//init and Render the Forms we have
+let editType = "{{ page }}";
+let pageType = "{{ page }}";
+qBuilder.server_address = "_";
+
+
+formDatas = formStructure;
+
+
+loadForms(0,0,0,1);
+addFancyPlaceholder();
+
+loadEvents();//Force Pre-load Events of each form fields, if neccesary
+
+
+
+</script>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+</script>
+{% endblock %}
+

@@ -1,0 +1,108 @@
+body{
+	background:rgba(30,30,30,0.5) !important;
+}
+
+.editor_main_con{
+	display:flex;
+	flex-direction:column;
+	width:100%;
+	max-width:900px;
+	min-height:100vh;
+	padding:10px;
+	justify-content:center;
+	/* border:solid red 1px; */
+	margin:0px auto;
+	position:relative;
+	
+}
+
+.bottom_toolbar{
+	background:var(--primary_background);
+	width:100%;
+	max-width:80vmax;
+	min-height:80px;
+	position:sticky;
+	bottom:0px;
+	margin:0 auto;
+	
+	/* border:solid red 1px; */
+	border-radius:10px 10px 0 0;
+	box-shadow:0 0 3px 3px rgba(35,35,35,0.3);
+	z-index:10;
+	display:flex;
+	align-items:center;
+	justify-content:left;
+	gap:10px;
+	
+	transform:translateY(20px);
+	opacity:0.8;
+	-webkit-transition:0.2s;
+	transition:0.2s;
+	padding:10px;
+}
+
+.form_required{
+	outline:solid #e91e63 1px !important;
+	
+}
+
+.check_container_two_cols > label{
+	opacity:1;
+	padding:2px;
+	padding-left:0;
+	font-size:1.1em;
+	
+}
+
+
+.bottom_toolbar:hover{
+	opacity:1;
+}
+
+
+.bottom_toolbar > button{
+	min-width:100px;
+}
+
+
+.import_button{
+    position:absolute;
+    right:10px;
+
+}
+
+.centered{
+	text-align:center;
+}
+
+.full_on{
+	width:100%;
+	max-width:700px;
+	min-height:150px;
+	
+}
+
+
+/* Add a Fancy On Focus Style on the form and other styles */
+
+.fancy_form_df{
+	-webkit-transition:0.2s;
+	transition:0.2s;	
+}
+
+.form_display:not(.header_input){
+	border-radius:5px !important;
+	min-height:45px !important;
+}
+
+
+.fancy_form_df:focus{
+	border:solid var(--secondary_color) 1px !important;
+	box-shadow:0 0 0 4px var(--secondary_color_faded);
+	background:var(--primary_background);
+	
+}
+
+
+
+

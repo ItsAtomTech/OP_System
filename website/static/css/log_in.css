@@ -1,0 +1,272 @@
+  @font-face {
+    font-family: 'Comfortaa';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Comfortaa'), url('comfortaa_regular.ttf') format('ttf');
+    src: url('comfortaa_regular.ttf') format('ttf'); 
+    src: url('comfortaa_regular.ttf'); 
+    }
+
+
+
+.log_in_main_con{
+	box-sizing:border-box;
+	width:100%;
+	min-height:100vh;
+	/* border:solid white 1px; */
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	background:var(--primary_background_darker);
+	background-color:transparent;
+	font-family:Gotham Rounded;
+	
+	transition:0.1s;
+}
+
+#main_body{
+		background-color:var(--primary_background_darker);
+		background-image:var(--bg_src);
+		background-size:cover;
+		background-attachment:fixed;
+		transition:0.2s;
+		-webkit-transition:0.2s;
+}
+
+
+.log_in_con{
+	box-sizing:border-box;
+	width:100%;
+	max-width:450px;
+	height:fit-content;
+	min-height:300px;
+	border-radius:20px;
+	box-shadow:2px 2px 4px -2px rgba(0,0,0,0.4);
+	padding:10px;
+	/* padding-left:40px; */
+	position:relative;
+	padding-top:;
+	transition:0.3s ;
+	-webkit-transition:0.3s ;
+}
+
+.log_title_con{
+	box-sizing:border-box;
+	position:relative;
+	margin-top:5px;
+	left:0;
+	right:0;
+	text-align:center;
+	width:inherit;
+	height:30px;
+	padding:20px;
+	padding-bottom:25px;
+	/* border:solid violet 1px; */
+}
+
+.l_line_{
+	width:100%;
+	background:none;
+	height:0px;
+	border:none;
+	border-top:1px solid rgba(0,0,0,0.3);
+	
+}
+
+.log_title_con  > span{
+	/* font-family:Comfortaa; */
+	font-weight:Bold;
+
+}
+
+
+.input_form{
+	box-sizing:border-box;
+	width:100%;
+	min-height:15px;
+	
+	position:relative;
+	text-align:left;
+	margin-top:10px;
+	
+}
+
+.input_form > .label{
+	/* font-family:Comfortaa; */
+	font-size:0.80em;
+	font-weight:bold;
+	/* color:rgba(65,65,65,0.9); */
+	
+}
+
+.form_cons_mid_bar > .label{
+	/* font-family:Comfortaa; */
+	font-size:0.80em;
+	font-weight:bold;
+	color:rgba(65,65,65,0.9);
+	
+}
+.form_cons_mid_bar > .forget_link_{
+	box-sizing:border-box;
+	color:;
+	/* font-family:Comfortaa; */
+	font-size:0.80em;
+	position:absolute;
+	right:0;
+	font-weight:bold;
+	color:var(--secondary_color);
+	
+}
+
+
+
+
+.log3_in{
+	display:block;
+	box-sizing:border-box;
+	width:100%;
+	border:1px solid transparent;
+	background:rgba(55,55,55,0.2);
+	outline:none;
+	font-family:Gotham Rounded;
+	margin-top:5px;
+	border-radius:8px;
+	height:35px;
+	padding:5px;
+	/* color:rgba(45,45,45,1); */
+	font-size:1.1em;
+	-webkit-transition:0.2s;
+	transition:0.2s;
+}
+
+
+
+.log3_in:focus{
+	border:solid 1px var(--secondary_color);
+	box-shadow:0 0 0 4px var(--secondary_color_faded);
+	background:var(--primary_background);
+	
+}
+
+.small_text_{
+	box-sizing:border-box;
+	width:100%;
+	height:50px;
+	/* border:solid 1px red; */
+	top:30px;
+	position:relative;
+	padding:15px;
+	opacity:0.7;
+	/* color:gray; */
+	font-style:italic;
+	font-size:0.7em;
+	/* font-family:Comfortaa; */
+}
+
+.pass_visib{
+	position:absolute;
+	box-sizing:border-box;
+	top:0;
+	right:0;
+	opacity:0.6;
+	color:rgba(45,45,45,0.3);
+	/* font-family:Comfortaa; */
+	cursor:pointer;
+	user-select:none;
+	text-transform: capitalize;
+}
+
+
+.form_cons{
+	box-sizing:border-box;
+	width:100%;
+	
+	min-height:100px;
+	
+	
+}
+
+
+
+.form_cons_mid_bar{
+	box-sizing:border-box;
+	width:100%;
+	position:relative;
+	
+	min-height:50px;
+	display:flex;
+	align-items:center;
+	
+	
+}
+
+
+.form_cons_bottom_bar{
+	box-sizing:border-box;
+	width:100%;
+	position:relative;
+	
+	min-height:50px;
+	display:flex;
+	align-items:center;
+	
+	
+}
+
+
+.log3_butt{
+	box-sizing:border-box;
+	width:100%;
+	height:35px;
+	font-size:0.8em;
+	border:none;
+	/* color:white; */
+	outline:0;
+	/* font-family:Comfortaa; */
+	font-family:Gotham Rounded;
+	/* background:#3f51b5; */
+	border-radius:3px;
+	-webkit-transition:0.2s;
+	transition:0.2s;
+	cursor:pointer;
+	
+}
+
+.log3_butt:hover{
+
+	opacity:0.7;
+
+	
+}
+
+
+
+@media screen and (max-width: 430px){
+	
+	.log_in_main_con{
+		
+		align-items:flex-start;
+		min-height:80vh;
+	}
+	
+	
+	.log_in_con{
+		width:100%;
+		min-height:450px;
+		margin-top:50px;
+		padding-left:10px;
+		border-right:5px solid #a0a0a0a0;
+		padding-top:45px;
+
+	}
+	
+	.form_cons_mid_bar{
+		font-size:0.9em;
+		
+	}
+	
+}
+
+
+/* ==== */
+

@@ -37,7 +37,7 @@ def create_app():
 
     db.init_app(app)
 
-    # from .views import views
+    from .views import views
     from .user_control import user_control
     # from .api_handles import api_handles
 
@@ -45,7 +45,7 @@ def create_app():
     app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-    # app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(views, url_prefix='/')
     # app.register_blueprint(api_handles, url_prefix='/')
     app.register_blueprint(user_control, url_prefix='/')
 

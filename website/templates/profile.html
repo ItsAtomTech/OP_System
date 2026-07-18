@@ -1,0 +1,397 @@
+{% extends "base_headless.html" %}
+
+{% block title%}User Profile {% endblock %}
+
+{% block extra_css %}
+<link id='maine' rel="stylesheet" href="{{ url_for('static', filename='css/profile_page.css') }}"> 
+
+
+{% endblock %}
+
+{% block contents %}
+
+
+<!-- Profile Viewer -->
+<div class="profile_page_main_con">
+
+{% if page == 'my_profile' %}
+
+	<div class="profile_page_con  primary_background primary_color {% if user.status != 'confirmed' %}blured_out{% endif %}" style=''>
+		<div class="profile_title">
+			
+			<div>My Profile</div>
+		</div>
+		<hr class='line_2'>
+		
+		<div class="profile_details">
+			<div class='avatar_con'> <img class='avatar_' src="{{ url_for('static', filename='images/'+current_user.avatar+'.png') }}" /></div>
+		</div>	
+		<div class="profile_details normal">
+			<p><span>User Name: </span> <span class="grayed_out normal" id="username">{{ user.username }}</span></p>
+			<p><span>Email: </span> <span class="grayed_out">{{ user.email }}</span></p>
+			
+		</div>	
+		
+			<hr class='line_2'>
+	
+	<div class="pro_button_kon">
+		
+	
+		<button class="df_button secondary_background pro_button_ normal cpass_button" onclick='go_to("change_pass")'>
+			<span class="fa fa-lock"></span> <span>Change Password</span>
+		</button>	
+		<div class="df_button secondary_background normal pro_button_ edit_button" onclick='go_to("edit_profile")'>
+			<span class="fa fa-pencil"></span> <span>Update Details</span>
+		</div>	
+
+		
+	</div>	
+	
+	<div class="pro_button_kon">
+
+	</div>
+	
+	</div>
+
+	
+<!-- Appears if not confirmed! -->
+{% if user.status != 'confirmed' %}
+	{% if sent == 'true' %}
+	<div class="confirm_email_con" style="">
+	<span class='em_text normal'>Email Sent to: {{ user.email }}, <br>check your inbox.</span>
+	<hr class='line_2' >
+		<button class=" df_button normal primary_color_invert conf_but" onclick='showToast("Sending Email...");go_to("/confirm_email")'>Re Send </button>
+	</div>	
+	
+	{% else %}
+	<div class="confirm_email_con" style="">
+	<span class='em_text normal'>Confirm Email to Activate your account!</span>
+	<hr class='line_2' >
+	Account email address: 
+	<div class="flexed input_email">
+		<input class="ls_form_in_" onchange="HAS_CHANGES = true;" value='{{ user.email }}' id="user_email" type="email"> <button onclick="updateEmailAddress();" class="df_button_flat medium "> <span class="fa fa-save"> &nbsp; </span></button>
+	</div>
+	
+
+	
+		<button class=" df_button normal primary_color_invert conf_but" onclick='showToast("Sending Email...");go_to("/confirm_email");updateEmailAddress(true);'>Send Confirmation</button>
+	</div>
+	
+<script>
+ let CURRENT_EMAIL = "{{ current_user.email }}";
+ 
+ </script>
+	
+		{% endif %}
+{% endif %}	
+<!-- Profile Viewer end -->
+
+
+{% endif %}
+
+
+
+<!-- Other User Profile Viewer -->
+
+
+{% if page == 'user_profile' %}
+
+	<div class="profile_page_con primary_background primary_color " style=''>
+		<div class="profile_title">
+			
+			<div>User Profile</div>
+		</div>
+		<hr class='line_2'>
+		
+		<div class="profile_details">
+			<div class='avatar_con'> <img class='avatar_' src="{{ url_for('static', filename='images/'+user.avatar+'.png') }}" /></div>
+		</div>	
+		<div class="profile_details">
+			<p><span>User Name: </span> <span class="grayed_out" id="username">{{ user.username }}</span></p>
+			<p><span>Email: </span> <span class="grayed_out">{{ user.email }}</span></p>
+			
+		</div>	
+		
+			<hr class='line_2'>
+	
+	<div class="pro_button_kon">
+		
+
+		
+	</div>	
+	
+	<div class="pro_button_kon">
+			<div class="profile_details">
+						<p><span>Available: </span> <span class="grayed_out">{{ user.status }} </span></p>
+		
+			</div>
+						
+
+		<div class="pro_button_ gal_button" onclick="go_to('/user_gallery?profile_id={{ user.id }}')">
+			<span class="fa fa-folder"></span> <span>View Shop</span>
+		</div>
+	
+	</div>
+	
+	</div>
+
+
+
+
+{% endif %}
+
+
+
+
+
+
+<!-- Password Change -->
+
+{% if page == 'change_pass' %}
+
+<div class="profile_page_con primary_background primary_color {% if sent != 'true' %}blured_out{% endif %}" style=''>
+	<div class="profile_title">
+			Change Password:
+			<span></span>
+	</div>
+		<hr class='line_2'>
+	<div class="profile_details">
+	
+	<div class="change_pass_con"><form method='POST' action="save_new_pass">
+		<span class='grayed_out'>Provide a new password, then enter the verification code sent to your email:</span>
+		<hr class='line_2' >
+		
+		<span class='f_label'>New Password: </span>
+		
+		<input class="ls_form_in_ primary_color profile_forms profile_forms"  type="password" id='p1'name='pass' placeholder='New Password' required>
+		
+		<span class='f_label'>Confirm New Password: </span>
+		<input class="ls_form_in_ primary_color profile_forms" onblur="verify()" oninput='verify()' type="password" id='p2' name='cpass' placeholder="Confirm New Pass" required>
+		<span class='f_label'>Code: </span>
+		<input class="ls_form_in_ primary_color profile_forms" type="text" name='code' placeholder='Enter Code here!' required>
+		<p><span class='grayed_out' id='ind_c'> : </span></p>
+		
+		<button class="confs_but df_button secondary_background primary_color_invert" id='sub_b' type='submit' onclick='' disabled>Change <span class='fa fa-lock'></span></button>
+		</form>
+	</div>	
+	
+		
+	</div>
+
+
+</div>
+
+
+<!-- Appears to send email for the code! -->
+	{% if sent != 'true' %}
+	<div class="confirm_email_con" style="">
+			<span class='em_text'></span><b>A code is needed to change password.</b>
+			<hr class='line_2' >
+			<span class='em_text small'>We will send an email to your email address containing a code.</span>
+		<button class="df_button conf_but primary_color_invert secondary_background normal" onclick='showToast("Sending Email...");go_to("send_code_pass")' >Send now <span class='fa fa-send'></span></button>
+	</div>
+	{% endif %}
+	
+{% endif %}
+
+
+
+
+{% if page == 'recover_page' %}
+
+
+
+<div class="profile_page_con primary_background primary_color {% if sent != 'true' %}blured_out{% endif %}" style=''>
+	<div class="profile_title">
+			Recover Password:
+			<span></span>
+	</div>
+
+	<hr class='line_2'>
+
+	<div class="profile_details">
+	
+	<div class="change_pass_con"><form method='POST' action="/recover_new_pass">
+		<span class='grayed_out small'>Make a new password, then enter the verification code sent to your email!</span>
+		<span class='f_label'>New Password: </span>
+		<input class="ls_form_in_ primary_color profile_forms"  type="password" id='pr1'name='pass' placeholder='New Password' required>
+		<span class='f_label'>Confirm Password: </span>
+		<input class="ls_form_in_ primary_color profile_forms" onblur="verifyr()" oninput='verifyr()' type="password" id='pr2' name='cpass' placeholder="Confirm New Pass" required>
+		<span class='f_label'>Verification Code: </span>
+		<input class="ls_form_in_ primary_color profile_forms" type="text" name='code' placeholder='Enter Code here!' required>
+		<p><span class='grayed_out' id='ind_cr'>--</span></p>
+		
+		<button class="confs_but df_button secondary_background" id='sub_br' type='submit' onclick='' disabled>Recover <span class='fa fa-unlock'></span></button>
+		</form>
+	</div>	
+	
+		
+	</div>
+
+
+</div>
+
+
+
+
+
+
+	
+	
+<!-- Appears to send email for the code! recovery -->
+{% if sent != 'true' %}
+<form class="confirm_email_con" method="POST" action='/send_recover'>
+	
+	
+	<span class='em_text'></span><b>A code is needed for password recovery!</b>
+	<span class='em_text'>Enter email of your account:</span>
+	<hr class='line_2' >
+	<input class="ls_form_in_ primary_color profile_forms" type="text" name='email' placeholder='Email' required><br>
+		<button class="confs_but df_button conf_but secondary_background">Send now <span class='fa fa-send'></span></button>
+	<span class='em_text'>Enter the sent code to recover your account.</span>
+	
+		
+</form>	
+{% endif %}
+	
+	
+{% endif %}
+	
+
+
+
+
+{% if page == 'edit_profile' %}
+
+
+
+	<div class="profile_page_con  primary_background primary_color  blured_out-" style=''>
+		<div class="profile_title">
+			
+			<div>Edit Profile</div>
+		</div>
+		<hr class='line_2'>
+		
+		<div class="profile_details">
+		<div class='avatar_con_edit'>
+			<div class='avatar_con'> <img class='avatar_' src="{{ url_for('static', filename='images/'+current_user.avatar+'.png') }}" id='avs'/></div>
+			<span onclick='tog_pane()' class='fa fa-pencil open_avatars'></span>
+		</div>	
+		</div>
+	<form class='in_form' method="POST" action='/save_profile'>
+		<div class="profile_details normal">
+			
+			<p><span>Email: </span> <span class="grayed_out"> {{ current_user.email }} </span></p>
+		
+
+		
+			<span class='f_label'>Username: </span>
+		<input class="ls_form_in_  primary_color profile_forms normal"  type="text" id='pr1'name='username' placeholder='Username' value='{{ current_user.username }}' required>
+			
+			<hr class='line_2'>
+			
+	</div>	
+	
+		<div class="pro_button_kon">
+			<input type='hidden' value='{{ current_user.avatar }}' id='avatar_in' name='avatar' >
+			<button type='submit' class="df_button secondary_background pro_button_ s_c "><span class='fa fa-save'></span>  <span>Save Changes</span></button>
+	
+		</div>
+	
+	</form>
+	
+	</div>
+
+
+	<div class="avatar_con_dia" id='a_pane' style='display:none;'>
+		<div class='avatar_pane'>
+			<span class='close_ava' onclick='tog_pane()' >&times;</span>
+			
+			<div class='pane_'>
+			{% for av in avatars %}
+			
+			
+			<div class='avatar_item' onclick='change_avatar("{{ av[0] }}",this)' >
+				<img class='avatar__' src="{{ url_for('static', filename='images/'+av[1]) }}" loading="lazy">
+			</div>
+					
+			
+				
+			{% endfor %}
+			
+
+			
+		</div>
+		</div>
+	</div>
+
+
+	<div class="map_widget_main" id="map_picker_1" style="display:absolute;z-index:0;visibility:hidden;pointer-events:none;">
+		<div class="map_widget_con primary_background primary_color">
+			
+			<div class="close_map_picker feature_button primary_background primary_color" onclick="hideMapPicker()">
+				<span class="fa fa-close"> </span>
+			</div>
+			
+			<div class="map_search_box_query primary_color"> 
+
+				<div class="search_container"> 
+					<input type="text" class="search_box_" id="ss_box" placeholder="Enter a Place.."/>
+					
+					
+				</div>
+				
+				<div class="tool_bar_con"> 
+					<div class="feature_button" onclick="searchPlace();">
+						<span class="fa fa-search ">  </span> 
+					</div> 
+					<div class="feature_button" onclick="removeResults()">
+						<span class="fa fa-trash ">  </span> 
+					</div>
+				
+				</div>	
+					
+			</div>
+	 <!-- ===Map View=== -->
+			<div id="map_finder" class="map_view_overon"></div>
+	<!-- ===Search Results Con===	-->
+			
+			<div class="map_box_results primary_color primary_background" id="s_res_box">
+			
+		
+			
+			
+			</div>
+			
+			
+		
+		
+		</div>
+
+	</div>
+
+
+<script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+<script src="{{ url_for('static', filename='js/map_view.js') }}"></script>
+
+
+
+
+{% endif %}
+
+</div>
+
+
+
+<script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
+<script src="{{ url_for('static', filename='js/profile_page.js') }}"></script>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}
+
+

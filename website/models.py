@@ -30,12 +30,43 @@ class UserType(db.Model):
 
 
 
+# =========================
+# Forms Section Start
+# =========================
+class PurchaseRequests(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    purchase_id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50)) 
+    items = db.Column(db.String(10000))
+    misc = db.Column(db.String(1024))
+    date_required = db.Column(db.DateTime(timezone=True))
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
+    date = db.Column(db.DateTime(timezone=True), default=manila_time)
+
+
+
+
+# =========================
+# Forms Section End
+# =========================
+
+# =========================
+# Others Section Start
+# =========================
+
+class Department(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    date = db.Column(db.DateTime(timezone=True), default=manila_time)
 
 
 
 
 
 
+# =========================
+# Others Section End
+# =========================
 
 
 # =========================

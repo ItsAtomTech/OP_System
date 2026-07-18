@@ -1,0 +1,171 @@
+let acadStatsForm = {
+    "forms": [
+        {
+            "type": "header",
+            "value": "Add On Probation Student",
+            "label": "",
+            "fancy": false,
+            "required": false,
+            "description": "",
+            "group": "g_2b276383-eb7e-45df-9db6-d0bd37edabbc",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "_0",
+            "index": 0
+        },
+        {
+            "type": "text",
+            "events": {},
+            "value": "",
+            "label": "Student Name",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_2b276383-eb7e-45df-9db6-d0bd37edabbc",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "student_name",
+            "index": 1
+        },
+        {
+            "type": "text",
+            "events": {},
+            "value": "",
+            "label": "Student ID",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_2b276383-eb7e-45df-9db6-d0bd37edabbc",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "student_number",
+            "index": 2
+        },
+        {
+            "type": "select",
+            "value": "",
+            "label": "Select Program",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_7742f64a-6f71-4190-abbc-656869584aa7",
+            "row_span": null,
+            "col_span": 0,
+            "span_column": false,
+            "list": "department_list",
+            "id": "department_id",
+            "index": 3
+        },
+        {
+            "type": "select",
+            "value": "",
+            "label": "Select Subject",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_7742f64a-6f71-4190-abbc-656869584aa7",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "list": "subject_list",
+            "id": "subject_id",
+            "index": 4
+        },
+		{
+            "type": "select",
+            "events": {},
+            "value": "",
+            "label": "Subject Type",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_7742f64a-6f71-4190-abbc-656869584aa7",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "subject_type",
+			"list": "type_list",
+            "index": 7
+        },
+        {
+            "type": "number",
+            "value": 1,
+            "label": "Year Level",
+            "fancy": true,
+			"min":1,
+			"max":4,
+            "required": true,
+            "description": "",
+            "group": "g_7742f64a-6f71-4190-abbc-656869584aa7",
+            "row_span": null,
+            "col_span": 1,
+            "span_column": false,
+            "id": "year_level",
+            "index": 8
+        },
+        {
+            "type": "select",
+            "value": "",
+            "label": "Enlisted Instructor",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_7742f64a-6f71-4190-abbc-656869584aa7",
+            "row_span": null,
+            "col_span": 2,
+            "span_column": false,
+            "id": "instructor_id",
+            "index": 5
+        },
+        {
+            "type": "select",
+            "events": {},
+            "value": "",
+            "label": "Reason",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_7742f64a-6f71-4190-abbc-656869584aa7",
+            "row_span": null,
+            "col_span": 3,
+            "span_column": false,
+            "list": "reasons",
+            "id": "reason",
+            "index": 6
+        },
+
+    ],
+    "groups": [
+        {
+            "name": "Tilte",
+            "type": "default",
+            "column_count": "2",
+            "row_view": false,
+            "id": "g_a0ce45a7-c617-416e-9157-3539dc5d4812"
+        },
+        {
+            "name": "Student Name and ID",
+            "type": "default",
+            "column_count": "2",
+            "row_view": false,
+            "id": "g_2b276383-eb7e-45df-9db6-d0bd37edabbc"
+        },
+        {
+            "name": "Subject and Program",
+            "type": "default",
+            "column_count": "3",
+            "row_view": false,
+            "id": "g_7742f64a-6f71-4190-abbc-656869584aa7"
+        },
+        {
+            "name": "More",
+            "type": "default",
+            "column_count": "2",
+            "row_view": false,
+            "id": "g_cabc5c28-dc3e-4b06-b557-0638217a2d99"
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+.check_box_button{
+	display:inline-block;
+	
+}
+
+
+.custom_check_hidden{
+	display:none;
+}
+
+
+.check_container_two_cols{
+	width:100%;
+	max-width:500px;
+	display:flex;
+	align-items:center;
+	flex-wrap:wrap;
+	justify-content:space-evenly;
+	align-items:flex-start;	
+	padding:10px;
+
+}
+
+
+
+@supports (display: grid) {
+    .check_container_two_cols {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
+        gap: 10px; /* Adjust the gap between columns as needed */
+    }
+}
+
+
+.check_container_two_cols > div > .custom_check_button{
+	width:100%;
+
+	
+}
+
+.custom_check_button{
+	padding:10px;
+	border:solid var(--primary_color_faded) 1px;
+	background-color:var(--primary_background_darker);
+	display:flex;
+	cursor:pointer;
+	align-items:center;
+	justify-content:center;
+	min-width:120px;
+	margin-top:10px;
+	overflow:hidden;
+	color:var(--primary_color_faded);
+	user-select:none;
+	border-radius:5px;
+	-webkit-transition:0.15s;
+	transition:0.15s;
+	position:relative;
+}
+
+.custom_check_button:hover{
+	border:solid var(--secondary_color) 1px;
+	box-shadow:0px 0px 3px 3px rgba(34,34,34,0.2);
+}
+.custom_check_button:active{
+	border:solid var(--secondary_color) 1px;
+	box-shadow:0px 0px 3px 3px rgba(34,34,34,0.2);
+	background-color:var(--secondary_color_darker);
+	color:var(--primary_color_invert);
+}
+
+.custom_check_hidden:checked + .custom_check_button{
+	color:var(--primary_color_invert);
+	background-color:var(--secondary_background);
+}
+
+

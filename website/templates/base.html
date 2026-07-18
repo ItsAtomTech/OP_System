@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_sidebar.css') }}">
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/modal_styles.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/modal_views.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/account_card.css') }}">
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+	{% block extra_css %} {% endblock %}
+
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.ico') }}">
+
+
+	<link id='' rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">	
+	
+	{% if get_theme() == 'dark' %}
+	<link  id='theme' rel="stylesheet" href="{{ url_for('static', filename='css/coloring_dark.css') }}">
+	{% else %}
+	<link  id='theme' rel="stylesheet" href="{{ url_for('static', filename='css/coloring.css') }}">
+	
+	{% endif %}
+	<script src="{{ url_for('static', filename='js/modalizer.js') }}"> </script>
+ <script src="{{ url_for('static', filename='js/light_dark.js') }}"> </script> 
+ <script src="{{ url_for('static', filename='js/loader.js') }}"> </script> 
+	<script>
+		function inIframe() {
+			return window.self !== window.top;
+		}
+	</script>
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}">
+	
+
+
+	<title>{% block title %} Page Title {% endblock %}</title>
+</head>
+
+
+<body class="primary_background primary_color" id="main_body">
+
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+{% if messages%}
+	{% for category, message in messages %}
+		<div onclick="close_alert(this)" class="alert_dail slideInRight animated type_{{ category }}"  title="Click to dismiss" >  {{ message }} </div>
+	{% endfor %}
+{%endif%}
+{% endwith %}
+
+
+
+
+
+		<div class="main_container_side_bar">
+			<div class="sidebar_container_dynamic primary_background" id="df_sidebar">
+				<div class="sidabar_buttons_con primary_background">
+
+					<div class="sidebar_box_con logo_contianer">
+
+						<div class="rounded_logo_ "> </div>
+						<div class="big onside_title"> On Probation Tracking </div>
+						
+					</div>
+					<!-- <div class="sidebar_box_con">  -->
+						<!-- <div onclick="toggleSidebar();" class="sidebar_button primary_color_invert df_button"> <span class="fa fa-columns"> </span> </div> -->
+					<!-- </div> -->
+
+
+
+		<div class="sidebar_box_con">
+			<div class="sidebar_button df_button active primary_color" onclick="closeAllPages();activate(this);" tooltip="Close All pages and go back to Home"> <span class="fa fa-home"> </span> 
+			
+			<span class="normal nav_text"> Dashboard </span>
+			
+			</div>
+		</div>
+
+
+{%if current_user.is_authenticated %}
+
+
+		<!-- For Admin side bar -->
+		
+		
+		{% if current_user.type == 4 %}
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showUserManageTable(this);" > <span class="fa fa-users" tooltip="Manage User Roles / Add User"> </span> <span class="normal nav_text"> User Management </span> </div>
+		</div>
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showSubjectManagementPage(this);" > <span class="fa fa-book" tooltip="Manage User Roles / Add User"> </span> <span class="normal nav_text"> Manage Subjects </span> </div>
+		</div>
+				
+				
+				
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="
+			showSettingsPage(this);" > <span class="fa fa-cogs" tooltip="Open the page for Settings"> </span> <span class="normal nav_text"> Settings </span> </div>
+		</div>
+		
+		
+		<!-- For Dean side bar -->
+		{% elif current_user.type == 2 or current_user.type == 5 %}
+		
+		
+
+		
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showAssessmentTable(this);" tooltip="Go to Assessment Page"> <span class="fa fa-users"> </span> <span class="normal nav_text"> Assessment </span> </div>
+		</div>
+		
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showDeadlinesTable(this);"> <span class="fa fa-hourglass-end"> </span> <span class="normal nav_text"> Deadlines </span> </div>
+		</div>		
+		
+		
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showReviewTable(this);"> <span class="fa fa-check-square"> </span> <span class="normal nav_text"> Review Students </span> </div>
+		</div>
+		
+		
+		
+		<!-- For Program Chair side bar -->
+
+		{% elif current_user.type == 3 %}
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showOnProbTable(this);" > <span class="fa fa-exclamation-triangle" tooltip="Open Onprobation List"> </span> <span class="normal nav_text"> On probation List </span> </div>
+		</div>
+				
+				
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showDeadlinesTable(this);"> <span class="fa fa-hourglass-end"> </span> <span class="normal nav_text"> Deadlines </span> </div>
+		</div>		
+		
+		
+		
+		
+		<!-- <div class="sidebar_box_con" > -->
+			<!-- <div class="sidebar_button df_button primary_color" onclick="showAssessmentTable(this);" tooltip="Go to Assessment Page"> <span class="fa fa-users"> </span> <span class="normal nav_text"> Assessment </span> </div> -->
+		<!-- </div> -->
+		
+		
+		{% else %}
+		<!-- For Teachers side bar -->
+		
+		<!-- <div class="sidebar_box_con" > -->
+			<!-- <div class="sidebar_button df_button primary_color" onclick="showOnProbTable(this);" > <span class="fa fa-exclamation-triangle" tooltip="Open Onprobation List"> </span> <span class="normal nav_text"> On probation List </span> </div> -->
+		<!-- </div> -->
+
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showTrackingTable(this);" tooltip="Go to Student Tracking Page"> <span class="fa fa-users"> </span> <span class="normal nav_text"> Track Student </span> </div>
+		</div>
+
+
+		
+		
+		{% endif %}
+		
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showNotificationPage(this);" id="notification_button" tooltip="Open Notifications"> <span class="fa fa-bell"> </span> <span class="normal nav_text"> Notifications </span> </div>
+		</div>
+		
+
+{% endif %}
+
+
+<!-- End of Side Icons -->
+
+
+
+				<div class="sidebar_box_con user_contianer"> </div>
+
+				</div>
+
+				<div class="sidebar_contents_container">
+
+
+	
+
+
+				</div>
+
+			</div>
+			
+			
+			
+			
+			<div class="general_container_ primary_color_invert " id="general_container">
+			<!-- Your General Non-Sidebar contents goes here -->
+				{% block contents %}
+
+				{%endblock%}
+			</div>
+	
+			
+			<!-- User card goes here to allow overlay -->
+			<div class="user_capsule_container primary_background primary_color" onclick="togle_dia_user(this);">
+				<div class="mini_icon_con">
+					{% if current_user.is_authenticated %}
+					<img class="_icon_user_" src="{{ url_for('static', filename='images/'+current_user.avatar+'.png') }}" alt="user-icon"/>
+					{% else %}		
+							
+					<img class="_icon_user_" src="{{url_for('static',  filename='images/person_user.png') }}" alt="user-icon"/>
+					{% endif %}	
+				</div>
+				
+				<span class="primary_color normal name_f">{{ current_user.username }} </span>
+				
+			</div>
+		
+		</div>
+
+
+
+<div class="main_card_body_ primary_background" id="main_card_con" style='top:-300px;display:none;'>
+	<div onclick="togle_dia_user(this)" class="close_user_card_button primary_color">&times; </div>
+	
+	<div class="_upper_part_card_con">
+		
+		
+		<div class="_user_icon_con_ca">
+		{% if current_user.is_authenticated %}
+				<img class="_icon_user_" src="{{ url_for('static', filename='images/'+current_user.avatar+'.png') }}" alt="user-icon"/>
+		{% else %}		
+				
+				<img class="_icon_user_" src="{{url_for('static',  filename='images/person_user.png') }}" alt="user-icon"/>
+		{% endif %}		
+				
+		</div>
+		
+		<div class="_name_con_ca primary_color">
+			{% if current_user.is_authenticated %}
+			<span class="name___">
+				{{ current_user.username }}
+			</span>
+			
+			
+			<span class="role___" >
+			{{ get_user_type(current_user.type).type }}
+			</span>
+			{% else %}
+			<span class="name___">
+				Guest
+			</span>
+			{% endif %}
+		</div>
+	
+	
+	</div>
+	<div class="_middle_part_card_con">
+		{% if current_user.is_authenticated %}
+		
+			{% if current_user.type == 'admin' %}
+
+	
+			{% endif %}
+		
+				<button class="_extra_a_but secondary_background primary_color_invert" onclick='go_to_modal("my_profile",oncloseProfile);togle_dia_user(this);hideDashboardContents(true);'> My Profile <span class="fa fa-user"></span></button>
+				
+
+
+		{% endif %}
+	</div>
+	<div class="message_cont">
+		{% if not current_user.is_authenticated %}
+		Note: You are not logged in, to use all feature, login or signup now!
+		{% endif %}
+	</div>
+	<div class="_bottom_part_card_con">
+		{% if current_user.is_authenticated %}
+		<button class="_logout_a_but"  onclick="go_to('logout')"> Logout</button>
+		{% else %}
+		<!-- <button class="_signup_a_but" onclick="go_to_modal('signup');togle_dia_user(this);"> Signup</button> -->
+		<!-- <button class="_login_a_but" onclick="go_to_modal('login');togle_dia_user(this);"> Login</button> -->
+		{% endif %}
+	</div>
+
+	<div class="_card_decor_1">
+	
+	</div>
+		<div class='toggle_theme' onclick="toggle_theme(this)" title='Toggle Theme!'> </div>
+	
+</div>
+
+{% block modals %}
+
+{%endblock%}
+
+</body>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/daimofuu_sidebar.js') }}"> </script>
+<script src="{{ url_for('static', filename='js/tooltip.js') }}"> </script>
+
+<script src="{{ url_for('static', filename='js/dashboard_functions.js') }}"> </script>
+<!-- <script src="{{ url_for('static', filename='js/footy.js') }}"> </script> -->
+<script src="{{ url_for('static', filename='js/account_card.js') }}"> </script>
+
+<script>
+	{% if current_user.is_authenticated %}
+		let userActiveAccount = "{{ current_user.status }}";
+		
+		if (userActiveAccount == "pending"){
+			let page = open_modal("my_profile", 'modal_on_container,no_close_button,page_containment', _('general_container'));
+			closeAllPages(page);
+			_('dash_contents').classList.add("hide_main_con");
+			}
+		
+	{% endif %}
+	monitorAlerts();
+	
+let static_audiomaster_link = "{{ url_for('static', filename='sound/') }}";	
+
+
+</script>
+
+
+</html>

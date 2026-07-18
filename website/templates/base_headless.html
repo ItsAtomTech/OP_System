@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/animate.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_contextmenu.css') }}">
+
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/modal_styles.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/modal_views.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_buttons.css') }}">
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_textfield.css') }}">
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/typography.css') }}">
+
+	{% block extra_css %} {% endblock %}
+
+	<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.ico') }}">
+
+
+	<link id='' rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">	
+	
+	{% if get_theme() == 'dark' %}
+	<link  id='theme' rel="stylesheet" href="{{ url_for('static', filename='css/coloring_dark.css') }}">
+	{% else %}
+	<link  id='theme' rel="stylesheet" href="{{ url_for('static', filename='css/coloring.css') }}">
+	
+	{% endif %}
+	<script src="{{ url_for('static', filename='js/modalizer.js') }}"> </script>
+ <script src="{{ url_for('static', filename='js/light_dark.js') }}"> </script> 
+ <script src="{{ url_for('static', filename='js/loader.js') }}"> </script> 
+ <script src="{{ url_for('static', filename='js/mime_types.js') }}"> </script>
+	<script>
+		function inIframe() {
+			return window.self !== window.top;
+		}
+		
+		{%if current_user.is_authenticated %}
+		const current_user_id = {{ current_user.user_id }};
+		const current_user_role = {{ current_user.type }};
+		const current_user_college = {{ current_user.college_id or "null"}};
+		const current_user_department = {{ current_user.department_id or "null"}};
+		
+		{% endif %}
+		
+	</script>
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}">
+	
+
+
+	<title>{% block title %} Page Title {% endblock %}</title>
+</head>
+
+
+<body class="primary_background primary_color" id="main_body">
+
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+{% if messages%}
+	{% for category, message in messages %}
+		<div onclick="close_alert(this)" class="alert_dail slideInRight animated  type_{{ category }}"  title="Click to dismiss" >  {{ message }} </div>
+	{% endfor %}
+{%endif%}
+{% endwith %}
+
+		
+
+<!-- Your General Non-Sidebar contents goes here -->
+{% block contents %}
+
+{%endblock%}
+
+	
+
+
+
+
+
+
+
+</body>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tooltip.js') }}"></script>
+<script src="{{ url_for('static', filename='js/context_menu.js') }}"></script>
+<script>
+monitorAlerts();
+
+</script>
+{% block extra_js %}
+
+{%endblock%}
+
+
+
+</html>

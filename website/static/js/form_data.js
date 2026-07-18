@@ -1,0 +1,135 @@
+let itemEditor = {
+    "forms": [
+        {
+            "type": "header",
+            "value": "Item Editor",
+            "label": "",
+            "fancy": false,
+            "required": false,
+            "description": "",
+            "group": "g_fd99b964-b3fb-4144-bb76-9e4851c69012",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "_0",
+            "index": 0
+        },
+        {
+            "type": "text",
+            "value": "",
+            "min": "",
+            "max": "",
+            "label": "Product Name",
+            "fancy": true,
+            "required": true,
+            "description": "",
+            "group": "g_fd99b964-b3fb-4144-bb76-9e4851c69012",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "name",
+			"span_column": true,
+            "index": 1,
+            "onchange": "updatesOn(this)",
+        },        
+		
+		{
+			"type": "select",
+			"value": "",
+			"label": "Item Category",
+			"fancy": true,
+			"required": false,
+			"description": "",
+			"list": "item_categories",
+			"group": "g_fd99b964-b3fb-4144-bb76-9e4851c69012",
+			"row_span": null,
+			"col_span": null,
+			"span_column": true,
+			"id": "category",
+            "onchange": "updatesOn(this)",
+		},
+		{
+            "type": "select",
+            "value": "",
+            "min": "",
+            "max": "",
+            "label": "Storage Type",
+            "fancy": true,
+            "required": false,
+            "description": "Select the Type of storage",
+            "group": "g_fd99b964-b3fb-4144-bb76-9e4851c69012",
+            "row_span": null,
+            "col_span": null,
+            "list": "storage_list",
+            "span_column": false,
+            "id": "storage",
+            "index": 1,
+            "onchange": "updatesOn(this)",
+        },
+		{
+            "type": "date",
+            "value": "",
+            "label": "Expiration Date",
+            "fancy": true,
+            "required": true,
+            "description": "Type In the Expiration Date:",
+            "group": "g_fd99b964-b3fb-4144-bb76-9e4851c69012",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+                
+            "id": "date_expiry",
+            "index": 1,
+            "onchange": "updatesOn(this)",
+        },
+        
+		{
+            "type": "number",
+            "value": "",
+            "min":0,
+            "max":0,
+            "label": "Quantity",
+            "fancy": true,
+            "required": true,
+            "description": "Quantity of the Item",
+            "group": "g_fd99b964-b3fb-4144-bb76-9e4851c69012",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+                
+            "id": "counts",
+            "index": 1,
+            "onchange": "updatesOn(this)",
+        },
+        
+        {
+            "type": "text",
+            "value": "",
+            "label": "Bar Code",
+            "fancy": true,
+            "required": false,
+            "description": "Type In the Barcode or use the Scanner (Make sure it is connected first).",
+            "group": "g_fd99b964-b3fb-4144-bb76-9e4851c69012",
+            "row_span": null,
+            "col_span": null,
+            "span_column": true,
+                
+            "id": "code",
+            "index": 1,
+            "onchange": "updatesOn(this)",
+        },
+
+    ],
+	
+
+		
+    "groups": [
+        {
+            "name": "Group 1",
+            "type": "default",
+            "column_count": "2",
+            "row_view": true,
+            "id": "g_fd99b964-b3fb-4144-bb76-9e4851c69012"
+        }
+    ]
+}

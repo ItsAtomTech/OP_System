@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="static/test/css/coloring.css">
+	<link rel="stylesheet" href="static/test/css/font-awesome.css">
+	<link rel="stylesheet" href="static/test/css/typography.css">
+	<link rel="stylesheet" href="static/test/css/daimofuu_buttons.css">
+	<link rel="stylesheet" href="static/test/css/daimofuu_fancylabel.css">
+	<link rel="stylesheet" href="static/test/css/daimofuu_formeditor.css">
+	
+
+
+<style>
+body, html{
+background:rgba(40,40,40,1);
+margin:0;
+	
+min-height:500px;
+padding:0px;
+
+}
+
+* {
+	box-sizing:border-box;
+}
+
+.mock_container{
+	width:100%;
+	min-height:900px;
+	border:solid red 1px;
+	padding:0px;
+	position:relative;
+
+	
+}
+
+
+	#progressBar {
+		width: 0%;
+		height: 30px;
+		background-color: green;
+		color: white;
+		text-align: center;
+		line-height: 30px;
+	}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Template start -->
+
+
+
+
+
+<!-- This is where the generated forms goes to.. -->
+	<div class="formclass_con" id="main_form_container">
+
+
+
+	</div>
+
+
+<!-- Editor Interfaces -->
+
+
+
+	<div class="formclass_con" id="quick_forms"> 
+		  <div class="quick_action_bar">
+		  <button class="df_button_flat primary_color primary_background" onclick="addQuickInput('text')" tooltip="Add text input"> |Aa</button>
+
+		  <button onclick="addQuickInput('number')" class="df_button_flat primary_color primary_background" tooltip="Add input number"> |123</button>
+		  
+		  <button onclick="addQuickInput('header')" class="df_button_flat primary_color  fa fa-header primary_background" tooltip="Add Header"> </button>
+		  <button onclick="addQuickInput('date')" class="df_button_flat primary_color  fa fa-calendar primary_background" tooltip="Add date input"> </button>
+		  
+		  <div class="small access_text">
+			Quick Toolbar
+		  </div>
+	  </div>
+	</div>
+
+	
+	
+	
+<!-- Form Editor Modal Start -->
+
+
+<div class="df_formeditor_con_main hidden" id="form_editor_modal">
+	<div class="df_formeditor_con primary_background primary_color">
+		<div class="row_dev_con">
+			<div class="medium primary_color header_title center_text">Form Editor </div>
+		</div>
+		
+		<div class="row_dev_con flexed"> 
+		<div class="cols_con_" >
+		
+			<label> Select type: </label>
+			<select class="df_button_flat secondary_background primary_color_invert"
+			onchange="formEditor.changeType(this)" id="form_type_"
+			>
+				<option value="" disabled>
+					-- Select type -- 
+				</option>
+				<option  value="text" selected>
+					Text
+				</option>
+				<option  value="textarea">
+					Textarea
+				</option>
+				<option  value="number">
+					Number
+				</option>
+				<option  value="date">
+					Date Picker
+				</option>
+				<option  value="range">
+					Range / Slider
+				</option>
+				<option disabled> - Special Types - </option>
+				<option  value="select">
+					Select Options
+				</option>
+				<option  value="checkboxes">
+					Checkbox Options
+				</option>
+				<option  value="file">
+					File Picker
+				</option>
+				<option  value="table">
+					Table Input
+				</option>
+				<option  value="header">
+					Header
+				</option>
+
+			</select>
+		</div>
+		
+		<div class="cols_con_" >
+			
+			<label> &nbsp;</label>
+			
+			<div class="cols_con_">
+				<label for="form_label_" class="placeholder_label"> Form Label  </label><input type="text" id='form_label_' value="" class="fancy_form_df" />		
+			</div>
+		
+			<label for="form_fancy_" class="small"> Fancy Label: </label> <input type="checkbox" id="form_fancy_">
+		
+		</div>
+		
+			
+		</div>
+		<div class="row_dev_con">
+			<div class="small"> Attributes:  </div>
+			
+			
+			<div class="attributes_group"> 
+				
+				<div class="cols_con_" group='value'>
+					<label for="form_value_" class="placeholder_label"> Value: (Optional)  </label><input type="text" id='form_value_' value="" class="fancy_form_df" />
+					<div class="cols_con_" group='required'>
+						<label for="form_required_" class="small"> Required: </label> <input type="checkbox" id="form_required_">
+					</div>
+					
+		
+				</div>	
+			
+			</div>
+			<div class="attributes_group"> 
+				<div class="cols_con_ hidden" group='item_editor'>
+					
+					<button class="df_button secondary_background primary_color_invert normal" onclick="openEditWindow();">
+						<span class="fa fa-cog"> </span> Edit Items
+					</button> 
+					
+				</div>	
+				
+			</div>
+			
+			<div class="attributes_group"> 		
+			
+				<div class="cols_con_" group='min'>
+					<label for="form_min_" class="placeholder_label"> Min: (Optional)  </label><input type="number" id='form_min_' value="" class="fancy_form_df" />		
+				</div>			
+				
+				<div class="cols_con_" group='max'>
+					<label for="form_max_" class="placeholder_label"> Max: (Optional)  </label><input type="number" id='form_max_' value="" class="fancy_form_df" />		
+				</div>
+			
+			</div>
+		</div>
+		
+		
+		<div class="row_dev_con"> </div>
+		<div class="row_dev_con">
+			<button class="df_button secondary_background primary_color_invert normal" onclick="saveInputForm();">
+				<span class="fa fa-save"> </span> Save
+			</button> 
+ 
+			<button class="df_button secondary_background primary_color_invert normal" onclick="closeEditor();">
+				<span class="fa fa-close"> </span> Cancel
+			</button> 
+		
+		</div>	
+	</div>
+</div>
+<!-- Form Editor Modal End -->
+
+
+<!-- Option Panes -->
+	<div class="formOptions primary_color hide_options" id="optionsBox">
+		<button class="df_button_flat fa fa-pencil primary_color primary_background" onclick="openForEdit()"> </button>
+		<button onclick="removeFormInput()" class="df_button_flat primary_color  fa fa-trash primary_background"> </button>
+		
+		<button onclick="moveUp()" class="df_button_flat primary_color  fa fa-arrow-up primary_background"> </button>
+		<button onclick="moveDown()" class="df_button_flat primary_color  fa fa-arrow-down primary_background"> </button>
+	</div>
+<!-- Option Panes End-->
+
+
+
+
+
+
+<!-- Selection Editor Container -->
+<div class="df_formeditor_con_main hidden" id="form_select_editor_modal" style="z-index:25;">
+	<div class="df_formeditor_con primary_background primary_color" >
+	
+		<div class="row_dev_con">
+			<div class="normal primary_color header_title center_text">Select Options Editor </div>
+		</div>
+	
+		<div class="row_dev_con">
+			<div class="list_container_pane" id="select_list_">
+					<!-- Items Goes Here -->
+				
+			</div>
+		</div>
+		
+		<div class="row_dev_con">
+			<div class="formOptionsList">
+				<button class="df_button_flat fa fa-plus primary_color primary_background" onclick="selectionEditor.addItemMenu()"> </button>
+
+				<button onclick="removeItemOption(selectionEditor)" class="df_button_flat primary_color  fa fa-trash primary_background"> </button>
+				
+				<button onclick="selectionEditor.moveUpItem()" class="df_button_flat primary_color  fa fa-arrow-up primary_background"> </button>
+				<button onclick="selectionEditor.moveDownItem()" class="df_button_flat primary_color  fa fa-arrow-down primary_background"> </button>
+			</div>
+		</div>
+						
+		<div class="row_dev_con ">
+			<button class="df_button secondary_background primary_color_invert small" onclick="selectionEditor.saveItems();closeEditor('form_select_editor_modal');">
+				<span class="fa fa-save"> </span> Save
+			</button> 
+ 
+			<button class="df_button secondary_background primary_color_invert small" onclick="closeEditor('form_select_editor_modal');">
+				<span class="fa fa-close"> </span> Cancel
+			</button> 
+		
+		</div>	
+		
+		
+	</div>	
+</div>
+
+
+
+<!-- Check Options Editor Container -->
+<div class="df_formeditor_con_main hidden" id="check_options_editor_modal">
+	<div class="df_formeditor_con primary_background primary_color">
+	
+		<div class="row_dev_con">
+			<div class="normal primary_color header_title center_text">Check Options Editor </div>
+		</div>
+	
+		<div class="row_dev_con">
+			<div class="list_container_pane" id="check_list_">
+					<!-- Items Goes Here -->
+				
+			</div>
+		</div>
+		
+		<div class="row_dev_con">
+			<div class="formOptionsList">
+				<button class="df_button_flat fa fa-plus primary_color primary_background" onclick="checkoptionEditor.addItemMenu()"> </button>
+
+				<button onclick="removeItemOption(checkoptionEditor)" class="df_button_flat primary_color  fa fa-trash primary_background"> </button>
+				
+				<button onclick="checkoptionEditor.moveUpItem()" class="df_button_flat primary_color  fa fa-arrow-up primary_background"> </button>
+				<button onclick="checkoptionEditor.moveDownItem()" class="df_button_flat primary_color  fa fa-arrow-down primary_background"> </button>
+			</div>
+		</div>
+		
+		<hr class="line_2"> 
+
+		<div class="row_dev_con flexed">	
+			
+			<div class="cols_con_" tooltip="Sets the minimum required of selection, 0 to unset">
+				<label for="min_check" class="placeholder_label infocus"> Min Selection  </label><input type="number" id="min_check" value="0" class="fancy_form_df" />		
+			</div>		
+			
+			<div class="cols_con_" tooltip="Sets the maximum limit required of selection, 0 means unlimited selection">
+				<label for="max_check" class="placeholder_label infocus"> Max Selection  </label><input type="number" id="max_check" value="1" class="fancy_form_df" />		
+			</div>
+			
+		</div>
+		
+				
+		<div class="row_dev_con flexed">	
+			
+			<div class="cols_con_" >
+			<input type="checkbox" id="column_check" class="" />
+				<label for="column_check" class="tiny primary_color_faded" tooltip="Use a Column View to render the checkboxes input"> Two Column View  </label>		
+			</div>	
+			
+			<div class="cols_con_" tooltip="">
+			<input type="checkbox" id="allow_others" class="" />
+				<label for="allow_others" class="tiny primary_color_faded" tooltip="Allow others input option."> Others Option  </label>		
+			</div>	
+
+		</div>
+			
+		
+		
+		<div class="row_dev_con ">
+			<button class="df_button secondary_background primary_color_invert small" onclick="checkoptionEditor.saveItems();closeEditor('check_options_editor_modal');">
+				<span class="fa fa-save"> </span> Save
+			</button> 
+ 
+			<button class="df_button secondary_background primary_color_invert small" onclick="closeEditor('check_options_editor_modal');">
+				<span class="fa fa-close"> </span> Cancel
+			</button> 
+		
+		</div>	
+		
+		
+		
+		
+		
+	</div>	
+</div>
+
+
+<!-- Table Options Editor Container -->
+<div class="df_formeditor_con_main hidden" id="table_editor_modal">
+	<div class="df_formeditor_con table_editor primary_background primary_color">
+	
+		<div class="row_dev_con">
+			<div class="normal primary_color header_title center_text">Table Input Editor </div>
+		</div>
+		<div class="column_dev_con">
+			<div class="cols_con_ sideby" >
+			<p class="small"> Header Fields </p>
+				<div class="row_dev_con">
+					<div class="list_container_pane tabcons" id="table_list_">
+							<!-- Items Goes Here -->
+						
+					</div>
+				</div>
+			
+				<div class="row_dev_con">
+					<div class="formOptionsList">
+						<button class="df_button_flat fa fa-plus primary_color primary_background" onclick="tableEditor.addItemMenu()"> </button>
+						
+						<button class="df_button_flat fa fa-cogs primary_color primary_background" onclick="tableEditor.configItem()"> </button>
+
+						<button onclick="removeItemOption(tableEditor)" class="df_button_flat primary_color  fa fa-trash primary_background"> </button>
+						
+						<button onclick="tableEditor.moveUpItem()" class="df_button_flat primary_color  fa fa-arrow-up primary_background"> </button>
+						<button onclick="tableEditor.moveDownItem()" class="df_button_flat primary_color  fa fa-arrow-down primary_background"> </button>
+					</div>
+				</div>
+		</div>
+
+		<div class="cols_con_ sideby" >	
+
+		<p class="small"> Row Configuration </p>
+		
+			<div class="row_dev_con flexed">
+				<div class="cols_con_" tooltip="Sets the maximum limit required of input, 0 means unlimited rows">
+					<label for="row_tab" class="placeholder_label infocus"> Row Count</label><input type="number" id="row_tab" value="1" class="fancy_form_df" />		
+				</div>	
+				
+			</div>
+			<div class="row_dev_con flexed">	
+		
+				<div class="cols_con_" tooltip="Sets the minimum required of input, 0 to unset">
+					<label for="min_tab" class="placeholder_label infocus"> Min Row</label><input type="number" id="min_tab" value="0" class="fancy_form_df" />		
+				</div>		
+				
+				<div class="cols_con_" tooltip="Sets the maximum limit required of input, 0 means unlimited rows">
+					<label for="max_tab" class="placeholder_label infocus"> Max Row</label><input type="number" id="max_tab" value="0" class="fancy_form_df" />		
+				</div>
+				
+			</div>
+
+			<div class="row_dev_con flexed">
+				<div class="cols_con_" tooltip="Should user can make and remove row entries, bounded to Min and Max.">
+					<label for="custom_tab_check" class="small"> Custom User Row: </label><input type="checkbox" id="custom_tab_check" class="" />		
+				</div>	
+
+			</div>	
+			
+			<div class="row_dev_con flexed">	
+				<div class="cols_con_" tooltip="">
+					<label for="type_tab" class="placeholder_label infocus">Input Type</label>
+						<select id="type_tab" value class="fancy_form_df" onchange="tableEditor.setInputType(this.value)">
+									<option disabled> Select Form Type </option>
+									<option value="text" selected> Text </option>
+									<option value="number" > Number </option>
+									<option value="date" > Date </option>
+									<option value="select"> Select </option>
+						</select>					
+				</div>
+				
+			</div>
+		
+		  </div>
+		</div>
+		
+		<div class="row_dev_con ">
+			<button class="df_button secondary_background primary_color_invert small" onclick="tableEditor.saveItems();closeEditor('table_editor_modal');">
+				<span class="fa fa-save"> </span> Save
+			</button> 
+ 
+			<button class="df_button secondary_background primary_color_invert small" onclick="closeEditor('table_editor_modal');">
+				<span class="fa fa-close"> </span> Cancel
+			</button> 
+		
+		</div>	
+		
+		
+	</div>	
+</div>
+
+
+<!-- To-Do: Make the File Picker Config Editor -->
+
+<!-- Template End -->
+
+
+
+</body>
+<script src="static/test/js/form_libs.js"></script>
+<script src="static/test/js/daimofuu_fancylabel.js"></script>
+
+
+<script>
+FILEUPLOAD_SERVER = "upload_files";
+FILEGET_SERVER = "resource";
+FILEREMOVE_SERVER = "delete_file";
+
+//dummy Data
+formDatas = {
+    "forms": [
+        {
+            "type": "header",
+            "value": "Header text",
+            "id": "undefined_0",
+            "index": 0
+        },
+        {
+            "type": "text",
+            "value": "",
+            "label": "Label text",
+            "fancy": true,
+            "id": "label_text_1",
+            "index": 1
+        },        
+		{
+            "type": "file",
+            "value":"[\"sample.jpg\", \"filename.txt\"]",
+            "label": "File input",
+            "fancy": false,
+            "id": "file_input_2",
+			"config": {},
+            "index": 8,
+			"required": true,
+        },
+        {
+            "type": "checkboxes",
+            "value": "[\"Check Item 1\", \"Other Value\"]",
+            "config": {
+                "config": {
+                    "min": "0",
+                    "max": "1",
+					"allow_others": true,
+                },
+                "items": [
+                    "Check Item 1",
+                    "Check Item 2",
+                    "Check Item 4",
+                    "Check \" Item 3"
+                ]
+            },
+            "label": "Label for checks",
+            "fancy": true,
+            "required": false,
+            "id": "label_for_checks_2",
+            "index": 2
+        },
+        {
+            "type": "select",
+            "value": "Item 1",
+            "items": [
+                "",
+                "Item 1",
+                "Item 2",
+                "Item 3"
+            ],
+            "label": "Label for select",
+            "fancy": true,
+            "required": true,
+            "id": "label_for_select_3",
+            "index": 3,
+			"onchange": 'testFunction(this)',
+			"oninput": 'testFunction(this)',
+        },
+		{
+			"type": "textarea",
+			"value": "",
+			"items": [
+				"",
+				"Item 1",
+				"Item 2",
+				"Item 3"
+			],
+			"label": "Label for text",
+			"fancy": true,
+			"required": true,
+			"id": "label_for_text",
+			"index": 3,
+			"disabled":true,
+		},	
+		{
+		"type": "table",
+		"value": '[["asdsad","sdasd","asdasd"]]',
+		"config": {
+			"config": {
+				"min": "1",
+				"max": "",
+				"custom_row": true,
+				"row_count": "2"
+			},
+			"items": [
+				"Column 1",
+				"Column 2",
+				"Column 3",
+				"Column 4"
+			],
+			
+			"itemsConfig":[
+			
+				{
+					"type": "number",
+					"attributes": {}
+				},
+				{
+					"type": "text",
+					"attributes": {}
+				},
+				{
+					"type": "date",
+					"attributes": {}
+				},
+				{
+					"type": "select",
+					"attributes": {items: ['Item 1','Item 2'],}
+				}
+			]
+		},
+		"label": "Label of Table",
+		"fancy": true,
+		"required": false,
+		"id": "_4",
+		"index": 4
+	},
+
+	]
+}
+
+
+loadForms(0,1,0,0);
+addFancyPlaceholder();
+loadEvents();
+//Dummy form maker
+
+
+//Dummy Functions
+function testFunction(e){
+
+	if(e.value == "Item 1"){
+		_("label_for_text_5").disabled = false;
+	}else{
+		_("label_for_text_5").disabled = true;
+	
+	};
+	
+	
+}
+
+
+</script>
+
+
+
+
+
+
+
+

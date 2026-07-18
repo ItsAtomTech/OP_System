@@ -1,0 +1,46 @@
+{% extends "base_headless.html" %}
+
+{% block title%}  Page is soon available {% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/content_header.css') }}">
+{% endblock %}
+
+{% block contents %}
+
+
+	<div class="content_header_main secondary_background  no_reverse">
+		
+		<div class="_content_section_con section_2 primary_color_invert faded">
+					<div class="_content_section_inner">
+					
+				<div class="_content_section_text">
+					<span class="_content_section_title">
+						Work Inprogress...
+					</span>
+					
+					<span class="_content_section_message">
+						this part is not ready yet (there is more...)
+					</span>
+											
+				<div class="_content_section_inner">
+					<div class="image_container_h_content">
+							<img src="{{ url_for('static', filename='images/building.png') }}" class="image_container_h_image"   title="Skills icons created by Freepik - Flaticon" />
+						</div>
+				</div>	
+			
+					
+				</div>
+			</div>
+		</div>
+	
+
+</div>
+
+
+
+{% endblock %}
+
+
+

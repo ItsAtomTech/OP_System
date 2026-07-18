@@ -1,0 +1,118 @@
+{% extends "base_headless.html" %}
+
+{% block title%} New Account Signup {% endblock %}
+
+{% block extra_css %}
+<link id='maine' rel="stylesheet" href="{{ url_for('static', filename='css/sign_in.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_titlebar.css') }}">
+{% endblock %}
+
+{% block contents %}
+
+
+<div class="df_titlebar_main_con third_background_faded primary_color_invert custom_pinned">
+
+
+	<div class="title_text_big">
+	
+		<div class="logo_title_con">
+			<img src="{{ url_for('static', filename='images/image_placeholder.png') }}" class="logo_onside"> 
+		</div>
+		
+		<div class="title_text bold medium">
+			Order & Precurment System
+		</div>
+		
+	</div>
+	
+	<div class="nav_buttons_top">
+		
+		<div class="nav_button_entry" onclick="go_to('login')">
+			Login
+		</div>
+		
+		
+		<div class="nav_button_entry" onclick="go_to('about');">	
+			About
+		</div>
+		
+				
+	</div>
+	
+	
+</div>
+
+
+<div class="sign_in_main_con fadeIn animated fast">
+
+	<div class="sign_in_con primary_color">
+		<div class="box_left_con_">
+				<div class='welcome_con'>
+					<span class='title_wel'><span class='t_l'> New User</span>
+					
+					<div class='user_circle_'></div>
+					
+					<span class='welcome_te small'> You will need to verify your email after creation</span>
+					
+				</div>
+		</div>
+		
+		
+		<div class="box_rigt_con_ primary_background">
+			<div class="title_sign_up_ secondary_color big centered bold"> Sign Up</div>
+				<!-- <hr class="l_line_">	 -->
+			
+		<form  method='POST' action='add_account' id="signup_form">
+			<div class="sign_devcon_f">
+				<span class="f_label_in">User Name</span>
+				<input class="sig_form_in_ primary_color" id="name" type="text" placeholder="Your User Name" name='username' autocomplete='off' required />
+			</div>			
+			<div class="sign_devcon_f">
+				<span class="f_label_in">Email</span>
+				<input class="sig_form_in_ primary_color" id="email" type="email" placeholder="Your email address" name="email" autocomplete='on' required />
+			</div>			
+			<div class="sign_devcon_f">
+				<span class="f_label_in">Password</span>
+				<input class="sig_form_in_ primary_color" id="pass1" type="password" placeholder="Password" name="password" autocomplete='off' required />
+				<span onclick="show_pass_in(this , 'pass1')" class="show_pass_b" name="password_c">show </span>
+			</div>			
+			<div class="sign_devcon_f">
+			<span class="f_label_in primary_color">Re-enter password <span id='i_n_f'></span></span>
+				<input class="sig_form_in_ primary_color" oninput='check_pass(this)' id="pass2" type="password" name='password_c' placeholder="Confirm Password" autocomplete='off' required />
+			</div>	
+		
+			<div class="sig_message_bar_small_">
+				
+
+				
+			</div>			
+					
+			<div class="sign_devcon_f">
+				<input class="sig_button_in secondary_background primary_color_invert" onclick="proccess_signup()" id="_s_" type="submit" value="Sign up"/>
+			</div>
+			
+			<div class="bottom_bar_seg_u">
+		
+			</div>
+		</form>
+		</div>
+	</div>
+	
+</div>
+
+<script src="{{ url_for('static', filename='js/request_builder.js') }}"> </script>
+<script src="{{ url_for('static', filename='js/sign_in.js') }}" ></script>  
+<script src="{{ url_for('static', filename='js/daimofuu_titlebar.js') }}"> </script>
+
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+	<!-- Keyboard.init("sig_form_in_"); -->
+	qBuilder.server_address = "_";
+</script>
+{% endblock %}
+

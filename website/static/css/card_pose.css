@@ -1,0 +1,202 @@
+*{
+	box-sizing:border-box;
+	
+}
+
+.card_pose_con{
+	position:relative;
+	z-index:1;
+	width:100%;
+	max-width:350px;
+	min-height:200px;
+	/* border:solid red 1px; */
+	overflow:hidden ;
+	padding:4px;
+	box-shadow: 1px 1px 2px 2px rgba(40,40,40,0.5) ;
+	box-shadow:1px 1px 2px 2px	var(--primary_color_faded) ;
+	display:flex;
+
+	-webkit-transition:0.2s;
+	transition:0.2s;
+	margin-left:10px;
+	margin-right:10px;
+}
+
+
+
+.squarecel{
+	border-radius:3px;
+	position:relative;
+}
+
+
+.devider_{
+	width:50%;
+	/* border:solid red 1px; */
+	height:inherit;
+	position:relative;
+	
+}
+
+
+.info_details_con{
+	display:flex;
+	align-items:flex-start;
+	justify-content:flex-start;
+	flex-direction:column;
+	padding:10px;
+
+	
+}
+
+
+
+.title_user{
+	font-size:1.1em;
+	font-weight:bold;
+	
+	
+	
+}
+
+.title_user_role{
+	font-size:0.8em;
+	font-weight:thin;
+	
+	
+	
+}
+
+
+
+.card_bg_pm{
+	width:100%;
+
+	min-height:100px;
+	background: linear-gradient( 90deg ,  var(--primary_background) , rgba(0,0,0,0));
+	height:100%;
+	position:absolute;
+	top:0;
+	bottom:0;
+	z-index:2;
+	-webkit-transition:0.4s;
+	transition:0.4s;
+		cursor:pointer;
+	
+}
+
+.card_bg_image{
+	width:100%;
+
+	min-height:100px;
+	height:100%;
+	position:absolute;
+	top:0;
+	bottom:0;
+	/* border:solid lime 1px; */
+	z-index:1;
+	overflow:hidden;
+	border-radius:10px 10px 10px 0;
+}
+
+
+
+.image_bg_centered_pan{
+	width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 2;
+    position: relative;
+    object-fit: cover;
+	
+}
+
+
+.card_pose_con:hover > .devider_ > .card_bg_pm{
+		background: linear-gradient( 60deg ,  var(--primary_background) , rgba(0,0,0,0));
+		opacity:0.8;
+}
+
+
+
+.card_pose_con:hover{
+		-webkit-transform:scale(1.1,1.1);
+		transform:scale(1.1,1.1);
+		z-index:4;
+}
+
+
+
+.decor_card_box{
+	width:40px;
+	height:40px;
+	position:absolute;
+	z-index:2;
+	border-radius:10px;
+	bottom:10px;
+	left:10px;
+	opacity:0.2;
+	pointer-events:none;
+	
+}
+
+.decor_card_box.bigger_decor{
+	width:60px;
+	height:60px;
+	bottom:15px;
+}
+
+
+
+
+/* Extra for this usage */
+
+
+.action_button{
+	min-height:20px;
+	display:inline-block;
+	padding:5px;
+	border:dashed gray 1px;
+	cursor:pointer;
+	
+}
+
+.full_width{
+	width:100%;
+	margin:0px auto;
+	border-radius:0 0 15px 5px;
+	
+}
+
+
+
+/* Extra end for this usage */
+
+
+
+
+@media (max-width:500px){
+	.card_pose_con{
+		flex-direction:column-reverse;
+		align-items:center;
+		justify-content:center;
+		margin-bottom:10px;
+	}
+	
+	
+	
+	
+	.devider_{
+		width:100%;
+		/* border:solid red 1px; */
+		height:inherit;
+		min-height:150px;
+	
+	}
+
+	.card_bg_pm{
+	background: linear-gradient( 0deg ,  var(--primary_background) , rgba(0,0,0,0));
+	}
+
+
+}

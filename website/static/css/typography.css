@@ -1,0 +1,251 @@
+
+    @font-face {
+    font-family: 'Montserrat Ace Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Regular'), url('../fonts/Montserrat-Ace-Regular.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Italic'), url('../fonts/Montserrat-Ace-Italic.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace Light';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Light'), url('../fonts/Montserrat-Ace-Light.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace Light Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Light Italic'), url('../fonts/Montserrat-Ace-Light-Italic.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace Medium';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Medium'), url('../fonts/Montserrat-Ace-Medium.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace Medium Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Medium Italic'), url('../fonts/Montserrat-Ace-Medium-Italic.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace SemiBold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace SemiBold'), url('../fonts/Montserrat-Ace-SemiBold.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace SemiBold Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace SemiBold Italic'), url('../fonts/Montserrat-Ace-SemiBold-Italic.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Bold'), url('../fonts/Montserrat-Ace-Bold.woff') format('woff');
+    }
+    
+
+    @font-face {
+    font-family: 'Montserrat Ace Bold Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Montserrat Ace Bold Italic'), url('../fonts/Montserrat-Ace-Bold-Italic.woff') format('woff');
+    }  
+    
+    @font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Poppins'), url('../fonts/Poppins-Regular.ttf') format('ttf');
+    src: url('../fonts/Poppins-Regular.ttf') format('ttf'); 
+    src: url('../fonts/Poppins-Regular.ttf'); 
+    }
+    
+    @font-face {
+    font-family: 'Poppins-Bold';
+    font-style: normal;
+    font-weight: bold;
+    src: local('Poppins-Bold'), url('../fonts/Poppins-Bold.ttf') format('ttf');
+    src: url('../fonts/Poppins-Bold.ttf') format('ttf'); 
+    src: url('../fonts/Poppins-Bold.ttf'); 
+    }  
+	
+	
+	
+	    
+    @font-face {
+    font-family: 'Gotham Rounded';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Gotham Rounded'), url('../fonts/gothamrnd_medium.otf') format('otf');
+    src: url('../fonts/gothamrnd_medium.otf') format('otf'); 
+    src: url('../fonts/gothamrnd_medium.otf'); 
+    }	    
+	
+    @font-face {
+    font-family: 'Gotham Rounded Bold';
+    font-style: normal;
+    font-weight: bold;
+    src: local('Gotham Rounded'), url('../fonts/gothamrnd_bold.otf') format('otf');
+    src: url('../fonts/gothamrnd_bold.otf') format('otf'); 
+    src: url('../fonts/gothamrnd_bold.otf'); 
+    }   
+	
+    @font-face {
+    font-family: 'Gotham Rounded';
+    font-style: normal;
+    font-weight: light;
+    src: local('Gotham Rounded'), url('../fonts/gothamrnd_book.otf') format('otf');
+    src: url('../fonts/gothamrnd_book.otf') format('otf'); 
+    src: url('../fonts/gothamrnd_book.otf'); 
+    }   
+
+	@font-face {
+    font-family: 'Gotham Rounded Light';
+    font-style: normal;
+    font-weight: bold;
+    src: local('Gotham Rounded'), url('../fonts/gothamrnd_light.otf') format('otf');
+    src: url('../fonts/gothamrnd_light.otf') format('otf'); 
+    src: url('../fonts/gothamrnd_light.otf'); 
+    }
+    
+	
+/* =========== */
+/* Typography */
+/* =========== */
+
+
+body, html{
+
+font-family:Gotham Rounded;
+}
+
+
+.super_jumbo{
+    font-size:6rem;
+    line-height:initial;
+}
+
+
+.jumbo{
+    font-size:5.5rem;
+    line-height:initial;
+}
+
+.large{
+    font-size:40px;
+    line-height:initial;
+}
+
+.big{
+    font-size:34px;
+    line-height:initial;
+}
+
+
+.medium{
+    font-size:20px !important;
+}
+
+.normal{
+    font-size:16px;
+    line-height:15px;
+	font-family: 'Gotham Rounded';
+}
+
+.small{
+    font-size:14px;
+    font-family: 'Gotham Rounded Light';
+    line-height:initial;
+}
+
+.tiny{
+    font-size:12px;
+    font-family: 'Gotham Rounded Light';
+    line-height:initial;
+    
+}
+
+
+/* Others */
+
+
+.paragraph{
+    
+    text-indent:20px;
+    
+    
+}
+
+.justify{
+    text-align:justify;
+    
+}
+
+.bold{
+    font-weight:bold;
+    
+}
+
+@media (max-width:500px){
+    
+    .jumbo{
+    font-size:3rem;
+    }
+    
+    .big{
+        font-size:24px;
+    }
+
+
+    .medium{
+        font-size:15px !important;
+    }
+
+    .normal{
+        font-size:13px;
+    }
+
+    .small{
+        font-size:12px;
+        font-family: 'Gotham Rounded Light';
+        
+    }
+
+    .tiny{
+        font-size:10px;
+        font-family: 'Gotham Rounded Light';
+        
+        
+    }
+
+
+}
+
+
