@@ -21,7 +21,7 @@ from .models import Users, Department, PurchaseRequests
 
 
 plt = ""  # empty this var when on live website
-post_per_page = 1000
+post_per_page = 2000
 
 api_handles = Blueprint('api_handles', __name__)
 
@@ -155,8 +155,6 @@ def save_user():
         if data.get("department") == " ":
             data["department"] = None
             
-        if data.get("college") == " ":
-            data["college"] = None
 
         # Optional: check if email already exists
         existing_user = Users.query.filter_by(email=data.get("email")).first()
@@ -227,7 +225,6 @@ def remove_user():
     except Exception as e:
         db.session.rollback()
         return {"type": "error", "message": str(e)}
-
 
 
 
@@ -406,6 +403,8 @@ def save_purchase_request():
     except Exception as e:
         db.session.rollback()
         return {"type": "error", "message": str(e)}
+
+
 
 
 
