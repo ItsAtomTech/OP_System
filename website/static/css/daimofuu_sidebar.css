@@ -331,7 +331,7 @@ font-family:Montserrat Ace Regular;
 /* ============ */
 
 .rounded_logo_{
-    background-image:url(../images/lnu_logo.webp);
+    background-image:url(../images/logo.png);
     width:100%;
     min-height:50px;
     background-size:60% auto;
@@ -482,10 +482,19 @@ font-family:Montserrat Ace Regular;
     .onside_title{
 		overflow:show;
 		max-height:unset;
-		
 	}
 }
 
+
+
+@media screen and (max-width: 1000px){
+	
+	
+	.onside_title{
+		opacity:0;
+	}
+	
+}
 
 
 @media screen and (max-width: 650px){
@@ -571,7 +580,9 @@ font-family:Montserrat Ace Regular;
     .sidebar_button >  .nav_text{
         display:none;
     }
-    
+	
+
+
     
 }
 

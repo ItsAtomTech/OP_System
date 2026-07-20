@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 from . import db
 from datetime import datetime, timedelta
-from .models import Users, Department, PurchaseRequests
+from .models import Users, Department, PurchaseRequests, Notification
 
 
 plt = ""  # empty this var when on live website

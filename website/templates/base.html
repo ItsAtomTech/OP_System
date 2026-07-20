@@ -66,7 +66,7 @@
 					<div class="sidebar_box_con logo_contianer">
 
 						<div class="rounded_logo_ "> </div>
-						<div class="big onside_title"> On Probation Tracking </div>
+						<div class="medium onside_title"> Order Procurement System </div>
 						
 					</div>
 					<!-- <div class="sidebar_box_con">  -->
@@ -89,86 +89,12 @@
 
 		<!-- For Admin side bar -->
 		
-		
-		{% if current_user.type == 4 %}
+	
 		
 		<div class="sidebar_box_con" >
 			<div class="sidebar_button df_button primary_color" onclick="showUserManageTable(this);" > <span class="fa fa-users" tooltip="Manage User Roles / Add User"> </span> <span class="normal nav_text"> User Management </span> </div>
 		</div>
 		
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="showSubjectManagementPage(this);" > <span class="fa fa-book" tooltip="Manage User Roles / Add User"> </span> <span class="normal nav_text"> Manage Subjects </span> </div>
-		</div>
-				
-				
-				
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="
-			showSettingsPage(this);" > <span class="fa fa-cogs" tooltip="Open the page for Settings"> </span> <span class="normal nav_text"> Settings </span> </div>
-		</div>
-		
-		
-		<!-- For Dean side bar -->
-		{% elif current_user.type == 2 or current_user.type == 5 %}
-		
-		
-
-		
-		
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="showAssessmentTable(this);" tooltip="Go to Assessment Page"> <span class="fa fa-users"> </span> <span class="normal nav_text"> Assessment </span> </div>
-		</div>
-		
-		
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="showDeadlinesTable(this);"> <span class="fa fa-hourglass-end"> </span> <span class="normal nav_text"> Deadlines </span> </div>
-		</div>		
-		
-		
-		
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="showReviewTable(this);"> <span class="fa fa-check-square"> </span> <span class="normal nav_text"> Review Students </span> </div>
-		</div>
-		
-		
-		
-		<!-- For Program Chair side bar -->
-
-		{% elif current_user.type == 3 %}
-		
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="showOnProbTable(this);" > <span class="fa fa-exclamation-triangle" tooltip="Open Onprobation List"> </span> <span class="normal nav_text"> On probation List </span> </div>
-		</div>
-				
-				
-		
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="showDeadlinesTable(this);"> <span class="fa fa-hourglass-end"> </span> <span class="normal nav_text"> Deadlines </span> </div>
-		</div>		
-		
-		
-		
-		
-		<!-- <div class="sidebar_box_con" > -->
-			<!-- <div class="sidebar_button df_button primary_color" onclick="showAssessmentTable(this);" tooltip="Go to Assessment Page"> <span class="fa fa-users"> </span> <span class="normal nav_text"> Assessment </span> </div> -->
-		<!-- </div> -->
-		
-		
-		{% else %}
-		<!-- For Teachers side bar -->
-		
-		<!-- <div class="sidebar_box_con" > -->
-			<!-- <div class="sidebar_button df_button primary_color" onclick="showOnProbTable(this);" > <span class="fa fa-exclamation-triangle" tooltip="Open Onprobation List"> </span> <span class="normal nav_text"> On probation List </span> </div> -->
-		<!-- </div> -->
-
-		<div class="sidebar_box_con" >
-			<div class="sidebar_button df_button primary_color" onclick="showTrackingTable(this);" tooltip="Go to Student Tracking Page"> <span class="fa fa-users"> </span> <span class="normal nav_text"> Track Student </span> </div>
-		</div>
-
-
-		
-		
-		{% endif %}
 		
 		
 		<div class="sidebar_box_con" >

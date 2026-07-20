@@ -1,0 +1,108 @@
+{% extends "base_headless.html" %}
+
+{% block title%}My Notifications{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_titlebar.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+
+
+{% endblock %}
+
+
+{% block contents %}
+<div class="notification_main_container ">
+
+	<div class="df_titlebar_main_con center third_background_faded primary_color_invert glass">
+		<div class="title_container">
+		
+			<div class="text_banner big"> Notifications</div>					
+		</div>
+	</div>
+
+    <div id="top_">  </div>
+
+
+    <div class="top_toolbar_main">
+        <button class="df_button_flat small primary_color primary_background" onclick="readAll()"><span class="fa fa-check"> </span> Mark all as Read </button>
+    </div>
+
+
+    <div class="notifications-container primary_color_invert" id="notification_center">
+    
+        <!-- Notifications Goes here -->
+
+
+    </div>
+
+    <div id="page_navigation_bar" class="page_navigation_notification" s_tyle='display:none;'>
+        <button tag='prev' class="df_button secondary_background primary_color_invert small" onclick='paginate_notif("prev")' >  Prev </button>     
+
+        <button tag='page_counter' class='df_button_flat counter  transparent primary_color normal'> 1 </button>
+        
+        <button tag='next' class="df_button secondary_background primary_color_invert small" onclick="paginate_notif()">  Next </button>
+    </div>
+
+
+<script>
+let current_role = "{{ current_user.role }}";
+
+</script>
+
+<script src="{{ url_for('static', filename='js/notification_functions.js') }}" ></script>
+<script src="{{ url_for('static', filename='js/request_builder.js') }}" ></script>
+
+<template id="notification_leaf">
+    
+    <div class="notification-card primary_background primary_color" tag='leaf'>
+        <div class="notification-icon">
+            <img src="{{ url_for('static', filename='images/notification.png') }}" alt="Notification Icon" tag="notification_icon">
+        </div>
+        <div class="notification-content" tag="content">
+            <h2 class="normal" tag='title'>Notification Title</h2>
+             <p class="small" tag='details'>Details of Notifications.</p>
+            <p class="notification-date tiny" tag='date'>Date Goes Here</p>
+        </div>
+        
+        <div class="action_corner" tag="remove">
+            <span class='fa fa-trash'> </span>
+        </div>
+        
+        
+    </div>
+
+
+
+
+</template>
+
+<div id="showNotification" class="modal to_center" style="display:none;">
+    <div class="notif-modal-content primary_background">
+        <div class="notif-modal-header">
+            <p class="normal">Notification</p>
+            <span class="close medium" onclick="closeNotif()">&times;</span>
+        </div>
+        <div class="notif-modal-body centered">
+
+            <h2 class="normal" tag='title'>Notification Title</h2>
+            <p class="notification-date tiny" tag='date'>Date Goes Here</p>
+            <p class="small modal_notif_details" tag='details'>Details of Notifications.</p>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+qBuilder.server_address = "notification_list";
+let image_static = "{{  url_for('static', filename='images') }}";
+
+
+    loadNotificationsList();
+</script>
+
+{% endblock %}
