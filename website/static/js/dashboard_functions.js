@@ -29,6 +29,15 @@ function showSubjectManagementPage(elm){
 	
 }
 
+function showRequestForms(elm){
+	activate(elm);
+
+	let page = open_modal("subject_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
+	closeAllPages(page);
+	hideDashboardContents(true);
+	
+}
+
 
 function showNotificationPage(elm){
 	activate(elm);
@@ -52,64 +61,17 @@ function showSettingsPage(elm){
 
 
 // ==========================
-// Teacher Functions Etc.
+// Forms Functions Etc.
 // ==========================
 
-function showOnProbTable(elm){
+function showRequestForms(elm){
 	activate(elm);
 
-	let page = open_modal("student_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
+	let page = open_modal("request_forms", 'modal_on_container,no_close_button,page_containment', _('general_container'));
 	closeAllPages(page);
 	hideDashboardContents(true);
 	
 }
-
-
-
-function showTrackingTable(elm){
-	activate(elm);
-
-	let page = open_modal("track_student_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
-	hideDashboardContents(true);
-}
-
-
-
-function showReviewTable(elm){
-	activate(elm);
-
-	let page = open_modal("review_student_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
-	hideDashboardContents(true);
-}
-
-
-
-
-// ==========================
-// Deans Functions Etc.
-// ==========================
-
-
-
-function showAssessmentTable(elm){
-	activate(elm);
-
-	let page = open_modal("assess_student_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
-	hideDashboardContents(true);
-}
-
-
-function showDeadlinesTable(elm){
-	activate(elm);
-
-	let page = open_modal("deadlines_student_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
-	hideDashboardContents(true);
-}
-
 
 
 

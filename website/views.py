@@ -109,11 +109,30 @@ def user_update_editor():
 
 
     
+@views.route('/request_forms', methods=['GET', 'POST'])
+def request_forms_page():
+    page = 'request_forms'
+
+    return render_template("under.html", user=current_user, page=page)
+        
+
+
+
+    
 @views.route('/purchase_request', methods=['GET', 'POST'])
-def status_new_editor():
+def purchase_request():
     page = 'purchase_editor'
 
     return render_template("forms/purchase_request.html", user=current_user, page=page)
+    
+    
+    
+    
+@views.route('/fuel_requisition', methods=['GET', 'POST'])
+def fuel_requisition_():
+    page = 'fuel_requisition_form'
+
+    return render_template("forms/fuel_requisition_form.html", user=current_user, page=page)
     
     
     

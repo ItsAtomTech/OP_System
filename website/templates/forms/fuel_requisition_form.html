@@ -1,14 +1,23 @@
 {% extends "base_headless.html" %}
 
-{% block title%}User Editor {% endblock %}
+{% block title%}Fuel Requisition Form Editor {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/form_editor.css') }}">
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_fancylabel.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_formeditor.css') }}">	
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_editor.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_form_styles.css') }}">
+
+
+
 <!-- Advance Editor Styling -->
 <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/codemirror.css') }}"> -->
 <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/dracula.css') }}"> -->
+
+
+
 {% endblock %}
 
 {% block contents %}
@@ -23,42 +32,34 @@
 	
 		<div class="bottom_toolbar ">
 		
-			<button class="df_button secondary_background primary_color_invert small" onclick="saveUser()" ><span class="fa fa-save"></span> Save</button>
+			<button class="df_button secondary_background primary_color_invert small" onclick="submitForm()" ><span class="fa fa-save"></span> Submit</button>
 			
 			<button class="df_button_flat primary_background_darker primary_color small" onclick="cancelEditor(this)"> Close </button>
-		
+
+
+
+		</div>
+
+
 		</div>
 
 </div>
 
 
 
-<datalist id="item_categories">
-</datalist>
 
-<datalist id="usertype">
-	
-	{% for user_type in get_user_types() %}
-	
-	<option value="{{ user_type.type_id}}">{{ user_type.type }}</option>
-	
-	{% endfor %}
+
+
+<datalist id="reasons" value="" required class="fancy_form_df form_display">
 
 </datalist>
 
 
 
+<datalist id="type_list">
 
-<datalist id="programs">
-<option value=" ">None</option>
 
 </datalist>
-
-
-<datalist id="college_list">
-
-</datalist>
-
 
 
 
@@ -74,21 +75,21 @@ function updatesOn(elm){
 
 <script src="{{ url_for('static', filename='js/lib/signature_pad.min.js') }}"></script>
 
-{% if page ==  'edit_user' %}
-	<script src="{{ url_for('static', filename='js/data/user_forms_data_edit.js') }}"></script>
-{% else %}
-	<script src="{{ url_for('static', filename='js/data/user_forms_data.js') }}"></script>
-{% endif %}
-
-
-
+<script src="{{ url_for('static', filename='js/data/fuel_requisition_form.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/form_libs.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lib/daimofuu_fancylabel.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
-<script defer src="{{ url_for('static', filename='js/user_editor_handles.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/fuel_requisition_handles.js') }}"></script>
 <script defer src="{{ url_for('static', filename='js/modalizer.js') }}"></script>
+
+
+
+<!-- <script defer src="{{ url_for('static', filename='js/activity_handles.js') }}"></script> -->
+
+
+
 
 <script>
 //init and Render the Forms we have
@@ -97,13 +98,13 @@ let pageType = "{{ page }}";
 qBuilder.server_address = "_";
 
 
-
-formDatas = configForm;
+formDatas = formStructure;
 
 
 loadForms(0,0,0,1);
 addFancyPlaceholder();
-//loadEvents();//Force Pre-load Events of each form fields, if neccesary
+
+loadEvents();//Force Pre-load Events of each form fields, if neccesary
 
 
 
@@ -115,6 +116,7 @@ addFancyPlaceholder();
 
 {% block extra_js %}
 <script>
+
 </script>
 {% endblock %}
 

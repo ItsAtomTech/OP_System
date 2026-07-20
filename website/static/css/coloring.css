@@ -6,13 +6,13 @@
   --primary_color: rgba(40,40,40,1);
   --primary_color_faded: rgba(40,40,40,0.6);
   --primary_color_invert: rgba(254,254,255,1);
-  --secondary_color: #86b7fe;
-  --secondary_color_faded: #86b7fe88;
-  --secondary_color_darker: #19237b;
+  --secondary_color: #ffdca8;
+  --secondary_color_faded: #ff980088;
+  --secondary_color_darker: #f5c800;
   --third_color_faded: rgba(24,24,24,0.30);
   --third_much_faded: rgba(24,24,24,0.05);
   
-  --secondary_background: #202d9d;
+  --secondary_background: #ffb637;
   --accent_color:#D6BC3D;
   --error_color: #e91e63;
   /* Extra Colors */

@@ -6,14 +6,13 @@
   --primary_color: rgba(230,230,230,1); /* Light text */
   --primary_color_faded: rgba(230,230,230,0.6);
   --primary_color_invert: rgba(240,240,240,1); /* Near-black for invert */
-  --secondary_color: #6d6aff;
-  --secondary_color_faded: #6d6aff88;
-  --secondary_color_darker: #181584;
+  --secondary_color: #F57C00;
+  --secondary_color_faded: #ff980088;
+  --secondary_color_darker: #f5c800;
   --third_color_faded: rgba(24,24,24,0.30);
-  --third_much_faded: rgba(34,34,34,0.45);
+  --third_much_faded: rgba(24,24,24,0.05);
   
-  
-  --secondary_background: #221db9;
+  --secondary_background: #ffb637;
   --accent_color:#D6BC3D;
   
   --error_color: #e91e63;

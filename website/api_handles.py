@@ -249,8 +249,8 @@ def get_user_by_id():
             "type": user.type,
             "status": user.status,
             "avatar": user.avatar,
-            "department": user.department_id,
-            "college": user.college_id,
+            # "department": user.department_id,
+            # "college": user.college_id,
             "misc": user.misc,
             "date": user.date.strftime("%Y-%m-%d %H:%M:%S") if user.date else None
         }
