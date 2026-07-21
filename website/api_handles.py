@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 from . import db
 from datetime import datetime, timedelta
-from .models import Users, Department, PurchaseRequests, Notification
+from .models import Users, Department, PurchaseRequests, Notification, Vehicles
 
 
 plt = ""  # empty this var when on live website
@@ -447,7 +447,219 @@ def get_purchase_request_by_id():
 
 
 
+# ================================
+# Vehicles Section
+# ================================
+@api_handles.route('/save_vehicle', methods=['POST'])
+@login_required
+def save_vehicle():
 
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+
+    try:
+        plate_no = request.form.get("plate_no")
+        average_km = request.form.get("average_km")
+        description = request.form.get("description")
+        misc = request.form.get("misc") or "{}"
+
+        if not plate_no:
+            return {"type": "error", "message": "Missing required fields"}
+
+        new_vehicle = Vehicles(
+            plate_no=plate_no,
+            average_km=average_km,
+            description=description,
+            misc=misc
+        )
+
+        db.session.add(new_vehicle)
+        db.session.commit()
+
+        return {"type": "success", "message": "Vehicle saved successfully!"}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+
+
+
+@api_handles.route('/list_vehicles', methods=['POST', 'GET'])
+@login_required
+def list_vehicles():
+    try:
+        current_page = int(request.form.get("page") or 1)
+    except ValueError:
+        current_page = 1
+
+    per_page = 20
+
+    query = db.session.query(Vehicles)
+
+    # Search
+    search = request.form.get("search")
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                Vehicles.plate_no.ilike(search_term),
+                Vehicles.description.ilike(search_term),
+                Vehicles.misc.ilike(search_term)
+            )
+        )
+
+    # Sorting
+    sortby = request.form.get("sort")
+    order = request.form.get("order_by", "asc").lower()
+
+    sortable_columns = {
+        "id": Vehicles.id,
+        "plate_no": Vehicles.plate_no,
+        "average_km": Vehicles.average_km,
+        "description": Vehicles.description,
+        "misc": Vehicles.misc,
+        "date": Vehicles.date
+    }
+
+    if sortby in sortable_columns:
+        sort_column = sortable_columns[sortby]
+        if order == "desc":
+            query = query.order_by(desc(sort_column))
+        else:
+            query = query.order_by(asc(sort_column))
+    else:
+        query = query.order_by(Vehicles.id.asc())
+
+    # Pagination
+    pagination = query.paginate(page=current_page, per_page=per_page, error_out=False)
+
+    results = pagination.items
+    total_pages = pagination.pages
+    total_results = pagination.total
+
+    vehicle_list = []
+
+    for vehicle in results:
+        vehicle_list.append({
+            "id": vehicle.id,
+            "plate_no": vehicle.plate_no,
+            "average_km": vehicle.average_km,
+            "description": vehicle.description,
+            "misc": vehicle.misc,
+            "date": vehicle.date.strftime("%Y-%m-%d %H:%M:%S") if vehicle.date else None
+        })
+
+    return {
+        "type": "success",
+        "vehicles": vehicle_list,
+        "pagination_data": {
+            "current_page": current_page,
+            "total_pages": total_pages,
+            "total_results": total_results
+        }
+    }
+
+
+
+@api_handles.route('/get_vehicle_by_id', methods=['POST'])
+@login_required
+def get_vehicle_by_id():
+
+    try:
+        vehicle_id = request.form.get("vehicle_id")
+        if not vehicle_id:
+            return {"type": "error", "message": "Missing vehicle_id"}
+
+        vehicle = Vehicles.query.get(int(vehicle_id))
+        if not vehicle:
+            return {"type": "error", "message": "Vehicle not found"}
+
+        vehicle_data = {
+            "id": vehicle.id,
+            "plate_no": vehicle.plate_no,
+            "average_km": vehicle.average_km,
+            "description": vehicle.description,
+            "misc": vehicle.misc,
+            "date": vehicle.date.strftime("%Y-%m-%d %H:%M:%S") if vehicle.date else None
+        }
+
+        return {"type": "success", "vehicle": vehicle_data}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+
+
+@api_handles.route('/update_vehicle', methods=['POST'])
+@login_required
+def update_vehicle():
+
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+
+    try:
+        vehicle_id = request.form.get("vehicle_id")
+        if not vehicle_id:
+            return {"type": "error", "message": "Missing vehicle_id"}
+
+        vehicle = Vehicles.query.get(int(vehicle_id))
+        if not vehicle:
+            return {"type": "error", "message": "Vehicle not found"}
+
+        plate_no = request.form.get("plate_no")
+        average_km = request.form.get("average_km")
+        description = request.form.get("description")
+        misc = request.form.get("misc")
+
+        if plate_no:
+            vehicle.plate_no = plate_no
+
+        if average_km is not None:
+            vehicle.average_km = average_km
+
+        if description is not None:
+            vehicle.description = description
+
+        if misc is not None:
+            vehicle.misc = misc
+
+        db.session.commit()
+
+        return {"type": "success", "message": "Vehicle updated successfully!"}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+
+
+
+@api_handles.route('/remove_vehicle', methods=['POST'])
+@login_required
+def remove_vehicle():
+
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+
+    try:
+        vehicle_id = request.form.get("vehicle_id")
+        if not vehicle_id:
+            return {"type": "error", "message": "Missing vehicle_id"}
+
+        vehicle = Vehicles.query.get(int(vehicle_id))
+        if not vehicle:
+            return {"type": "error", "message": "Vehicle not found"}
+
+        db.session.delete(vehicle)
+        db.session.commit()
+
+        return {"type": "success", "message": "Vehicle removed successfully!"}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+# ================================
+# Vehicles Section End
+# ================================
 
 
 
@@ -692,7 +904,7 @@ load_config()
 # Other Section
 # ================================
 def is_admin(silent=False):
-    if current_user.type == 4 or current_user.type == '4':
+    if current_user.type == 1 or current_user.type == '1':
         return 1
     else:
         return 0

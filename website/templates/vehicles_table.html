@@ -73,7 +73,7 @@
 			</div>
 			
 
-			<a href="#" onclick="addNewSubject()" class="create-action-btn small">  <span class="fa fa-user"> &nbsp;</span> <span> Add Entry</span></a>
+			<a href="#" onclick="addNewEntry()" class="create-action-btn small">  <span class="fa fa-user"> &nbsp;</span> <span> Add Entry</span></a>
 		
 			
 
@@ -82,7 +82,7 @@
 
 <!-- Filter Ribbons -->
 <div class="filter_toolbar_con padded_left_right" style="" id="">
-	<span class="fa fa-arrow-left go_back_arrow" onclick=""> </span> <span class="normal"> <span class="normal"> Admin Tools / Vehicles / </span>
+	<span class="fa fa-arrow-left go_back_arrow" onclick="go_to('admin_tools_page')"> </span> <span class="normal"> <span class="normal"> Admin Tools / Vehicles / </span>
 </div>
 
 <!-- <div class="top_container"> -->
@@ -167,7 +167,7 @@
 <script src="{{ url_for('static', filename='js/foreignKeys.js') }}"></script>
 
 <script>
-qBuilder.server_address = "list_subjects";
+qBuilder.server_address = "list_vehicles";
 current_role = "admin";
 //qBuilder.filters.status = "active";
 let pageType = "{{ page }}";
@@ -202,7 +202,7 @@ function findById(arr, id) {
 
 {% block extra_js %}
 
-<script src="{{ url_for('static', filename='js/subject_table.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vehicles_table.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/lib/daimofuu_fancylabel.js') }}"></script>
 
