@@ -109,6 +109,13 @@
 	padding-top:0px;
 }
 
+/* Action Bars */
+.go_back_arrow{
+	
+	padding:5px;
+	padding-right:10px;
+	
+}
 
 @media (max-width:600px){
 	.table_actoion_button_con{

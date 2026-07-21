@@ -1,0 +1,177 @@
+{% extends "base_headless.html" %}
+
+{% block title%}Lessons{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_titlebar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index_cards.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_cards.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/railed.css') }}">
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/expandable_rails.css') }}"> -->
+
+
+{% endblock %}
+
+
+{% block contents %}
+ 
+ 	<div class="df_titlebar_main_con center secondary_background_gradient">
+		<div class="title_container">
+		
+			<div class="text_banner big primary_color_invert" id="title_page"> Request Forms</div>
+		</div>
+	</div>
+	
+	
+	<div class="top_action_bar" style="">
+		
+		<div>
+			<input class="df_field primary_background primary_color normal search_input" type='text' id="search_input" placeholder="Search Name of Form"  onchange="searchLocal()" oninput="searchLocal()" />
+		</div>
+		
+		<!-- <div class=""> -->
+			<!-- <span class="small"> <span class="fa fa-sort-amount-asc"> </span> -->
+			<!-- </span> -->
+			
+			<!-- <select class="df_field primary_background primary_color small select_input" id="sort_options" onchange="delayedQuerry()">  -->
+				<!-- <option value="name,asc"> Name (Ascending) </option>	 -->
+				<!-- <option value="name,desc"> Name (Descending)</option> -->
+				<!-- <option value="date,asc"> Date (Ascending) </option> -->
+				<!-- <option value="date,desc"> Date (Descending)</option> -->
+	
+			<!-- </select> -->
+		<!-- </div> -->
+		
+		
+	</div>
+
+<div class="top_container">
+	<span class="fa fa-file go_back_arrow" onclick=""> </span>
+	<!-- <span class="fa fa-refresh go_back_arrow" tooltip="Refresh Lesson List." onclick="refreshLessons()"> </span> -->
+
+	<span class="normal"> <span class="normal"> Request Forms / </span>
+
+
+</div>
+
+
+<div class="normal time_sched_display" id="time_banner_top">
+	<span class="fa fa-calendar"> </span> <span class="secondary_color" id="time_monitor"></span>
+</div>
+
+
+
+<div class="main_card_con" id="lesson_con">
+	
+  <section class="railed_main_con">
+	<div class="railed_con none_wraped" id="form_list_main">
+
+
+
+
+		<div class="course_card primary_background_darker animated slideInLeft fast" onclick="openForm(this)" tag="index">
+			<div class="top_items_bar">
+				<div class="small_card_icon">
+					<span class="fa fa-file"> </span>
+				</div>
+				<span class="tiny bold" tag="small_title"> Form Item</span>
+				<!-- <div class="action_button_top" oncontextmenu="setAsCurrent(this)" onclick="setAsCurrent(this)"> -->
+					<!-- <span class="action_button fa fa-ellipsis-h medium" tag="lesson_id" > </span> -->
+				<!-- </div> -->
+
+
+			</div>
+
+			<div class="big_text_title">
+				<span class="normal bold" tag="name"> Sample Text Goes Here. </span>
+			</div>
+
+			<div class="tiny bottom_details" tag="text_details">
+				Sample Text Goes here
+			</div>
+
+		</div>
+
+
+	</div>
+
+  </section>
+
+	
+</div>
+
+
+
+<template id="add_button">
+	<div class="course_card lesson_card add_button primary_color" onclick="(this);" tag="qrt">
+		<div class="add_sign">
+			<span class="fa fa-plus fa-3x"> </span>
+		</div>
+	</div>
+</template>
+
+
+<template id="form_card">
+
+		<div class="course_card primary_background_darker animated slideInLeft fast" onclick="openForm(this)" tag="index">
+			<div class="top_items_bar">
+				<div class="small_card_icon">
+					<span class="fa fa-file"> </span>
+				</div>
+				<span class="tiny bold" tag="small_title"> Form Item</span>
+				<!-- <div class="action_button_top" oncontextmenu="setAsCurrent(this)" onclick="setAsCurrent(this)"> -->
+					<!-- <span class="action_button fa fa-ellipsis-h medium" tag="lesson_id" > </span> -->
+				<!-- </div> -->
+
+
+			</div>
+
+			<div class="big_text_title">
+				<span class="normal bold" tag="name"> Sample Text Goes Here. </span>
+			</div>
+
+			<div class="tiny bottom_details" tag="text_details">
+				Sample Text Goes here
+			</div>
+
+		</div>
+
+</template>
+	
+
+
+
+
+
+
+<script>
+const current_role = "{{ user.type }}";
+let page_type = "{{ page }}";
+let courses = [];
+
+
+
+</script>
+<script src="{{ url_for('static', filename='js/form_collections.js') }}"> </script>
+
+<script src="{{ url_for('static', filename='js/request_builder.js') }}" ></script>
+
+<script src="{{ url_for('static', filename='js/daimofuu_titlebar.js') }}"></script>
+
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+qBuilder.server_address = "_";
+
+
+
+
+</script>
+<script src="{{ url_for('static', filename='js/forms_gallery_page.js') }}" ></script>
+
+{% endblock %}

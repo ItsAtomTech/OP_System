@@ -1,0 +1,685 @@
+.courses_main_con{
+	width:100%;
+	/* border:solid red 1px; */
+	min-height:200px;
+	padding:10px;
+	display:flex;
+	flex-wrap:wrap;
+	gap:10px;
+	
+}
+
+.go_back_arrow{
+	padding:5px;
+	padding-right:10px;
+	padding-left:20px;
+	cursor:pointer;
+}
+
+.config_button{
+	padding:5px;
+	padding-right:20px;
+	padding-left:20px;
+	cursor:pointer;
+	display:inline-flex;
+	position:absolute;
+	right: 0;
+}
+
+.config_buttons{
+	padding:5px;
+	padding-right:20px;
+	padding-left:20px;
+	cursor:pointer;
+	align-items:center;
+	display:flex;
+}
+
+.top_container > span:not(.fa) {
+    
+	padding-left: 15px;
+}
+
+
+
+.action_right_buttons{
+	right: 0;
+	display:flex;
+	align-items:center;
+	justify-content:flex-end;
+	width:100%;
+	max-width:200px;
+	max-height:30px;
+	padding:5px;
+	min-height:30px;
+	float:right;
+}
+
+
+
+
+
+.course_card{
+	width:100%;
+	max-width:300px;
+	display:inline-block;
+	aspect-ratio:2/1;
+	/* border:solid red 1px; */
+	border-radius:10px;
+	padding:10px;
+	cursor:pointer;
+	-webkit-transition:0.2s;
+	transition:0.2s;
+  animation-duration: 0.4s;
+  animation-delay: calc(var(--i) * 0.2s);
+}
+
+
+.course_card > .top_items_bar{
+	width:100%;
+	/* border:solid red 1px; */
+	min-height:25px;
+	position:relative;
+	display:flex;
+	align-items:center;
+	gap:5px;
+	
+	
+}
+
+.course_card > .top_items_bar > span{
+	font-family:Gotham Rounded Bold;
+}
+
+
+.course_card > .top_items_bar >.small_card_icon{
+	width:100%;
+	/* border:solid red 1px; */
+	max-width:30px;
+	aspect-ratio:1/1;
+	position:relative;
+	border-radius:100%;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	background:var(--primary_background);
+	
+}
+
+.course_card > .big_text_title{
+	width:100%;
+	/* border:solid yellow 1px; */
+	min-height:60px;
+	position:relative;
+	display:flex;
+	align-items:flex-end;	
+	white-space:normal;
+}
+
+
+.course_card > .bottom_details{
+	width:100%;
+	/* border:solid yellow 1px; */
+	min-height:40px;
+	position:relative;
+	display:flex;
+	padding-top:10px;
+	gap:2px;
+	align-items:flex-end;	
+	padding-left:10px;
+}
+
+
+
+.course_card.add_card{
+	width:100%;
+	/* border:solid yellow 1px; */
+	min-height:40px;
+	position:relative;
+	display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+
+.course_card > .logo_image_here{
+	/* border:solid red 1px; */
+	width:40%;
+	max-width:100px;
+	height:100px;
+	position:absolute;
+	top:5px;
+	right:5px;
+	opacity:0.80;
+	border-radius:15px;
+	overflow:hidden;
+	pointer-events:none;
+	
+	
+}
+
+.course_card > .logo_image_here > .logo_icon_lng{
+	width:100%;
+	aspect-ratio:1/1;
+	height:auto;
+	
+	
+}
+
+
+.top_container{
+	position:relative;
+	
+}
+
+
+/* Schedule Setup ======================= */
+.sched_conf_forms{
+	display:flex;
+	gap:10px;
+	flex-wrap:wrap;
+	justify-content:center;
+	padding-bottom:50px;
+}
+
+.sched_con{
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	gap:5px;
+	
+	
+}
+
+
+
+/* ====================== */
+/* Lesson Page */
+/* ====================== */
+
+.lesson_card{
+	max-width:600px;
+	aspect-ratio:4/1;
+}
+
+
+.lesson_card.add_button{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+}
+
+#lesson_con{
+	align-items:center;
+	
+}
+
+.action_button_top{
+	position:absolute;
+	top:0px;
+	width:100%;
+	max-width:100px;
+	border:solid transparent 1px;
+	right:15px;
+	display:flex;
+	align-items:center;
+	justify-content:flex-end;
+	gap:5px;
+	padding:5px;
+	pointer-events:none;
+	
+}
+
+.action_button_top{
+	position:absolute;
+	top:0px;
+	width:100%;
+	max-width:100px;
+	border:solid transparent 1px;
+	padding-right:5px;
+	right:10px;
+	display:flex;
+	align-items:center;
+	justify-content:flex-end;
+	gap:5px;
+	pointer-events:all;
+	
+}
+
+
+.top_items_bar{
+	pointer-events:none;
+	
+}
+
+
+.action_button_top > span.action_button{
+
+	pointer-events:all;
+	opacity:0.8;
+	-webkit-transition:0.2s;
+	transition:0.2s;
+	
+}
+
+.action_button_top > span.action_button::before{
+    height:25px;
+    padding-left:10px;
+    padding-right:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+}
+
+.action_button_top > span.action_button:active{
+	-webkit-transform:translateY(2px);
+	transform:translateY(2px);
+	
+	
+}
+.action_button_top > span.action_button:hover{
+	opacity:1;
+	
+	
+}
+
+/* ===================== */
+/* Smaller View Pane */
+/* ===================== */
+
+.fancy_small_pane > .title_text{
+	width:100%;
+	padding:10px;
+	text-align:center;
+	
+}
+
+
+.fancy_small_pane{
+	padding:10px;
+	
+}
+
+.enrolled_list_view{
+	width:100%;
+	min-height:300px;
+	padding:5px;
+	background:var(--primary_background);
+	border-radius:10px;
+	max-height:600px;
+	overflow-y:auto;
+}
+
+
+.course_card:hover{
+	box-shadow:2px 2px 0px 0px var(--primary_color_faded);
+	opacity:0.8;
+}
+
+
+#list_pending_student_main > .pending_title{
+    padding:10px;
+    text-align:center;
+    border-bottom:1px solid rgba(60,60,60,0.6);
+}
+
+
+#list_view_pending_student{
+  padding-top:10px;
+
+}
+
+
+
+
+/*
+List Section
+*/
+
+
+
+.list_item{
+    width:100%;
+    height:45px;
+    min-height:45px;
+    padding:10px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    border-radius:10px;
+    box-shadow:1px 1px 3px -2px var(--primary_color_faded);
+    cursor:pointer;
+    position:relative;
+    margin-bottom:5px;
+    -webkit-transition:0.3s;
+    transition:0.3s;
+}
+
+
+.list_item > .action_control{
+    padding:10px;
+    position:absolute;
+    right:0px;
+    opacity:0.2;
+}
+
+
+.list_item.this_me{
+	background:var(--secondary_background);
+	color:var(--primary_color_invert);
+	opacity:0.9;
+}
+
+.list_item:hover{
+    opacity:0.8;
+}
+
+.list_item:hover > .action_control{
+    opacity:0.8;
+}
+
+
+.action_control.flex{
+    display:flex;
+	gap:10px;
+}
+
+
+
+.action_control.flex > .fa-check{
+		color:var(--secondary_color);
+}
+
+.action_control.flex > .fa-close{
+		color:var(--error_color);
+}
+
+
+
+.list_item > span[tag='name']{
+
+    font-family:Poppins;
+
+}
+
+
+.list_item > img[tag='avatar']{
+    width:30px;
+    height:auto;
+    aspect-ratio:1/1;
+    margin-right:5px;
+    border-radius:100%;
+    border:solid 2px var(--primary_color_invert);
+    overflow:hidden;
+}
+
+
+.warning_color{
+    color:#e91e63;
+}
+
+
+
+.room_actions_on_list{
+    width:100&;
+    min-height:40px;
+    padding-top:10px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:10px;
+}
+
+
+.room_actions_on_list > .join_code{
+    padding:8px;
+    border:solid rgba(45,45,45,0.4) 1px;
+    border-radius:10px;
+    font-weight:bold;
+    font-family:Poppins;
+
+}
+
+.leave_room{
+    opacity:0.8;
+    cursor:pointer;
+    position:absolute;
+    border-radius:5px;
+    right:0;
+    padding:10px;
+}
+.leave_room:hover{
+    box-shadow:2px 2px 3px -3px var(--primary_color_faded);
+    opacity:1;
+}
+
+
+
+
+/*
+List Section End
+*/
+
+
+/* ==========================
+Quarters Section Start
+   =========================*/
+
+.quarter_styles_main_con {
+    width: 100%;
+    min-height: 100px;
+    position: relative;
+    display: flex;
+    flex-direction:column;
+    gap: 5px;
+}
+
+.quarter_styles_main {
+    width: 100%;
+    min-height: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding-top:20px;
+    gap:10px;
+}
+
+
+.quarter_header{
+    text-align:center;
+    border-bottom:dashed 3px rgba(50, 50, 50, 0.5);
+    position:relative;
+}
+
+.quarter_header > .quarter_text{
+    bottom:-10px;
+    padding:10px;
+    position:relative;
+    background:var(--primary_background);
+}
+
+
+
+/* ==========================
+Quarters Section Start
+   =========================*/
+
+
+
+
+
+/* ==========================
+Assessment Play Section Start
+   =========================*/
+.assessment_play_button_con{
+    width:100%;
+    min-height:200px;
+    padding:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+}
+
+
+.button_container{
+    width:100%;
+    max-width:300px;
+    min-height:150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.button_container button{
+    padding:20px;
+    border-radius:100%;
+    aspect-ratio:1/1;
+}
+
+
+.assessment_info{
+    width:100%;
+    max-width:200px;
+/*    border:solid yellow 1px;*/
+    padding:5px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+#assessment_status{
+    font-family:Poppins;
+
+}
+/* ======================
+Assessment Play Section End
+ ========================*/
+
+
+
+/*============== Others ===*/
+
+.quarter_styles_main_con.locked{
+    opacity:0.6;
+    pointer-events:none;
+    user-select:none;
+
+}
+
+.course_card.locked{
+    opacity:0.6;
+    cursor:default;
+	pointer-events:all;
+
+}
+
+.course_card.locked > *{
+	pointer-events:none;
+
+}
+
+.course_card.locked:hover{
+	box-shadow:none;
+
+}
+
+.course_card.locked > .big_text_title > span{
+    opacity:0;
+
+}
+
+
+#leave_pass_first > .modal_container_box > .main_contents_box{
+	text-align:center;
+	
+}
+
+
+.time_disabled{
+    opacity: 0.7;
+    -webkit-opacity: 0.5;
+    cursor: initial;
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+
+.time_sched_display{
+	padding:10px;
+	padding-left:20px;
+	text-align:center;
+	position:sticky;
+	display:none;
+	top:50px;
+	z-index:20;
+	width:auto;
+	background:var(--primary_background);
+	opacity:0.9;
+	border-radius:3px;
+	border-right:3px solid var(--secondary_background);
+}
+
+
+.time_sched_display:has(.active){
+	display:block;
+}
+
+
+
+
+
+/* Other Stuff */
+.date_input{
+	opacity:1 !important;
+}
+
+
+
+
+
+@media screen and (max-width: 1250px){
+	#lesson_con{
+		align-items:center;
+		justify-content:center;
+		
+	}
+}
+
+@media screen and (max-width: 800px){
+	.course_card{
+		max-width:800px;
+		max-height:150px;
+	}
+	
+	.lesson_card{
+		max-width:800px;
+		max-height:150px;
+		aspect-ratio:auto;
+	}
+	
+	.main_container_pane > .smaller_pane{
+		min-width:200px;
+		padding-left:20px;
+	}
+
+}
+
+
+
+@media screen and (max-width: 500px){
+	.time_sched_display{
+		margin-top:25px;
+		
+		
+	}
+
+
+}

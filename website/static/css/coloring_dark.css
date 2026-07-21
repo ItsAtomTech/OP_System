@@ -12,7 +12,7 @@
   --third_color_faded: rgba(24,24,24,0.30);
   --third_much_faded: rgba(24,24,24,0.05);
   
-  --secondary_background: #ffb637;
+  --secondary_background: #ffa50a;
   --accent_color:#D6BC3D;
   
   --error_color: #e91e63;
@@ -22,7 +22,7 @@
   --secondary_color_faded2: #1f911b60;
   --failed_color_faded: #e91e63a0;
   
-  --bg_src: url('../images/bg_1.png');
+  --bg_src: url('../images/mosiac_dark.png');
 }
 
 *::-moz-selection {

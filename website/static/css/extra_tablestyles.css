@@ -741,8 +741,8 @@ tbody#data_generative tr:nth-child(even) {
 #main_body{
 		background-color:var(--primary_background_darker);
 		background-image:var(--bg_src);
-		background-size:cover;
-		background-attachment:fixed;
+		background-size:500px;
+		background-attachment:initial;
 		transition:0.2s;
 		-webkit-transition:0.2s;
 }

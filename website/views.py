@@ -108,12 +108,12 @@ def user_update_editor():
 
 
 
-    
+#Main page that list all types of Forms available    
 @views.route('/request_forms', methods=['GET', 'POST'])
 def request_forms_page():
     page = 'request_forms'
 
-    return render_template("under.html", user=current_user, page=page)
+    return render_template("forms_gallery_page.html", user=current_user, page=page)
         
 
 
@@ -140,6 +140,40 @@ def fuel_requisition_():
 
 # =======================
 # Forms Section End
+# =======================
+
+
+
+# =======================
+# Admin Section Start
+# =======================
+
+
+#Main page that list all types of Forms available    
+@views.route('/admin_tools_page', methods=['GET', 'POST'])
+def admin_tools_page_():
+    page = 'admin_tools'
+
+    return render_template("admin_tools.html", user=current_user, page=page)
+        
+
+
+
+
+#Main page that list all types of Forms available    
+@views.route('/vehicles_table_list', methods=['GET', 'POST'])
+def vehicles_table_():
+    page = 'vehicles_table'
+
+    return render_template("vehicles_table.html", user=current_user, page=page)
+        
+
+
+    
+
+
+# =======================
+# Admin Section End
 # =======================
 
 

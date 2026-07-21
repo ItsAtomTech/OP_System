@@ -93,8 +93,9 @@ font-family:Montserrat Ace Regular;
 #main_body{
 		background-color:var(--primary_background_darker);
 		background-image:var(--bg_src);
-		background-size:cover;
-		background-attachment:fixed;
+		/* background-size:cover; */
+		background-attachment:initial;
+		background-size:500px;
 		transition:0.2s;
 		-webkit-transition:0.2s;
 }

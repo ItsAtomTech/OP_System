@@ -59,6 +59,34 @@ function showSettingsPage(elm){
 }
 
 
+// ==========================
+// Admin Functions Etc.
+// ==========================
+
+
+
+function showAdminTools(elm){
+	activate(elm);
+
+	let page = open_modal("admin_tools_page", 'modal_on_container,no_close_button,page_containment', _('general_container'));
+	closeAllPages(page);
+	hideDashboardContents(true);
+	
+}
+
+
+
+
+
+
+// ==========================
+// Admin Functions Ends Here.
+// ==========================
+
+
+
+
+
 
 // ==========================
 // Forms Functions Etc.

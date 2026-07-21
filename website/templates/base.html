@@ -101,11 +101,22 @@
 		</div>
 		
 		
+
 		
+		{%if current_user.type == 1 %}
+		
+							
+			<div class="sidebar_box_con" >
+				<div class="sidebar_button df_button primary_color" onclick="showAdminTools(this);" > <span class="fa fa-cogs" tooltip="Open the Forms Page"> </span> <span class="normal nav_text"> Admin Tools </span> </div>
+			</div>
+		
+		
+		{% endif %}
+		
+				
 		<div class="sidebar_box_con" >
 			<div class="sidebar_button df_button primary_color" onclick="showNotificationPage(this);" id="notification_button" tooltip="Open Notifications"> <span class="fa fa-bell"> </span> <span class="normal nav_text"> Notifications </span> </div>
 		</div>
-		
 
 {% endif %}
 

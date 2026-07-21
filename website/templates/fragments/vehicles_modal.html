@@ -1,0 +1,53 @@
+<div class="modal_main_backdrop padded" id="subject_modal" inert > 
+	<div class="modal_container_box">
+		<!-- Modal Header -->
+		<div class="top_header">
+			<div class="title_form_top"> Subject Editor </div>
+			<div class="close_modal_tright" tabindex='1' onclick="closeModalContent('subject_modal')"> &times; </div>
+		</div>
+		
+		<!-- Modal Contents Container -->
+
+		<div class="option_main_container">
+			<div class="centered small padded" tag=""> <span class="fa fa-info-circle"> </span> Provide the Details for this subject. </div>
+			<br />
+			
+			
+			
+			
+					
+		<div class="cols_con_ full_width padded_input"><label class="df_label_con required_style_label placeholder_label" for="subject_name">Subject Name</label>
+		
+			<input id="subject_name" type="text" value="" required class="fancy_form_df form_display">
+
+			</input>
+		</div>
+			
+			
+		<div class="flexed padded_gap">
+			
+			<div class="cols_con_ padded_input full_width"><label class="df_label_con required_style_label placeholder_label" for="subject_code">Subject Code</label>
+				<input type="text" id="subject_code" value="" required="" class="fancy_form_df form_display">
+				
+			</div>
+
+			<div class="cols_con_ padded_input full_width"><label class="df_label_con required_style_label placeholder_label" for="units">Units</label>
+			<input id="units" type="number" value="1" min="1" required="" class="fancy_form_df form_display">
+			</div>
+
+			
+		</div>
+							
+			
+		</div>
+		
+		<div class="option_main_container_buttons">
+	
+			<button class="df_button secondary_background primary_color_invert small" onclick="saveItem()"> <span class="fa fa-save"> </span> Save </button>
+			
+		</div>
+	
+
+
+	</div>
+</div>
