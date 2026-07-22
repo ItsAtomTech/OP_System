@@ -17,11 +17,11 @@ from dotenv import load_dotenv
 
 from . import db
 from datetime import datetime, timedelta
-from .models import Users, Department, PurchaseRequests, Notification, Vehicles
+from .models import Users, Department, PurchaseRequests, Notification, Vehicles, DriverCrew
 
 
 plt = ""  # empty this var when on live website
-post_per_page = 2000
+post_per_page = 200
 
 api_handles = Blueprint('api_handles', __name__)
 
@@ -662,7 +662,256 @@ def remove_vehicle():
 # ================================
 
 
+# ================================
+# Driver Crew Section
+# ================================
+@api_handles.route('/save_driver_crew', methods=['POST'])
+@login_required
+def save_driver_crew():
 
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+
+    try:
+        name = request.form.get("name")
+        position = request.form.get("position") or None
+        department_id = request.form.get("department_id") or 0
+        description = request.form.get("description") or ""
+        status = request.form.get("status")
+        misc = request.form.get("misc") or "{}"
+
+        if not name:
+            return {"type": "error", "message": "Missing required fields"}
+
+        new_driver_crew =DriverCrew(
+            name=name,
+            position=position,
+            department_id=department_id,
+            description=description,
+            status=status,
+            misc=misc
+        )
+
+        db.session.add(new_driver_crew)
+        db.session.commit()
+
+        return {"type": "success", "message": "Driver/Crew saved successfully!"}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+
+
+
+@api_handles.route('/list_driver_crew', methods=['POST', 'GET'])
+@login_required
+def list_driver_crew():
+    try:
+        current_page = int(request.form.get("page") or 1)
+    except ValueError:
+        current_page = 1
+
+    per_page = 20
+
+    query = db.session.query(DriverCrew)
+
+    # Filters
+    filters_raw = request.form.get("filters")
+    if filters_raw:
+        try:
+            filters = json.loads(filters_raw)
+
+            if 'status' in filters and filters['status']:
+                query = query.filter(DriverCrew.status == filters['status'])
+
+            if 'position' in filters and filters['position']:
+                query = query.filter(DriverCrew.position == filters['position'])
+
+            if 'department_id' in filters and filters['department_id']:
+                query = query.filter(DriverCrew.department_id == int(filters['department_id']))
+
+        except json.JSONDecodeError:
+            pass
+
+    # Search
+    search = request.form.get("search")
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            db.or_(
+               DriverCrew.name.ilike(search_term),
+               DriverCrew.position.ilike(search_term),
+               DriverCrew.description.ilike(search_term),
+               DriverCrew.misc.ilike(search_term)
+            )
+        )
+
+    # Sorting
+    sortby = request.form.get("sort")
+    order = request.form.get("order_by", "asc").lower()
+
+    sortable_columns = {
+        "id":DriverCrew.id,
+        "name":DriverCrew.name,
+        "position":DriverCrew.position,
+        "department_id":DriverCrew.department_id,
+        "status":DriverCrew.status,
+        "date":DriverCrew.date
+    }
+
+    if sortby in sortable_columns:
+        sort_column = sortable_columns[sortby]
+        if order == "desc":
+            query = query.order_by(desc(sort_column))
+        else:
+            query = query.order_by(asc(sort_column))
+    else:
+        query = query.order_by(DriverCrew.id.asc())
+
+    # Pagination
+    pagination = query.paginate(page=current_page, per_page=per_page, error_out=False)
+
+    results = pagination.items
+    total_pages = pagination.pages
+    total_results = pagination.total
+
+    driver_crew_list = []
+
+    for crew in results:
+        driver_crew_list.append({
+            "id": crew.id,
+            "name": crew.name,
+            "position": crew.position,
+            "department_id": crew.department_id,
+            "description": crew.description,
+            "status": crew.status,
+            "misc": crew.misc,
+            "date": crew.date.strftime("%Y-%m-%d %H:%M:%S") if crew.date else None
+        })
+
+    return {
+        "type": "success",
+        "driver_crew": driver_crew_list,
+        "pagination_data": {
+            "current_page": current_page,
+            "total_pages": total_pages,
+            "total_results": total_results
+        }
+    }
+
+
+
+
+@api_handles.route('/get_driver_crew_by_id', methods=['POST'])
+@login_required
+def get_driver_crew_by_id():
+
+    try:
+        crew_id = request.form.get("crew_id")
+        if not crew_id:
+            return {"type": "error", "message": "Missing crew_id"}
+
+        crew =DriverCrew.query.get(int(crew_id))
+        if not crew:
+            return {"type": "error", "message": "Driver/Crew not found"}
+
+        crew_data = {
+            "id": crew.id,
+            "name": crew.name,
+            "position": crew.position,
+            "department_id": crew.department_id,
+            "description": crew.description,
+            "status": crew.status,
+            "misc": crew.misc,
+            "date": crew.date.strftime("%Y-%m-%d %H:%M:%S") if crew.date else None
+        }
+
+        return {"type": "success", "driver_crew": crew_data}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+
+
+
+@api_handles.route('/update_driver_crew', methods=['POST'])
+@login_required
+def update_driver_crew():
+
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+
+    try:
+        crew_id = request.form.get("crew_id")
+        if not crew_id:
+            return {"type": "error", "message": "Missing crew_id"}
+
+        crew =DriverCrew.query.get(int(crew_id))
+        if not crew:
+            return {"type": "error", "message": "Driver/Crew not found"}
+
+        name = request.form.get("name")
+        position = request.form.get("position")
+        department_id = request.form.get("department_id")
+        description = request.form.get("description")
+        status = request.form.get("status")
+        # misc = request.form.get("misc")
+
+        if name:
+            crew.name = name
+
+        if position is not None:
+            crew.position = position
+
+        if department_id is not None:
+            crew.department_id = department_id
+
+        if description is not None:
+            crew.description = description
+
+        if status is not None:
+            crew.status = status
+
+        # if misc is not None:
+            # crew.misc = misc
+
+        db.session.commit()
+
+        return {"type": "success", "message": "Driver/Crew updated successfully!"}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+
+
+
+@api_handles.route('/remove_driver_crew', methods=['POST'])
+@login_required
+def remove_driver_crew():
+
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+
+    try:
+        crew_id = request.form.get("crew_id")
+        if not crew_id:
+            return {"type": "error", "message": "Missing crew_id"}
+
+        crew =DriverCrew.query.get(int(crew_id))
+        if not crew:
+            return {"type": "error", "message": "Driver/Crew not found"}
+
+        db.session.delete(crew)
+        db.session.commit()
+
+        return {"type": "success", "message": "Driver/Crew removed successfully!"}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+# ================================
+# Driver Crew Section End
+# ================================
 
 
 

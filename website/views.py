@@ -158,14 +158,21 @@ def admin_tools_page_():
         
 
 
-
-
-#Main page that list all types of Forms available    
+    
 @views.route('/vehicles_table_list', methods=['GET', 'POST'])
 def vehicles_table_():
     page = 'vehicles_table'
 
     return render_template("vehicles_table.html", user=current_user, page=page)
+        
+
+
+    
+@views.route('/drivers_table_list', methods=['GET', 'POST'])
+def drivers_table_list_():
+    page = 'drivers_table'
+
+    return render_template("drivers_table.html", user=current_user, page=page)
         
 
 

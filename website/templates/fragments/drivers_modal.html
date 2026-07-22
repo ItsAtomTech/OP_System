@@ -1,0 +1,77 @@
+<div class="modal_main_backdrop padded" id="input_modal" inert > 
+	<div class="modal_container_box">
+		<!-- Modal Header -->
+		<div class="top_header">
+			<div class="title_form_top"> Driver Crew Editor </div>
+			<div class="close_modal_tright" tabindex='1' onclick="closeModalContent('input_modal')"> &times; </div>
+		</div>
+		
+		<!-- Modal Contents Container -->
+
+		<div class="option_main_container">
+			<div class="centered small padded" tag=""> <span class="fa fa-info-circle"> </span> Provide the Details for this Driver Crew. </div>
+			<br />
+			
+			
+			
+			
+					
+		<div class="cols_con_ full_width padded_input"><label class="df_label_con required_style_label placeholder_label" for="name">Name</label>
+		
+			<input id="name" type="text" value="" required class="fancy_form_df form_display">
+
+			</input>
+		</div>
+			
+			
+		<div class="flexed padded_gap">
+			
+			<div class="cols_con_ padded_input full_width"><label class="df_label_con placeholder_label" for="position">Position</label>
+				
+				<select class="fancy_form_df form_display" id="position" value="" >
+				
+				<option class="" value="">  </option>
+				</select>
+			
+	
+				
+			</div>
+
+			<div class="cols_con_ padded_input full_width"><label class="df_label_con placeholder_label" for="department">Department</label>
+				<select class="fancy_form_df form_display" id="department" value="" >
+				
+				<option class="" value="">  </option>
+				</select>
+				
+				
+			</div>
+			
+			
+			<div class="cols_con_ padded_input full_width"><label class="df_label_con placeholder_label" for="status">Status</label>
+				<select class="fancy_form_df form_display" id="status" value="" >
+				
+				<option class="" value="">  </option>				
+				<option class="" value="active"> Active </option>				
+				<option class="" value="inactive"> Inactive </option>
+				
+				</select>
+				
+				
+			</div>
+
+			
+		</div>
+							
+			
+		</div>
+		
+		<div class="option_main_container_buttons">
+	
+			<button class="df_button secondary_background primary_color_invert small" onclick="saveItem()"> <span class="fa fa-save"> </span> Save </button>
+			
+		</div>
+	
+
+
+	</div>
+</div>
