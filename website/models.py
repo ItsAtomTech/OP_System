@@ -43,6 +43,30 @@ class PurchaseRequests(db.Model):
     date_required = db.Column(db.String(1024))
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
+    
+    
+class FuelRequisitionRecords(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'))
+    requested_by = db.Column(db.Integer, db.ForeignKey('driver_crew.id'))
+    type = db.Column(db.String(50)) 
+    branch_id = db.Column(db.String(50)) 
+    actual_fuel_beg_l = db.Column(db.String(100)) 
+    actual_fuel_endl = db.Column(db.String(100)) 
+    supplier_vendor_name = db.Column(db.String(1000))
+    no_of_ltrs = db.Column(db.String(1000))
+    prev_costltr = db.Column(db.String(512))
+    activity_type = db.Column(db.String(512))
+    crewoccupants1 = db.Column(db.String(256))
+    crewoccupants2 = db.Column(db.String(256))
+    
+    misc = db.Column(db.String(1024))
+    date = db.Column(db.DateTime(timezone=True), default=manila_time)
+    
+    user = db.relationship('Users', backref='fuel_records', lazy=True)
+    vehicle = db.relationship('Vehicles', backref='fuel_records', lazy=True)
+    driver = db.relationship('DriverCrew', backref='fuel_records', lazy=True)
 
 
 

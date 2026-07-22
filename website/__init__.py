@@ -52,7 +52,7 @@ def create_app():
 
 
 
-    from .models import Users, UserType
+    from .models import Users, UserType, Department
 
     create_database(app)
     
@@ -83,12 +83,12 @@ def create_app():
         # return dict(get_programs=get_programs)     
 
         
-    # @app.context_processor
-    # def get_college_():
-        # def get_college():
-            # deps = College.query.order_by(College.name.asc()).all()
-            # return deps
-        # return dict(get_college=get_college)     
+    @app.context_processor
+    def get_departments_():
+        def get_departments():
+            deps = Department.query.order_by(Department.name.asc()).all()
+            return deps
+        return dict(get_departments=get_departments)     
 
         
     @app.context_processor

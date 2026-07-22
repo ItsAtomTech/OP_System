@@ -17,18 +17,18 @@ let tableFormat = [
 		// parser:parseBranch,
 		
 	},
-	{	
-		label: "Position",
-		data_path: "position",
-		sort: true,
-		// parser:parseBranch,
+	// {	
+		// label: "Position",
+		// data_path: "position",
+		// sort: true,
+
 		
-	},
+	// },
 	{	
 		label: "Department",
 		data_path: "department_id",
 		sort: true,
-		// parser:parseBranch,
+		parser:parseDepartment,
 		
 	},
 	{	
@@ -614,11 +614,13 @@ function parseStatus(data){
 		return "None"
 	};
 	
-	
-	
 	return data;
 }
 
+
+function parseDepartment(data){
+	return findById(departments,data).name;
+}
 
 
 

@@ -196,7 +196,7 @@ let formStructure = {
             "index": 9
         },
         {
-            "type": "text",
+            "type": "select",
             "events": {
                 "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
                 "type": "hideon",
@@ -496,7 +496,7 @@ let formStructure = {
             "fancy": true,
             "required": false,
             "description": "",
-            "group": "g_1dfe9fa6-fbc3-44dd-a121-41a082bd36b3",
+            "group": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87",
             "row_span": null,
             "col_span": null,
             "span_column": false,
@@ -516,7 +516,7 @@ let formStructure = {
             "fancy": true,
             "required": false,
             "description": "",
-            "group": "g_1dfe9fa6-fbc3-44dd-a121-41a082bd36b3",
+            "group": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87",
             "row_span": null,
             "col_span": null,
             "span_column": false,
@@ -562,3 +562,47 @@ let formStructure = {
         }
     ]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let schema = {
+
+    "date_requested": "", // Current Time Date
+    "fuel_requisition_no": "", //System Generated
+    "plate_no": "", //Supply With Current / Selected From Datalist 
+    "recent_driver": "", //Based on Recent Entry 
+    "average_kml": "",  // Supplied from Vehicle Entry Database
+    "vehicle_description": "", //Supplied from Vehicle Entry on Database
+    "driverrequested_by": "", //Input from Dropdown
+    "branch_id": "", //Supplied From Dropdown
+
+
+    "dist_travelled_kms": "", //Calculated (See Doc)
+    "est_fuel_consumed": "", //Calculated (See Doc)
+    "actual_fuel_beg_l": "",  //Input From User
+    "actual_fuel_endl": "",   //Input From User
+    "theo_end_l": "",        //Calculated (See Doc)
+    "so_theoactl_end_l": "",  //Calculated (See Doc)
+    "supplier_vendor_name": "", //Input From User
+    "no_of_ltrs": "", //Input From User
+    "prev_costltr": "", //Input From User
+    "activity_type": "", //Supplied From Dropdown
+    "crewoccupants1": "", //Supplied From Dropdown
+    "crewoccupants2": "" //Supplied From Dropdown
+};

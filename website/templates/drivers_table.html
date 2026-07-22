@@ -169,7 +169,7 @@ qBuilder.server_address = "list_driver_crew";
 current_role = "admin";
 //qBuilder.filters.status = "active";
 let pageType = "{{ page }}";
-let subjects = [];
+let departments = [];
 
 let selectTypes = [];
 
@@ -182,6 +182,10 @@ if(pageType == "trash"){
 }
 
 
+
+{% for department in get_departments() %}
+		departments.push({"id":"{{ department.id }}", "name": "{{ department.name }}"});
+{% endfor %}
 
 
 function findById(arr, id) {

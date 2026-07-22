@@ -327,7 +327,7 @@ color:var(--error_background);
 }
 
 .action_cols_td > div > div.modify{
-color:var(--secondary_color);
+color:var(--secondary_color_darker);
 	
 	
 }
