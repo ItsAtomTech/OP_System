@@ -308,8 +308,8 @@ tbody#data_generative tr:nth-child(even) {
 
 
 .search-filter-container input {
-    max-width: 300px;
-    min-width:70px;
+    max-width: 450px;
+    min-width:100px;
     width:100%;
 }
 

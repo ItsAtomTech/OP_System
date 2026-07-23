@@ -31,7 +31,7 @@ function submitForm(){
 	
 	console.log(params);
 	
-	qBuilder.sendQuery(feedBackSaving,"", params);
+	qBuilder.sendQuery(feedBackSaving,"save_fuel_req", params);
 	createDialogue("wait");
 
 }

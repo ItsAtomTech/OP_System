@@ -60,6 +60,8 @@ class FuelRequisitionRecords(db.Model):
     activity_type = db.Column(db.String(512))
     crewoccupants1 = db.Column(db.String(256))
     crewoccupants2 = db.Column(db.String(256))
+    status = db.Column(db.String(50))
+    last_fuel_recordltrs = db.Column(db.String(256))
     
     misc = db.Column(db.String(1024))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)

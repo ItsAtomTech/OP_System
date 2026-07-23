@@ -105,6 +105,10 @@
 	
 }
 
+.filter_toolbar_con.padded_left_right{
+	padding-top:10px;
+}
+
 .table_wrapper{
 	padding-top:0px;
 }
@@ -114,7 +118,14 @@
 	
 	padding:5px;
 	padding-right:10px;
+	cursor:pointer;
 	
+}
+
+/* Action Bars */
+.go_back_arrow:hover{
+	transform:scale(1.2);
+	opacity:0.8;
 }
 
 @media (max-width:600px){

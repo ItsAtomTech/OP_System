@@ -107,7 +107,7 @@ function showRequestForms(elm){
 function showRequestFilesPage(elm){
 	activate(elm);
 
-	let page = open_modal("soon", 'modal_on_container,no_close_button,page_containment', _('general_container'));
+	let page = open_modal("request_files", 'modal_on_container,no_close_button,page_containment', _('general_container'));
 	closeAllPages(page);
 	hideDashboardContents(true);
 	

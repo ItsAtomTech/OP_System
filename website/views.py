@@ -138,6 +138,16 @@ def fuel_requisition_():
     
 
 
+#Main page that list all records of Forms files available    
+@views.route('/request_files', methods=['GET', 'POST'])
+def file_records_page():
+    page = 'request_files'
+
+    return render_template("file_records_page.html", user=current_user, page=page)
+        
+
+
+
 # =======================
 # Forms Section End
 # =======================
@@ -173,6 +183,16 @@ def drivers_table_list_():
     page = 'drivers_table'
 
     return render_template("drivers_table.html", user=current_user, page=page)
+        
+
+
+ 
+    
+@views.route('/fuel_files_table', methods=['GET', 'POST'])
+def fuel_files_table_():
+    page = 'fuel_files_table'
+
+    return render_template("fuel_files_table.html", user=current_user, page=page)
         
 
 

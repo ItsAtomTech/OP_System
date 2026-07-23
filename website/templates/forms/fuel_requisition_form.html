@@ -56,9 +56,42 @@
 
 
 
-<datalist id="type_list">
+<datalist id="branch_list">
+	<option value="">  </option>
+	<option value="tacloban"> Tacloban </option>
+	<option value="ormoc"> Ormoc </option>
+
+</datalist>
 
 
+
+
+<datalist id="supplier_list">
+	<option value="">  </option>
+	<option value="sample"> Sample </option>
+
+</datalist>
+
+
+
+
+<datalist id="plate_noms">
+	<option value="vehicle">  </option>
+	{% for vehicle in get_vehicles() %}
+		<option class="" value="{{ vehicle.id }}"> {{ vehicle.plate_no }}  </option>
+	{% endfor %}
+				
+</datalist>
+
+
+
+
+<datalist id="drivers">
+	<option value="">  </option>
+	{% for drivers in get_drivers() %}
+		<option class="" value="{{ drivers.id }}"> {{ drivers.name }}  </option>
+	{% endfor %}
+				
 </datalist>
 
 
@@ -105,6 +138,9 @@ loadForms(0,0,0,1);
 addFancyPlaceholder();
 
 loadEvents();//Force Pre-load Events of each form fields, if neccesary
+
+
+//"date_requested", "plate_no", "driverrequested_by", "branch_id", "last_fuel_recordltrs", "actual_fuel_beg_l", "actual_fuel_endl", "supplier_vendor_name", "no_of_ltrs", "prev_costltr", "activity_type", "crewoccupants1", "crewoccupants2"
 
 
 

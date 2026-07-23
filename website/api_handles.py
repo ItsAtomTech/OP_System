@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 from . import db
 from datetime import datetime, timedelta
-from .models import Users, Department, PurchaseRequests, Notification, Vehicles, DriverCrew
+from .models import Users, Department, PurchaseRequests, Notification, Vehicles, DriverCrew, FuelRequisitionRecords
 
 
 plt = ""  # empty this var when on live website
@@ -912,6 +912,201 @@ def remove_driver_crew():
 # ================================
 # Driver Crew Section End
 # ================================
+
+
+
+# ================================
+# Fuel Requisition Section
+# ================================
+@api_handles.route('/list_fuel_req_files', methods=['POST', 'GET'])
+@login_required
+def list_fuel_req_files():
+    try:
+        current_page = int(request.form.get("page") or 1)
+    except ValueError:
+        current_page = 1
+
+    per_page = 20
+
+    # Join Vehicles and DriverCrew
+    query = db.session.query(
+        FuelRequisitionRecords,
+        Vehicles.plate_no.label("vehicle_plate_no"),
+        Vehicles.description.label("vehicle_description"),
+        DriverCrew.name.label("driver_name"),
+        DriverCrew.position.label("driver_position"),
+    ).outerjoin(
+        Vehicles, FuelRequisitionRecords.vehicle_id == Vehicles.id
+    ).outerjoin(
+        DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
+    )
+
+    # Filters
+    filters_raw = request.form.get("filters")
+    if filters_raw:
+        try:
+            filters = json.loads(filters_raw)
+
+            if 'type' in filters and filters['type']:
+                query = query.filter(FuelRequisitionRecords.type == filters['type'])
+
+            if 'activity_type' in filters and filters['activity_type']:
+                query = query.filter(FuelRequisitionRecords.activity_type == filters['activity_type'])
+
+            if 'branch_id' in filters and filters['branch_id']:
+                query = query.filter(FuelRequisitionRecords.branch_id == filters['branch_id'])
+
+            if 'vehicle_id' in filters and filters['vehicle_id']:
+                query = query.filter(FuelRequisitionRecords.vehicle_id == int(filters['vehicle_id']))
+
+            if 'requested_by' in filters and filters['requested_by']:
+                query = query.filter(FuelRequisitionRecords.requested_by == int(filters['requested_by']))
+
+        except json.JSONDecodeError:
+            pass
+
+    # Search
+    search = request.form.get("search")
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                FuelRequisitionRecords.type.ilike(search_term),
+                FuelRequisitionRecords.supplier_vendor_name.ilike(search_term),
+                FuelRequisitionRecords.activity_type.ilike(search_term),
+                FuelRequisitionRecords.misc.ilike(search_term),
+                Vehicles.plate_no.ilike(search_term),
+                DriverCrew.name.ilike(search_term),
+            )
+        )
+
+    # Sorting
+    sortby = request.form.get("sort")
+    order = request.form.get("order_by", "asc").lower()
+
+    sortable_columns = {
+        "id": FuelRequisitionRecords.id,
+        "type": FuelRequisitionRecords.type,
+        "branch_id": FuelRequisitionRecords.branch_id,
+        "activity_type": FuelRequisitionRecords.activity_type,
+        "no_of_ltrs": FuelRequisitionRecords.no_of_ltrs,
+        "date": FuelRequisitionRecords.date,
+        "vehicle": Vehicles.plate_no,
+        "driver": DriverCrew.name,
+    }
+
+    if sortby in sortable_columns:
+        sort_column = sortable_columns[sortby]
+        if order == "desc":
+            query = query.order_by(desc(sort_column))
+        else:
+            query = query.order_by(asc(sort_column))
+    else:
+        query = query.order_by(FuelRequisitionRecords.id.asc())
+
+    # Pagination
+    pagination = query.paginate(page=current_page, per_page=per_page, error_out=False)
+
+    results = pagination.items
+    total_pages = pagination.pages
+    total_results = pagination.total
+
+    fuel_req_list = []
+
+    for record, vehicle_plate_no, vehicle_description, driver_name, driver_position in results:
+        fuel_req_list.append({
+            "id": record.id,
+            "user_id": record.user_id,
+            "vehicle_id": record.vehicle_id,
+            "vehicle_plate_no": vehicle_plate_no,
+            "vehicle_description": vehicle_description,
+            "requested_by": record.requested_by,
+            "driver_name": driver_name,
+            "driver_position": driver_position,
+            "type": record.type,
+            "branch_id": record.branch_id,
+            "actual_fuel_beg_l": record.actual_fuel_beg_l,
+            "actual_fuel_endl": record.actual_fuel_endl,
+            "supplier_vendor_name": record.supplier_vendor_name,
+            "no_of_ltrs": record.no_of_ltrs,
+            "prev_costltr": record.prev_costltr,
+            "activity_type": record.activity_type,
+            "crewoccupants1": record.crewoccupants1,
+            "crewoccupants2": record.crewoccupants2,
+            "misc": record.misc,
+            "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
+        })
+
+    return {
+        "type": "success",
+        "fuel_req_files": fuel_req_list,
+        "pagination_data": {
+            "current_page": current_page,
+            "total_pages": total_pages,
+            "total_results": total_results
+        }
+    }
+    
+    
+@api_handles.route('/save_fuel_req', methods=['POST'])
+@login_required
+def save_fuel_req():
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+    try:
+        fuel_data = request.form.get("form_data")
+        if not fuel_data:
+            return {"type": "error", "message": "Missing fuel_data"}
+
+        data = json.loads(fuel_data)
+
+        date_requested        = data.get("date_requested")
+        vehicle_id            = data.get("plate_no")
+        requested_by          = data.get("driverrequested_by")
+        branch_id             = data.get("branch_id")
+        last_fuel_recordltrs  = data.get("last_fuel_recordltrs")
+        actual_fuel_beg_l     = data.get("actual_fuel_beg_l")
+        actual_fuel_endl      = data.get("actual_fuel_endl")
+        supplier_vendor_name  = data.get("supplier_vendor_name")
+        no_of_ltrs            = data.get("no_of_ltrs")
+        prev_costltr          = data.get("prev_costltr")
+        activity_type         = data.get("activity_type")
+        crewoccupants1        = data.get("crewoccupants1")
+        crewoccupants2        = data.get("crewoccupants2")
+
+        if not vehicle_id:
+            return {"type": "error", "message": "Missing required fields"}
+
+        new_fuel_req = FuelRequisitionRecords(
+            user_id=current_user.user_id,
+            vehicle_id=int(vehicle_id),
+            requested_by=int(requested_by) if requested_by else None,
+            branch_id=branch_id,
+            actual_fuel_beg_l=actual_fuel_beg_l,
+            actual_fuel_endl=actual_fuel_endl,
+            supplier_vendor_name=supplier_vendor_name,
+            no_of_ltrs=no_of_ltrs,
+            prev_costltr=prev_costltr,
+            activity_type=activity_type,
+            crewoccupants1=crewoccupants1,
+            crewoccupants2=crewoccupants2,
+            last_fuel_recordltrs=last_fuel_recordltrs,
+            status=None,
+            misc=None,
+            date=datetime.strptime(date_requested, "%Y-%m-%d") if date_requested else manila_time()
+        )
+
+        db.session.add(new_fuel_req)
+        db.session.commit()
+
+        return {"type": "success", "message": "Fuel Requisition saved successfully!"}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+# ================================
+# Fuel Requisition Section End
+# ================================
+
 
 
 

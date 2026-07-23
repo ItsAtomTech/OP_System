@@ -32,6 +32,7 @@ let formStructure = {
             "col_span": null,
             "span_column": false,
             "onchange": "",
+			"disabled":true,
             "id": "last_fuel_date",
             "index": 1
         },
@@ -50,6 +51,7 @@ let formStructure = {
             "description": "",
             "group": "g_f5fe8977-fba1-420d-a9bc-36017b845383",
             "row_span": null,
+			"disabled":true,
             "col_span": null,
             "span_column": false,
             "id": "last_fuel_issuedltrs",
@@ -83,11 +85,12 @@ let formStructure = {
                 "targetIndex": "2",
                 "value": "2"
             },
-            "value": "",
+            "value": "XX-XX000",
             "label": "Fuel Requisition No.",
             "fancy": true,
             "required": false,
             "description": "",
+			"disabled":true,
             "group": "g_f5fe8977-fba1-420d-a9bc-36017b845383",
             "row_span": null,
             "col_span": null,
@@ -116,7 +119,7 @@ let formStructure = {
             "index": 5
         },
         {
-            "type": "text",
+            "type": "select",
             "events": {
                 "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
                 "type": "hideon",
@@ -133,6 +136,7 @@ let formStructure = {
             "col_span": null,
             "span_column": false,
             "id": "plate_no",
+			"list":"plate_noms",
             "index": 6
         },
         {
@@ -151,6 +155,7 @@ let formStructure = {
             "group": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87",
             "row_span": null,
             "col_span": null,
+			"disabled": true,
             "span_column": false,
             "id": "recent_driver",
             "index": 7
@@ -168,6 +173,7 @@ let formStructure = {
             "fancy": true,
             "required": false,
             "description": "",
+			"disabled": true,
             "group": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87",
             "row_span": null,
             "col_span": null,
@@ -185,6 +191,7 @@ let formStructure = {
             },
             "value": "",
             "label": "Vehicle Description",
+			"disabled": true,
             "fancy": true,
             "required": false,
             "description": "",
@@ -212,6 +219,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"list": "drivers",
             "id": "driverrequested_by",
             "index": 10
         },
@@ -232,6 +240,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"list":"branch_list",
             "id": "branch_id",
             "index": 11
         },
@@ -258,7 +267,8 @@ let formStructure = {
                 "itemsConfig": [
                     {
                         "type": "text",
-                        "attributes": {}
+                        "attributes": {},
+						"disabled":false,
                     },
                     {
                         "type": "text",
@@ -300,6 +310,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"disabled": true,
             "id": "dist_travelled_kms",
             "index": 13
         },
@@ -320,6 +331,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"disabled": true,
             "id": "est_fuel_consumed",
             "index": 14
         },
@@ -381,6 +393,7 @@ let formStructure = {
             "col_span": null,
             "span_column": false,
             "id": "theo_end_l",
+			"disabled": true,
             "index": 17
         },
         {
@@ -401,6 +414,7 @@ let formStructure = {
             "col_span": null,
             "span_column": false,
             "id": "so_theoactl_end_l",
+			"disabled": true,
             "index": 18
         },
         {
@@ -421,6 +435,7 @@ let formStructure = {
             "col_span": null,
             "span_column": false,
             "id": "supplier_vendor_name",
+			"list":"supplier_list",
             "index": 19
         },
         {

@@ -52,7 +52,7 @@ def create_app():
 
 
 
-    from .models import Users, UserType, Department
+    from .models import Users, UserType, Department, Vehicles, DriverCrew
 
     create_database(app)
     
@@ -82,6 +82,21 @@ def create_app():
             # return deps
         # return dict(get_programs=get_programs)     
 
+        
+    @app.context_processor
+    def get_vehicles_():
+        def get_vehicles():
+            deps = Vehicles.query.order_by(Vehicles.plate_no.asc()).all()
+            return deps
+        return dict(get_vehicles=get_vehicles)      
+
+        
+    @app.context_processor
+    def get_drivers_():
+        def get_drivers():
+            deps = DriverCrew.query.order_by(DriverCrew.name.asc()).all()
+            return deps
+        return dict(get_drivers=get_drivers)  
         
     @app.context_processor
     def get_departments_():
