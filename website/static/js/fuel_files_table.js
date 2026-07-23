@@ -129,12 +129,12 @@ function tableLoader(data){
 	
 		
 	function generateTableDataRows(data, index = undefined){
-		let record_id = (data.subject_id);
+		let record_id = (data.id);
 			let headTr = make("tr");
 				headTr.classList.add("padded_colms","clickable_row");
 				headTr.setAttribute("onclick","clickedOnRow("+record_id+")");
 				headTr.setAttribute("data_id",record_id);
-				headTr.setAttribute("code_id",data.code);
+				headTr.setAttribute("code_id",data.record_id);
 				
 			//check columns
 		let table_check = make("td");
@@ -390,43 +390,9 @@ function loadItemToEdit(id){
 
 
 function saveItem(){
-	let params = [
-	{
-		"name": "name",
-		"value": _("name").value,
-	},
-	{
-		"name": "position",
-		"value": _("position").value,
-	},
-	{
-		"name": "department_id",
-		"value": _("department").value,
-		
-	},
-	{
-		"name": "status",
-		"value": _("status").value,	
-	}
-	];
-	
-		//for updating
-	if(saveMode == "edit"){
-		let custom_params = {
-		"name": "crew_id",
-		"value": selectedItemId,
-		}
-		
-		params.push(custom_params);
-		qBuilder.sendQuery(feedBackSaving,"update_driver_crew", params);
-		createDialogue("wait");
-		return;
-	}
 	
 	
-	
-	qBuilder.sendQuery(feedBackSaving,"save_driver_crew",params);
-	localStorage.setItem("shouldReload","true");
+	//
 	
 }
 
@@ -557,7 +523,7 @@ function moveToTrash(confirmed = undefined,silent=false){
 		return;
 	}
 	let itemvalue = [{"name":"crew_id", "value": idSelected}];
-	qBuilder.sendQuery(feedBackRemoving,"/remove_driver_crew",itemvalue);
+	qBuilder.sendQuery(feedBackRemoving,"/remove_fuel_request_file",itemvalue);
 }
 
 
@@ -661,15 +627,19 @@ function toggleSelectOption(visible=false){
 
 
 // Misc Functions ====
-function clickedOnRow(){
+function clickedOnRow(elm){
 	let ev = event;
-	
 	let parent_attrib = (ev.target.parentNode);
-	
-	if(!parent_attrib.getAttribute('code_id')){
+	if(!parent_attrib.getAttribute('data_id')){
 		return;
 	};
-
+	
+	let targetID = parent_attrib.getAttribute('data_id');
+	
+	console.log(targetID);
+	
+	//To-Do: Should Open a Modal that will display the Data, with an Option to Print it as document from a template...
+	
 	
 }
 

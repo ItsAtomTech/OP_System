@@ -992,7 +992,9 @@ def list_fuel_req_files():
         "no_of_ltrs": FuelRequisitionRecords.no_of_ltrs,
         "date": FuelRequisitionRecords.date,
         "vehicle": Vehicles.plate_no,
+        "vehicle_plate_no": Vehicles.plate_no,
         "driver": DriverCrew.name,
+        "driver_name": DriverCrew.name,
     }
 
     if sortby in sortable_columns:
