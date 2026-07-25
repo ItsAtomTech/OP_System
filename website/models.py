@@ -48,6 +48,7 @@ class PurchaseRequests(db.Model):
 class FuelRequisitionRecords(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    fuel_requisition_no = db.Column(db.String(50)) 
     vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'))
     requested_by = db.Column(db.Integer, db.ForeignKey('driver_crew.id'))
     type = db.Column(db.String(50)) 
@@ -63,6 +64,7 @@ class FuelRequisitionRecords(db.Model):
     status = db.Column(db.String(50))
     last_fuel_recordltrs = db.Column(db.String(256))
     
+    json_data = db.Column(db.String(10000))
     misc = db.Column(db.String(1024))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
     

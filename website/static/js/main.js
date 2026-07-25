@@ -286,6 +286,17 @@ const utility = {
 		return yearsDifference * 12 + monthsDifference;
 	},
 	  
+	  
+	  /**
+	 * Pads a number with leading zeros until it reaches the desired length.
+	 * @param {number|string} int - The number Nushi-sama wishes to pad.
+	 * @param {number} numOfZeros - The total length of the resulting string (default is 4).
+	 * @returns {string} The beautifully padded number :-P!
+ */
+	addZeros: function (int, numOfZeros = 4) {
+	  //transforms number into a string, then fills the spatial void with '0's!
+		return String(int).padStart(numOfZeros, '0');
+	}
   
 };
 
@@ -687,6 +698,14 @@ function search_(id){
 	
 	
 }
+
+function getCurrentYear() {
+  // Muku gathers the present moment and extracts just the year for thee!
+  return new Date().getFullYear();
+}
+
+
+
 
 //Form Validate if filled
 function validateRequired(from_ids,scroll=false){

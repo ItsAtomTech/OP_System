@@ -37,7 +37,7 @@ let formStructure = {
             "index": 1
         },
         {
-            "type": "date",
+            "type": "text",
             "events": {
                 "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
                 "type": "hideon",
@@ -68,7 +68,7 @@ let formStructure = {
             "value": "",
             "label": "Date Requested",
             "fancy": true,
-            "required": false,
+            "required": true,
             "description": "",
             "group": "g_f5fe8977-fba1-420d-a9bc-36017b845383",
             "row_span": null,
@@ -85,7 +85,7 @@ let formStructure = {
                 "targetIndex": "2",
                 "value": "2"
             },
-            "value": "XX-XX000",
+            "value": "FRN-YYYY-XXXX",
             "label": "Fuel Requisition No.",
             "fancy": true,
             "required": false,
@@ -129,11 +129,13 @@ let formStructure = {
             "value": "",
             "label": "Plate No.",
             "fancy": true,
-            "required": false,
+            "required": true,
             "description": "",
             "group": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87",
             "row_span": null,
             "col_span": null,
+			"onchange": "loadRecentData(this)",
+			"onclick": undefined,
             "span_column": false,
             "id": "plate_no",
 			"list":"plate_noms",
@@ -269,10 +271,12 @@ let formStructure = {
                         "type": "text",
                         "attributes": {},
 						"disabled":false,
+						"onchange": "calculateDistTravelled(this)",
                     },
                     {
                         "type": "text",
-                        "attributes": {}
+                        "attributes": {},
+						"onchange": "calculateDistTravelled(this)",
                     }
                 ],
                 "rowed": true,
@@ -291,6 +295,7 @@ let formStructure = {
             "col_span": null,
             "span_column": true,
             "id": "last_fuel_recordltrs",
+			"onchange": "calculateDistTravelled(this)",
             "index": 12
         },
         {
@@ -352,6 +357,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"onchange": "calculateTheoEnd(this)",
             "id": "actual_fuel_beg_l",
             "index": 15
         },
@@ -365,6 +371,7 @@ let formStructure = {
             },
             "value": "",
             "label": "Actual Fuel End(L)",
+			"onchange": "calculateSOEnd()",
             "fancy": true,
             "required": false,
             "description": "",
@@ -455,6 +462,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"onchange": "calculateTheoEnd()",
             "id": "no_of_ltrs",
             "index": 20
         },

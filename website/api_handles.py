@@ -987,6 +987,7 @@ def list_fuel_req_files():
     sortable_columns = {
         "id": FuelRequisitionRecords.id,
         "type": FuelRequisitionRecords.type,
+        "fuel_requisition_no": FuelRequisitionRecords.fuel_requisition_no,
         "branch_id": FuelRequisitionRecords.branch_id,
         "activity_type": FuelRequisitionRecords.activity_type,
         "no_of_ltrs": FuelRequisitionRecords.no_of_ltrs,
@@ -1021,6 +1022,7 @@ def list_fuel_req_files():
             "user_id": record.user_id,
             "vehicle_id": record.vehicle_id,
             "vehicle_plate_no": vehicle_plate_no,
+            "fuel_requisition_no": record.fuel_requisition_no,
             "vehicle_description": vehicle_description,
             "requested_by": record.requested_by,
             "driver_name": driver_name,
@@ -1063,6 +1065,7 @@ def save_fuel_req():
         data = json.loads(fuel_data)
 
         date_requested        = data.get("date_requested")
+        fuel_requisition_no   = data.get("fuel_requisition_no")
         vehicle_id            = data.get("plate_no")
         requested_by          = data.get("driverrequested_by")
         branch_id             = data.get("branch_id")
@@ -1082,6 +1085,7 @@ def save_fuel_req():
         new_fuel_req = FuelRequisitionRecords(
             user_id=current_user.user_id,
             vehicle_id=int(vehicle_id),
+            fuel_requisition_no=(fuel_requisition_no),
             requested_by=int(requested_by) if requested_by else None,
             branch_id=branch_id,
             actual_fuel_beg_l=actual_fuel_beg_l,
@@ -1094,6 +1098,7 @@ def save_fuel_req():
             crewoccupants2=crewoccupants2,
             last_fuel_recordltrs=last_fuel_recordltrs,
             status=None,
+            json_data=fuel_data,
             misc=None,
             date=datetime.strptime(date_requested, "%Y-%m-%d") if date_requested else manila_time()
         )
@@ -1105,6 +1110,158 @@ def save_fuel_req():
 
     except Exception as e:
         return {"type": "error", "message": str(e)}
+
+
+
+
+@api_handles.route('/get_latest_fuel_req_by_vehicle', methods=['POST','GET'])
+@login_required
+def get_latest_fuel_req_by_vehicle():
+    try:
+        vehicle_id = request.form.get("plate_no") or request.args.get("plate_no")
+        if not vehicle_id:
+            return {"type": "error", "message": "Missing vehicle_id"}
+
+        # Fetch vehicle details first
+        vehicle = Vehicles.query.get(int(vehicle_id))
+        if not vehicle:
+            return {"type": "error", "message": "Vehicle not found"}
+
+        vehicle_data = {
+            "id": vehicle.id,
+            "plate_no": vehicle.plate_no,
+            "average_km": vehicle.average_km,
+            "description": vehicle.description,
+            "misc": vehicle.misc,
+        }
+
+        # Get next insert ID
+        last_record = FuelRequisitionRecords.query.order_by(FuelRequisitionRecords.id.desc()).first()
+        next_id = (last_record.id + 1) if last_record else 1
+
+        # Fetch latest fuel requisition record with driver join
+        latest_record = db.session.query(
+            FuelRequisitionRecords,
+            DriverCrew.name.label("driver_name"),
+            DriverCrew.position.label("driver_position")
+        ).outerjoin(
+            DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
+        ).filter(
+            FuelRequisitionRecords.vehicle_id == int(vehicle_id)
+        ).order_by(
+            FuelRequisitionRecords.date.desc()
+        ).first()
+
+        # No recent record found, still return vehicle details
+        if not latest_record:
+            return {
+                "type": "success",
+                "has_recent": False,
+                "next_id": next_id,
+                "vehicle": vehicle_data,
+                "latest_fuel_req": None
+            }
+
+        record, driver_name, driver_position = latest_record
+
+        return {
+            "type": "success",
+            "has_recent": True,
+            "next_id": next_id,
+            "vehicle": vehicle_data,
+            "latest_fuel_req": {
+                "id": record.id,
+                "vehicle_id": record.vehicle_id,
+                "requested_by": record.requested_by,
+                "driver_name": driver_name,
+                "driver_position": driver_position,
+                "branch_id": record.branch_id,
+                "actual_fuel_beg_l": record.actual_fuel_beg_l,
+                "actual_fuel_endl": record.actual_fuel_endl,
+                "supplier_vendor_name": record.supplier_vendor_name,
+                "no_of_ltrs": record.no_of_ltrs,
+                "prev_costltr": record.prev_costltr,
+                "activity_type": record.activity_type,
+                "crewoccupants1": record.crewoccupants1,
+                "crewoccupants2": record.crewoccupants2,
+                "last_fuel_recordltrs": record.last_fuel_recordltrs,
+                "status": record.status,
+                "misc": record.misc,
+                "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
+            }
+        }
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+        
+
+
+@api_handles.route('/get_fuel_request_data_by_id', methods=['POST','GET'])
+@login_required
+def get_fuel_request_data_by_id():
+    try:
+        request_id = request.form.get("request_id") or request.args.get("request_id")
+        if not request_id:
+            return {"type": "error", "message": "Missing request_id"}
+
+        # Fetch fuel requisition record with driver and vehicle join
+        record_query = db.session.query(
+            FuelRequisitionRecords,
+            DriverCrew.name.label("driver_name"),
+            DriverCrew.position.label("driver_position"),
+            Vehicles.plate_no.label("vehicle_plate_no"),
+            Vehicles.average_km.label("vehicle_average_km"),
+            Vehicles.description.label("vehicle_description"),
+            Vehicles.misc.label("vehicle_misc")
+        ).outerjoin(
+            DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
+        ).outerjoin(
+            Vehicles, FuelRequisitionRecords.vehicle_id == Vehicles.id
+        ).filter(
+            FuelRequisitionRecords.id == int(request_id)
+        ).first()
+
+        if not record_query:
+            return {"type": "error", "message": "Fuel requisition record not found"}
+
+        record, driver_name, driver_position, vehicle_plate_no, vehicle_average_km, vehicle_description, vehicle_misc = record_query
+
+        return {
+            "type": "success",
+            "vehicle": {
+                "id": record.vehicle_id,
+                "plate_no": vehicle_plate_no,
+                "average_km": vehicle_average_km,
+                "description": vehicle_description,
+                "misc": vehicle_misc,
+            },
+            "fuel_req": {
+                "id": record.id,
+                "vehicle_id": record.vehicle_id,
+                "fuel_requisition_no": record.fuel_requisition_no,
+                "requested_by": record.requested_by,
+                "driver_name": driver_name,
+                "driver_position": driver_position,
+                "branch_id": record.branch_id,
+                "actual_fuel_beg_l": record.actual_fuel_beg_l,
+                "actual_fuel_endl": record.actual_fuel_endl,
+                "supplier_vendor_name": record.supplier_vendor_name,
+                "no_of_ltrs": record.no_of_ltrs,
+                "prev_costltr": record.prev_costltr,
+                "activity_type": record.activity_type,
+                "crewoccupants1": record.crewoccupants1,
+                "crewoccupants2": record.crewoccupants2,
+                "last_fuel_recordltrs": record.last_fuel_recordltrs,
+                "status": record.status,
+                "misc": record.misc,
+                "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
+            },
+            "json_data": record.json_data
+        }
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}       
+        
 # ================================
 # Fuel Requisition Section End
 # ================================

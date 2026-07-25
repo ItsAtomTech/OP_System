@@ -209,6 +209,26 @@ def fuel_files_table_():
 
 
 # =======================
+# Print Templates Section
+# =======================
+
+@views.route('/fuel_requisition_slip_print', methods=['GET', 'POST'])
+def fuel_requisition_slip_():
+    page = 'fuel_requisition_slip'
+
+    return render_template("print_templates/fuel_requisition_slip.html", user=current_user, page=page)
+        
+
+
+
+
+# =======================
+# Print Templates Section End
+# =======================
+
+
+
+# =======================
 # Notifications Section
 # =======================
 @views.route('/notifications', methods=['GET', 'POST'])

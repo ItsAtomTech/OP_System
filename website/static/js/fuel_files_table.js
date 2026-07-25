@@ -11,6 +11,13 @@ let tableFormat = [
 		
 	},	
 	{	
+		label: "File No.",
+		data_path: "fuel_requisition_no",
+		sort: true,
+		// parser:parseBranch,
+		
+	},
+	{	
 		label: "Plate No.",
 		data_path: "vehicle_plate_no",
 		sort: true,
@@ -625,7 +632,7 @@ function toggleSelectOption(visible=false){
 
 //Check Functions End
 
-
+let targetID;
 // Misc Functions ====
 function clickedOnRow(elm){
 	let ev = event;
@@ -634,14 +641,80 @@ function clickedOnRow(elm){
 		return;
 	};
 	
-	let targetID = parent_attrib.getAttribute('data_id');
+	targetID = parent_attrib.getAttribute('data_id');
 	
 	console.log(targetID);
 	
 	//To-Do: Should Open a Modal that will display the Data, with an Option to Print it as document from a template...
 	
 	
+	
+	let params =  [
+			{"name": "request_id" , "value": targetID},
+		];
+		
+	qBuilder.sendQuery(generateDataView,'get_fuel_request_data_by_id',params);	
+	
+
+		function generateDataView(data) {
+			let res_data = (JSON.parse(data.responseText));
+			let fuel_req = res_data.fuel_req;
+			let vehicle  = res_data.vehicle;
+			let raw_json = res_data.json_data;
+
+			try {
+				raw_json = JSON.parse(raw_json);
+			} catch(e) {
+				raw_json = {};
+			}
+
+			console.log(raw_json);
+
+			// Vehicle Info
+			tag('plate_no',           _('view_stat_1'))[0].innerText = vehicle.plate_no;
+			tag('vehicle_desc',       _('view_stat_1'))[0].innerText = vehicle.description;
+			tag('avg_kml',            _('view_stat_1'))[0].innerText = vehicle.average_km;
+
+			// Driver / Request Info
+			tag('recent_driver',      _('view_stat_1'))[0].innerText = fuel_req.driver_name;
+			tag('driver_requested_by',_('view_stat_1'))[0].innerText = fuel_req.driver_name;
+			tag('branch',             _('view_stat_1'))[0].innerText = fuel_req.branch_id;
+			tag('date_requested',     _('view_stat_1'))[0].innerText = utility.formatDate(fuel_req.date);
+			tag('frs_number',         _('view_stat_1'))[0].innerText = fuel_req.fuel_requisition_no;
+			tag('supplier_name',      _('view_stat_1'))[0].innerText = fuel_req.supplier_vendor_name;
+
+			// Fuel Request Details
+			_('view_no_of_ltrs').value    = raw_json.no_of_ltrs;
+			_('view_prev_cost_ltr').value = raw_json.prev_costltr;
+			_('view_total_cost').value    = (parseFloat(raw_json.no_of_ltrs) * parseFloat(raw_json.prev_costltr)).toFixed(2);
+
+			// Odometer
+			_('view_prev_odo').value = raw_json.last_fuel_recordltrs ? JSON.parse(raw_json.last_fuel_recordltrs)[0][0] : '--';
+			_('view_curr_odo').value = raw_json.last_fuel_recordltrs ? JSON.parse(raw_json.last_fuel_recordltrs)[0][1] : '--';
+
+			// Calculated Fields — pulled directly from raw_json
+			_('view_dist_travelled').value    = raw_json.dist_travelled_kms    || '--';
+			_('view_est_fuel_consumed').value = raw_json.est_fuel_consumed      || '--';
+			_('view_actual_fuel_beg').value   = raw_json.actual_fuel_beg_l      || '--';
+			_('view_actual_fuel_end').value   = raw_json.actual_fuel_endl       || '--';
+			_('view_theo_end').value          = raw_json.theo_end_l             || '--';
+			_('view_surplus_over').value      = isNaN(parseFloat(raw_json.so_theoactl_end_l)) 
+												? '--' 
+												: parseFloat(raw_json.so_theoactl_end_l).toFixed(2);
+
+			// Activity & Crew
+			_('view_activity_type').value = fuel_req.activity_type;
+			_('view_crew_1').value        = fuel_req.crewoccupants1;
+			_('view_crew_2').value        = fuel_req.crewoccupants2;
+
+			addFancyPlaceholder();
+		}
+	
+	
+	showModalContent("view_stat_1");
 }
+
+
 
 
 let selectedItemId;
@@ -651,11 +724,32 @@ function itemNotifyUpdate(data){
 		return createDialogue("error","Server Response error");
 	}
 	
+	
+	
 	data = JSON.parse(data.responseText);
 	
 	showToast(data.message);
 	// closeModalContent("modal_1");
 	
+}
+
+
+
+
+//Printing Logics
+async function printDoc(){
+
+	//Extract the Filters to pass onto the overall printing	
+	let filters_to_pass = {
+		"id": targetID,
+	}
+	
+	localStorage.setItem("printFuelRequest", JSON.stringify(filters_to_pass));
+	
+	showToast("Preparing Document filters ... ");
+	await sleep(1200);
+	
+	window.open('/fuel_requisition_slip_print', 'printFuelRequest');
 }
 
 

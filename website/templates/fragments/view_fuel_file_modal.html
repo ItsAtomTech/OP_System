@@ -1,0 +1,121 @@
+<div class="modal_main_backdrop padded" id="view_stat_1" inert>
+	<div class="modal_container_box larger_">
+
+		<!-- Modal Header -->
+		<div class="top_header">
+			<div class="title_form_top">Fuel Requisition Details</div>
+			<div class="close_modal_tright" tabindex='1' onclick="closeModalContent('view_stat_1')">&times;</div>
+		</div>
+
+		<!-- Modal Contents Container -->
+		<div class="option_main_container">
+			<br />
+
+			<!-- Vehicle Info -->
+			<div class="normal info_items"><span class="fa fa-car"></span> Plate No: <span class="bold" tag="plate_no"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-user"></span> Recent Driver: <span class="bold" tag="recent_driver"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-truck"></span> Vehicle Description: <span class="bold" tag="vehicle_desc"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-tachometer"></span> Average Km/L: <span class="bold" tag="avg_kml"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-id-card"></span> Driver / Requested By: <span class="bold" tag="driver_requested_by"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-map-marker"></span> Branch: <span class="bold" tag="branch"> -- </span></div>
+
+			<hr class="line_2">
+
+			<!-- Fuel Request Info -->
+			<div class="normal info_items"><span class="fa fa-calendar"></span> Date Requested: <span class="bold" tag="date_requested"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-file-text"></span> FRS No.: <span class="bold" tag="frs_number"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-industry"></span> Supplier / Vendor: <span class="bold" tag="supplier_name"> -- </span></div>
+
+			<hr class="line_2">
+
+			<!-- Fuel Details -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_no_of_ltrs">No. of Liters</label>
+					<input type="text" id="view_no_of_ltrs" tag="no_of_ltrs" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_prev_cost_ltr">Prev. Cost / Ltr</label>
+					<input type="text" id="view_prev_cost_ltr" tag="prev_cost_ltr" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_total_cost">Total</label>
+					<input type="text" id="view_total_cost" tag="total_cost" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<!-- Odometer -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_prev_odo">Previous Odo</label>
+					<input type="text" id="view_prev_odo" tag="prev_odo" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_curr_odo">Current Odo</label>
+					<input type="text" id="view_curr_odo" tag="curr_odo" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<!-- Calculated Fields -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_dist_travelled">Dist. Travelled (Kms)</label>
+					<input type="text" id="view_dist_travelled" tag="dist_travelled" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_est_fuel_consumed">Est. Fuel Consumed</label>
+					<input type="text" id="view_est_fuel_consumed" tag="est_fuel_consumed" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_actual_fuel_beg">Actual Fuel Beg. (L)</label>
+					<input type="text" id="view_actual_fuel_beg" tag="actual_fuel_beg" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_actual_fuel_end">Actual Fuel End (L)</label>
+					<input type="text" id="view_actual_fuel_end" tag="actual_fuel_end" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_theo_end">Theo End (L)</label>
+					<input type="text" id="view_theo_end" tag="theo_end" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_surplus_over">S/(O) Theo-Actl End (L)</label>
+					<input type="text" id="view_surplus_over" tag="surplus_over" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<!-- Activity Type -->
+			<div class="cols_con_ full_width padded_input">
+				<label class="df_label_con placeholder_label" for="view_activity_type">Activity Type</label>
+				<input type="text" id="view_activity_type" tag="activity_type" class="fancy_form_df form_display" readonly />
+			</div>
+
+			<!-- Crew -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_crew_1">Crew / Occupants 1</label>
+					<input type="text" id="view_crew_1" tag="crew_1" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_crew_2">Crew / Occupants 2</label>
+					<input type="text" id="view_crew_2" tag="crew_2" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+
+			<hr class="line_2">
+
+			<!-- Print Button -->
+			<div class="floating_print" onclick="printDoc();">
+				<span class="fa fa-print fa-2x"></span>
+			</div>
+
+		</div>
+	</div>
+</div>

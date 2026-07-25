@@ -130,3 +130,176 @@ function cancelEditor(){
 
 
 
+//Other Essential Functions
+function loadRecentData(elm){
+	
+	let vehicle_id = (elm.value);
+	let custom_param = [
+		{"name": "plate_no", value: vehicle_id},
+	];		
+	
+	if(isNaN(vehicle_id) || vehicle_id.length <= 0){
+		return;
+	}
+	
+	qBuilder.sendQuery(proccess,"get_latest_fuel_req_by_vehicle", custom_param);
+	
+	
+	function proccess(data){
+		let setdata = JSON.parse(event.target.responseText);
+		
+		if(setdata.type != "success"){
+			return createDialogue("error",setdata.message);
+		}
+		
+		
+		console.log(setdata.latest_fuel_req);
+		
+		//Proccess Vehicle Details
+		_("vehicle_description").value = setdata.vehicle.description;
+		_("average_kml").value = setdata.vehicle.average_km;
+		
+		
+		if(setdata.has_recent){
+		
+			_("recent_driver").value = setdata.latest_fuel_req.driver_name;
+			_("last_fuel_date").value = utility.dateNormalize(setdata.latest_fuel_req.date);
+			
+			_("last_fuel_issuedltrs").value = setdata.latest_fuel_req.no_of_ltrs;
+		
+			
+			processOPrevOdo(setdata.latest_fuel_req.last_fuel_recordltrs);
+			
+			
+			
+		}else{
+			
+			_("last_fuel_date").value = "";
+			_("recent_driver").value = "";	
+			_("last_fuel_issuedltrs").value = "";
+			
+			processOPrevOdo("");
+		
+		}
+		
+		generateReqNo(setdata.next_id);
+		calculateDistTravelled();
+		
+		addFancyPlaceholder();
+	}
+	
+}
+
+
+function generateReqNo(data){
+	
+	let year = getCurrentYear();
+	let nom = utility.addZeros(data);
+	let str = "FRN-"+ year + "-" + nom;
+	
+	_("fuel_requisition_no").value = str;
+}
+
+
+
+function calculateDistTravelled(elm){
+	
+	let tableValue = _("last_fuel_recordltrs").value;
+	if (!tableValue) return; 
+	let odoData = JSON.parse(tableValue)[0];
+	
+	
+	let calculation = odoData[1] - odoData[0];
+	_("dist_travelled_kms").value = calculation;
+	
+	calculateEstFuelConsumed();
+	calculateSOEnd();
+	addFancyPlaceholder();
+	
+	// console.log(odoData, calculation);	
+}
+
+
+function processOPrevOdo(data){
+	
+	
+	try{
+		let odoData = JSON.parse(data)[0]
+		let prevData = odoData[1];
+		let currentData = "";
+		
+		let tableValue = _("last_fuel_recordltrs").value;
+		let CurrentodoData = JSON.parse(tableValue)[0]
+		if(CurrentodoData[1].length){
+			currentData = CurrentodoData[1];
+		}
+		
+		
+		let partData = [[prevData, currentData]];
+		
+		setValues("last_fuel_recordltrs",JSON.stringify(partData),formDatas.forms[formIdCollections.indexOf("last_fuel_recordltrs")])
+		
+	}catch(e){
+		
+		let partData = [['', '']];
+		setValues("last_fuel_recordltrs",JSON.stringify(partData),formDatas.forms[formIdCollections.indexOf("last_fuel_recordltrs")])
+		
+		//
+	}
+	
+	
+}
+
+
+function calculateEstFuelConsumed(elm){
+	
+	let distTravel = _("dist_travelled_kms").value;
+	let averageKM = _("average_kml").value;
+	
+	
+	_("est_fuel_consumed").value = (distTravel / averageKM).toFixed(2);
+	
+	
+	return;
+	
+	console.log(_("est_fuel_consumed").value);
+	
+	
+}
+
+
+
+
+function calculateTheoEnd(){
+	
+	let calculatedValue;
+	
+	let a = parseFloat(_("actual_fuel_beg_l").value);
+	let b = parseFloat(_("no_of_ltrs").value);
+	let c = parseFloat(_("est_fuel_consumed").value);
+	
+	calculatedValue = (a + b) - c;
+		
+	_("theo_end_l").value = calculatedValue;
+	calculateSOEnd();
+	
+	addFancyPlaceholder();
+}
+
+
+
+function calculateSOEnd(){
+	
+	let calculatedValue;
+	
+	let a = parseFloat(_("actual_fuel_endl").value);
+	let b = parseFloat(_("theo_end_l").value);
+	
+	
+	calculatedValue = (a - b);
+	
+	
+	_("so_theoactl_end_l").value = calculatedValue;
+	addFancyPlaceholder();
+	
+}

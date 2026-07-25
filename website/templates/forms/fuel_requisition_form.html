@@ -76,7 +76,7 @@
 
 
 <datalist id="plate_noms">
-	<option value="vehicle">  </option>
+	<option value=""> </option>
 	{% for vehicle in get_vehicles() %}
 		<option class="" value="{{ vehicle.id }}"> {{ vehicle.plate_no }}  </option>
 	{% endfor %}
