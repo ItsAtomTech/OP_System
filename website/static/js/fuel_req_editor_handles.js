@@ -153,7 +153,7 @@ function loadRecentData(elm){
 		}
 		
 		
-		console.log(setdata.latest_fuel_req);
+		// console.log(setdata.latest_fuel_req);
 		
 		//Proccess Vehicle Details
 		_("vehicle_description").value = setdata.vehicle.description;

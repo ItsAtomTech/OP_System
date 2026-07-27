@@ -109,7 +109,7 @@ def create_app():
     @app.context_processor
     def get_user_ty():
         def get_user_types():
-            typ = UserType.query.all()
+            typ = UserType.query.order_by(UserType.type_id.desc()).all()
             return typ
         return dict(get_user_types=get_user_types)
     

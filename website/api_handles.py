@@ -151,10 +151,7 @@ def save_user():
 
         if data.get("password") != data.get("repassword"):
             return {"type": "error", "message": "Passwords do not match"}
-            
-        if data.get("department") == " ":
-            data["department"] = None
-            
+                       
 
         # Optional: check if email already exists
         existing_user = Users.query.filter_by(email=data.get("email")).first()
@@ -173,9 +170,7 @@ def save_user():
         new_user = Users(
             username=data.get("username"),
             email=data.get("email"),
-            department_id=data.get("department", None),
-            college_id=data.get("college", None),
-            type=data.get("type", "1"),
+            type=data.get("type"),
             password=generate_password_hash(data.get("password"), method="pbkdf2:sha256"),
             status="pending",
             avatar="user",
@@ -296,11 +291,6 @@ def save_user_update():
         if data.get("type"):
             user.type = data["type"]
             
-        if data.get("department"):
-            user.department_id = data["department"]
-            
-        if data.get("college"):
-            user.college_id = data["college"]
 
         if data.get("email") and data["email"] != user.email:
             # If email changes, also set status to "pending"
@@ -1005,7 +995,7 @@ def list_fuel_req_files():
         else:
             query = query.order_by(asc(sort_column))
     else:
-        query = query.order_by(FuelRequisitionRecords.id.asc())
+        query = query.order_by(FuelRequisitionRecords.id.desc())
 
     # Pagination
     pagination = query.paginate(page=current_page, per_page=per_page, error_out=False)

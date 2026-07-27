@@ -90,12 +90,16 @@
 		<!-- For Admin side bar -->
 		
 	
+		{%if current_user.type == 1 %}
+		
 		
 		<div class="sidebar_box_con" >
 			<div class="sidebar_button df_button primary_color" onclick="showUserManageTable(this);" > <span class="fa fa-users" tooltip="Manage User Roles / Add User"> </span> <span class="normal nav_text"> User Management </span> </div>
 		</div>
 		
-				
+		{% endif %}
+		
+		
 		<div class="sidebar_box_con" >
 			<div class="sidebar_button df_button primary_color" onclick="showRequestForms(this);" > <span class="fa fa-file" tooltip="Open the Forms Page"> </span> <span class="normal nav_text">Request Forms </span> </div>
 		</div>

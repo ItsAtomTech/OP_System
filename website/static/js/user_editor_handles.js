@@ -128,6 +128,9 @@ function cancelEditor(){
 //Custom Events goes here
 // ======================
 function toggleDepColFields(elm){
+	
+	return;
+	
 	let fieldValue = elm.value;
 	let college_elm = _("college").parentNode.parentNode;
 	let department_elm = _("department").parentNode.parentNode;

@@ -36,6 +36,7 @@ let formStructure = {
             "id": "last_fuel_date",
             "index": 1
         },
+		
         {
             "type": "text",
             "events": {
@@ -246,6 +247,29 @@ let formStructure = {
             "id": "branch_id",
             "index": 11
         },
+		
+		{
+            "type": "header",
+            "events": {
+                "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
+                "type": "hideon",
+                "targetIndex": "2",
+                "value": "2"
+            },
+            "value": "Last Fuel Record",
+            "label": "",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_d63a3455-ae8b-4e35-8a98-d11c37d7e326",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "_5",
+            "index": 5
+        },
+		
+		
         {
             "type": "table",
             "events": {
@@ -286,7 +310,7 @@ let formStructure = {
             "rowed": true,
             "fullspan": false,
             "responsivespan": true,
-            "label": "Last Fuel Record(ltrs)",
+            "label": "",
             "fancy": true,
             "required": false,
             "description": "",
@@ -424,6 +448,21 @@ let formStructure = {
 			"disabled": true,
             "index": 18
         },
+		{
+            "type": "header",
+  
+            "value": "CURRENT FUEL REQUEST",
+            "label": "",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_5145d6e5-19d8-47df-b15d-531c9258d721",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "_5",
+            "index": 5
+        },
         {
             "type": "text",
             "events": {
@@ -466,6 +505,8 @@ let formStructure = {
             "id": "no_of_ltrs",
             "index": 20
         },
+		
+		
         {
             "type": "text",
             "events": {
@@ -562,19 +603,19 @@ let formStructure = {
             "row_view": false,
             "id": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87"
         },
+		{
+            "name": "Current Fuel Request",
+            "type": "default",
+            "column_count": "2",
+            "row_view": true,
+            "id": "g_5145d6e5-19d8-47df-b15d-531c9258d721"
+        },
         {
             "name": "Last Fuel Record",
             "type": "default",
             "column_count": "3",
             "row_view": false,
             "id": "g_d63a3455-ae8b-4e35-8a98-d11c37d7e326"
-        },
-        {
-            "name": "Current Fuel Request",
-            "type": "default",
-            "column_count": "2",
-            "row_view": true,
-            "id": "g_5145d6e5-19d8-47df-b15d-531c9258d721"
         },
         {
             "name": "Occupants",

@@ -200,7 +200,7 @@ function tableLoader(data){
 					edit_action.setAttribute("onclick",'loadItemToEdit("'+forms[index].id+'")');
 				
 					
-					action_div.appendChild(edit_action);
+					//action_div.appendChild(edit_action);
 					
 					
 			if(pageType == "trash"){
@@ -365,6 +365,9 @@ function loadItemToEdit(id){
 	
 	let item_id = parseInt(id);	
 	let params = [{"name":"crew_id", "value": item_id}];
+	
+	
+	return showToast("Not yet implemented");
 	
 	qBuilder.sendQuery(openModal,"/get_driver_crew_by_id",params);
 	
@@ -644,8 +647,9 @@ function clickedOnRow(elm){
 	targetID = parent_attrib.getAttribute('data_id');
 	
 	console.log(targetID);
+
 	
-	//To-Do: Should Open a Modal that will display the Data, with an Option to Print it as document from a template...
+	
 	
 	
 	
@@ -654,7 +658,8 @@ function clickedOnRow(elm){
 		];
 		
 	qBuilder.sendQuery(generateDataView,'get_fuel_request_data_by_id',params);	
-	
+		
+		
 
 		function generateDataView(data) {
 			let res_data = (JSON.parse(data.responseText));
@@ -667,8 +672,8 @@ function clickedOnRow(elm){
 			} catch(e) {
 				raw_json = {};
 			}
-
-			console.log(raw_json);
+		
+		console.log(raw_json);
 
 			// Vehicle Info
 			tag('plate_no',           _('view_stat_1'))[0].innerText = vehicle.plate_no;
@@ -676,7 +681,7 @@ function clickedOnRow(elm){
 			tag('avg_kml',            _('view_stat_1'))[0].innerText = vehicle.average_km;
 
 			// Driver / Request Info
-			tag('recent_driver',      _('view_stat_1'))[0].innerText = fuel_req.driver_name;
+			tag('recent_driver',      _('view_stat_1'))[0].innerText = raw_json.recent_driver;
 			tag('driver_requested_by',_('view_stat_1'))[0].innerText = fuel_req.driver_name;
 			tag('branch',             _('view_stat_1'))[0].innerText = fuel_req.branch_id;
 			tag('date_requested',     _('view_stat_1'))[0].innerText = utility.formatDate(fuel_req.date);

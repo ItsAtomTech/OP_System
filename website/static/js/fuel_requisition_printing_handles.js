@@ -86,7 +86,7 @@ async function generateDataOnDoc(dataraw) {
 
     // Vehicle Info
     _('plate_no').innerText            = vehicle.plate_no        || '--';
-    _('recent_driver').innerText       = fuel_req.driver_name    || '--';
+    _('recent_driver').innerText       = raw_json.recent_driver  || '--';
     _('avg_kml').innerText             = vehicle.average_km      || '--';
     _('vehicle_desc').innerText        = vehicle.description     || '--';
     _('driver_requested_by').innerText = fuel_req.driver_name    || '--';
@@ -156,10 +156,7 @@ function generateTableData(data){
 
 }
 
-
-
-	
 	
 
 //Calls this function when the page is done loading
-window.onload = () => getPrintableData();
+getPrintableData();
