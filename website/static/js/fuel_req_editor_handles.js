@@ -128,7 +128,8 @@ function cancelEditor(){
 }
 
 
-
+let FUEL_CAPACITY = null;
+let MAX_FUEL_CAP = null;
 
 //Other Essential Functions
 function loadRecentData(elm){
@@ -159,6 +160,10 @@ function loadRecentData(elm){
 		_("vehicle_description").value = setdata.vehicle.description;
 		_("average_kml").value = setdata.vehicle.average_km;
 		
+		FUEL_CAPACITY = setdata.vehicle.capacity_l;
+		
+		console.log();
+		
 		
 		if(setdata.has_recent){
 		
@@ -166,8 +171,13 @@ function loadRecentData(elm){
 			_("last_fuel_date").value = utility.dateNormalize(setdata.latest_fuel_req.date);
 			
 			_("last_fuel_issuedltrs").value = setdata.latest_fuel_req.no_of_ltrs;
-		
 			
+			_("prev_costltr").value = setdata.latest_fuel_req.prev_costltr
+			_("actual_fuel_beg_l").value = setdata.latest_fuel_req.actual_fuel_endl
+			
+			console.log(setdata.vehicle);
+			
+
 			processOPrevOdo(setdata.latest_fuel_req.last_fuel_recordltrs);
 			
 			
@@ -275,12 +285,20 @@ function calculateTheoEnd(){
 	let calculatedValue;
 	
 	let a = parseFloat(_("actual_fuel_beg_l").value);
-	let b = parseFloat(_("no_of_ltrs").value);
+	let b = (_("last_fuel_issuedltrs").value).length ?  parseFloat(_("last_fuel_issuedltrs").value): 0  ;
+	
+	// console.log(b);	
+	
 	let c = parseFloat(_("est_fuel_consumed").value);
 	
 	calculatedValue = (a + b) - c;
 		
 	_("theo_end_l").value = calculatedValue;
+	
+	
+	proccessFuelWarn(calculatedValue, FUEL_CAPACITY);
+	
+	
 	calculateSOEnd();
 	
 	addFancyPlaceholder();
@@ -303,3 +321,28 @@ function calculateSOEnd(){
 	addFancyPlaceholder();
 	
 }
+
+
+function proccessFuelWarn(calculatedValue, FUEL_CAPACITY){
+	
+	let fuelToInput = (_("no_of_ltrs").value).length ? parseFloat(_("no_of_ltrs").value): 0;
+	
+	let cap = FUEL_CAPACITY - calculatedValue;
+	
+	
+	if(fuelToInput <= 0){
+		return;
+	}
+	
+	
+
+	if(parseFloat(fuelToInput) > parseFloat(cap)){			
+	
+		showToast("You appear to have entered a Fuel \n beyond your maximum tank capacity" + "\n cap is: "+ cap +"L");
+		
+		
+	}
+
+	
+	
+};

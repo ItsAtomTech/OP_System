@@ -25,6 +25,13 @@ let tableFormat = [
 		
 	},
 	{	
+		label: "Fuel Capacity (L)",
+		data_path: "capacity_l",
+		sort: true,
+		// parser:parseBranch,
+		
+	},
+	{	
 		label: "Average Km/L",
 		data_path: "average_km",
 		sort: true,
@@ -376,6 +383,7 @@ function loadItemToEdit(id){
 			_("plate_no").value = res_data.plate_no;
 			_("description").value = res_data.description;
 			_("average_km").value = res_data.average_km;
+			_("capacity_l").value = parseFloat(res_data.capacity_l);
 							
 			
 			addFancyPlaceholder();
@@ -397,6 +405,12 @@ function saveItem(){
 	{
 		"name": "description",
 		"value": _("description").value,
+	},
+	{
+		"name": "capacity_l",
+		"value": _("capacity_l").value,
+		
+		
 	},
 	{
 		"name": "average_km",
@@ -449,6 +463,7 @@ function addNewEntry(){
 	_("plate_no").value = "";
 	_("description").value = "";
 	_("average_km").value = "0.0";
+	_("capacity_l").value = 0;
 	
 	showModalContent('vehicle_modal');
 	

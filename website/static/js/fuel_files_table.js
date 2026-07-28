@@ -200,7 +200,7 @@ function tableLoader(data){
 					edit_action.setAttribute("onclick",'loadItemToEdit("'+forms[index].id+'")');
 				
 					
-					//action_div.appendChild(edit_action);
+					action_div.appendChild(edit_action);
 					
 					
 			if(pageType == "trash"){
@@ -369,33 +369,8 @@ function loadItemToEdit(id){
 	
 	return showToast("Not yet implemented");
 	
-	qBuilder.sendQuery(openModal,"/get_driver_crew_by_id",params);
-	
-	
-	function openModal(data){
-		
-		let res_data = (JSON.parse(data.responseText));
-			selectedItemId = id;
-		if(res_data.type == "success"){
-			
-			// console.log(res_data.student);
-			showModalContent('input_modal');
-			
-			res_data = res_data.driver_crew;
-					
-			_("name").value = res_data.name;
-			_("position").value = res_data.position;
-			_("department").value = res_data.department_id;
-			_("status").value = res_data.status;
-							
-			
-			addFancyPlaceholder();
-			saveMode = "edit";
-			
-		}else{
-			createDialogue("error", res_data.message);
-		}
-	}
+	//To-Do: 
+	// Open using modalizer the view for Fuel Req. Form
 }
 
 
@@ -650,9 +625,6 @@ function clickedOnRow(elm){
 
 	
 	
-	
-	
-	
 	let params =  [
 			{"name": "request_id" , "value": targetID},
 		];
@@ -679,6 +651,7 @@ function clickedOnRow(elm){
 			tag('plate_no',           _('view_stat_1'))[0].innerText = vehicle.plate_no;
 			tag('vehicle_desc',       _('view_stat_1'))[0].innerText = vehicle.description;
 			tag('avg_kml',            _('view_stat_1'))[0].innerText = vehicle.average_km;
+			tag('capacity_l',          _('view_stat_1'))[0].innerText = vehicle.capacity_l;
 
 			// Driver / Request Info
 			tag('recent_driver',      _('view_stat_1'))[0].innerText = raw_json.recent_driver;

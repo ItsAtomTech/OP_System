@@ -94,6 +94,7 @@ class Vehicles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     plate_no = db.Column(db.String(255))
     average_km = db.Column(db.String(255))
+    capacity_l = db.Column(db.String(255))
     description = db.Column(db.String(1000))
     misc = db.Column(db.String(1024))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
