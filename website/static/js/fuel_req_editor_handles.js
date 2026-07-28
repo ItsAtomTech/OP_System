@@ -39,15 +39,16 @@ function submitForm(){
 
 
 
-
-function feedBackSaving(){
+function feedBackSaving(data){
 	let res_data = (JSON.parse(event.target.responseText));
 	createDialogue("info", res_data.message);
 	if(res_data.type == "success" && pageType != "edit_purchase_request"){
 		window.setTimeout(close, 1000);
 	}
+	
 	function close(){
-		postMessageToParent("close");
+		nextFormID = res_data.id;
+		askForPrint();
 	}
 	localStorage.setItem("shouldReloadRequests","true");
 	hasChanges = false;
@@ -56,8 +57,24 @@ function feedBackSaving(){
 
 
 
+async function askForPrint(confirmed = undefined){
+	
+	if(confirmed == undefined){
+		askUser("Do you want to Print the Document now?",askForPrint,arguments);
+		return;
+	}
+	destroy_dia();
+	
+	if(confirmed == "pass"){
+		printDoc();
+		await sleep(1000);
+		postMessageToParent("close");
+	}else{
+		postMessageToParent("close");
+	}
+	console.log(confirmed);
 
-
+}
 
 
 
@@ -201,6 +218,8 @@ function loadRecentData(elm){
 }
 
 
+
+let nextFormID = undefined;
 function generateReqNo(data){
 	
 	let year = getCurrentYear();
@@ -208,6 +227,7 @@ function generateReqNo(data){
 	let str = "FRN-"+ year + "-" + nom;
 	
 	_("fuel_requisition_no").value = str;
+	nextFormID = data;
 }
 
 
@@ -323,26 +343,37 @@ function calculateSOEnd(){
 }
 
 
+
+
 function proccessFuelWarn(calculatedValue, FUEL_CAPACITY){
 	
 	let fuelToInput = (_("no_of_ltrs").value).length ? parseFloat(_("no_of_ltrs").value): 0;
 	
 	let cap = FUEL_CAPACITY - calculatedValue;
 	
-	
 	if(fuelToInput <= 0){
 		return;
 	}
 	
-	
 
 	if(parseFloat(fuelToInput) > parseFloat(cap)){			
-	
-		showToast("You appear to have entered a Fuel \n beyond your maximum tank capacity" + "\n cap is: "+ cap +"L");
-		
-		
+		showToast("You appear to have entered a Fuel \n beyond your maximum tank capacity" + "\n cap is: "+ cap +"L");	
 	}
-
-	
-	
 };
+
+
+
+
+//Printing Logics
+async function printDoc(){
+
+	//Extract the Filters to pass onto the overall printing	
+	let filters_to_pass = {
+		"id": nextFormID,
+	}
+	localStorage.setItem("printFuelRequest", JSON.stringify(filters_to_pass));
+	showToast("Preparing Document filters ... ");
+	await sleep(500);
+	
+	window.open('/fuel_requisition_slip_print', 'printFuelRequest');
+}

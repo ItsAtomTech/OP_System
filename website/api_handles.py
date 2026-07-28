@@ -1105,7 +1105,7 @@ def save_fuel_req():
         db.session.add(new_fuel_req)
         db.session.commit()
 
-        return {"type": "success", "message": "Fuel Requisition saved successfully!"}
+        return {"type": "success", "message": "Fuel Requisition saved successfully!", "id": new_fuel_req.id}
 
     except Exception as e:
         return {"type": "error", "message": str(e)}
@@ -1263,7 +1263,36 @@ def get_fuel_request_data_by_id():
 
     except Exception as e:
         return {"type": "error", "message": str(e)}       
-        
+ 
+
+
+@api_handles.route('/remove_fuel_request_file', methods=['POST'])
+@login_required
+def remove_fuel_request_file():
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+
+    try:
+        request_id = request.form.get("request_id")
+        if not request_id:
+            return {"type": "error", "message": "Missing request_id"}
+
+        record = FuelRequisitionRecords.query.get(int(request_id))
+        if not record:
+            return {"type": "error", "message": "Fuel requisition record not found"}
+
+        if record.status == "approved":
+            return {"type": "error", "message": "Cannot delete an approved fuel requisition record"}
+
+        db.session.delete(record)
+        db.session.commit()
+
+        return {"type": "success", "message": "Fuel requisition record removed successfully!"}
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+ 
 # ================================
 # Fuel Requisition Section End
 # ================================

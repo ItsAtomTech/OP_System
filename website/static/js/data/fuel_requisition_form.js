@@ -604,18 +604,18 @@ let formStructure = {
             "id": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87"
         },
 		{
-            "name": "Current Fuel Request",
-            "type": "default",
-            "column_count": "2",
-            "row_view": true,
-            "id": "g_5145d6e5-19d8-47df-b15d-531c9258d721"
-        },
-        {
             "name": "Last Fuel Record",
             "type": "default",
             "column_count": "3",
             "row_view": false,
             "id": "g_d63a3455-ae8b-4e35-8a98-d11c37d7e326"
+        },
+		{
+            "name": "Current Fuel Request",
+            "type": "default",
+            "column_count": "2",
+            "row_view": true,
+            "id": "g_5145d6e5-19d8-47df-b15d-531c9258d721"
         },
         {
             "name": "Occupants",

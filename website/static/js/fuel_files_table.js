@@ -145,7 +145,7 @@ function tableLoader(data){
 				
 			//check columns
 		let table_check = make("td");
-			table_check.innerHTML = '<input class="check_input" row_selector  type="checkbox" data_id="'+data.user_id+'" form_id="'+data.form_data_form_id+'" onclick="selectHandle(this)" title="Select This Entry"/>';
+			table_check.innerHTML = '<input class="check_input" row_selector  type="checkbox" data_id="'+record_id+'" form_id="'+data.form_data_form_id+'" onclick="selectHandle(this)" title="Select This Entry"/>';
 			table_check.className = "sticky_column_left primary_background_darker check_cols";
 			headTr.appendChild(table_check);
 		
@@ -479,8 +479,10 @@ function feedBackRemoving(){
 }
 
 function silentlyMovetoRemove(ids){
-	let itemvalue = [{"name":"subject_id", "value": ids}];
-	qBuilder.sendQuery(doNothing,"remove_subject",itemvalue);
+	let itemvalue = [{"name":"request_id", "value": ids}];
+	qBuilder.sendQuery(doNothing,"remove_fuel_request_file",itemvalue);
+	
+	
 }
 
 function silentlyDeleteItem(ids){
@@ -498,6 +500,8 @@ function silentlyRestoreItem(ids){
 }
 
 
+
+
 function moveToTrash(confirmed = undefined,silent=false){
 	if(confirmed == undefined){
 		askUser("Are you sure to Remove this item?",moveToTrash,arguments);
@@ -507,7 +511,7 @@ function moveToTrash(confirmed = undefined,silent=false){
 	if(confirmed == 'fail'){
 		return;
 	}
-	let itemvalue = [{"name":"crew_id", "value": idSelected}];
+	let itemvalue = [{"name":"request_id", "value": idSelected}];
 	qBuilder.sendQuery(feedBackRemoving,"/remove_fuel_request_file",itemvalue);
 }
 
