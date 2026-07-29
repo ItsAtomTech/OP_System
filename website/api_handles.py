@@ -957,6 +957,9 @@ def list_fuel_req_files():
 
             if 'vehicle_id' in filters and filters['vehicle_id']:
                 query = query.filter(FuelRequisitionRecords.vehicle_id == int(filters['vehicle_id']))
+                
+            if 'status' in filters and filters['status']:
+                query = query.filter(FuelRequisitionRecords.status == filters['status'])
 
             if 'requested_by' in filters and filters['requested_by']:
                 query = query.filter(FuelRequisitionRecords.requested_by == int(filters['requested_by']))
@@ -973,6 +976,7 @@ def list_fuel_req_files():
                 FuelRequisitionRecords.type.ilike(search_term),
                 FuelRequisitionRecords.supplier_vendor_name.ilike(search_term),
                 FuelRequisitionRecords.activity_type.ilike(search_term),
+                FuelRequisitionRecords.fuel_requisition_no.ilike(search_term),
                 FuelRequisitionRecords.misc.ilike(search_term),
                 Vehicles.plate_no.ilike(search_term),
                 DriverCrew.name.ilike(search_term),
