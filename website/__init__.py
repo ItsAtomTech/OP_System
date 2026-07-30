@@ -45,8 +45,9 @@ class ChangeHandler(FileSystemEventHandler):
                     clients.remove(ws)
 
 def watch_files():
+    static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
     observer = Observer()
-    observer.schedule(ChangeHandler(), path='.', recursive=True)
+    observer.schedule(ChangeHandler(), path=static_path, recursive=True)
     observer.start()
 
 threading.Thread(target=watch_files, daemon=True).start()
