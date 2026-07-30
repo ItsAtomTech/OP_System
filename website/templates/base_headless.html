@@ -79,16 +79,16 @@
 	
 
 
-
-
-
-
-
 </body>
 
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='js/tooltip.js') }}"></script>
 <script src="{{ url_for('static', filename='js/context_menu.js') }}"></script>
+
+{% if config.DEBUG %}
+<script defer src="{{ url_for('static', filename='js/smart_reload.js') }}"></script>
+{% endif %}
+
 <script>
 monitorAlerts();
 
@@ -96,7 +96,4 @@ monitorAlerts();
 {% block extra_js %}
 
 {%endblock%}
-
-
-
 </html>

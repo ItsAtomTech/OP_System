@@ -12,3 +12,6 @@ bleach
 tinycss2
 requests
 psutil
+flask-sock
+watchdog
+simple-websocket

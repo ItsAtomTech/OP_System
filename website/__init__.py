@@ -3,7 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from flask_login import current_user
-import os, json, bleach
+import os, json, bleach, threading
+
+from flask_sock import Sock
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 from bleach.css_sanitizer import CSSSanitizer
 
@@ -26,6 +30,28 @@ db = SQLAlchemy()
 DB_NAME = "OPS_DB.db"
 
 
+
+# WS for Smart Relaod
+sock = Sock()
+clients = []
+
+class ChangeHandler(FileSystemEventHandler):
+    def on_any_event(self, event):
+        if event.src_path.endswith(('.html', '.js', '.css')):
+            for ws in clients[:]:
+                try:
+                    ws.send("reload")
+                except Exception:
+                    clients.remove(ws)
+
+def watch_files():
+    observer = Observer()
+    observer.schedule(ChangeHandler(), path='.', recursive=True)
+    observer.start()
+
+threading.Thread(target=watch_files, daemon=True).start()
+
+
 def create_app():
 
     app = Flask(__name__)
@@ -34,9 +60,12 @@ def create_app():
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://flask_user:admin@localhost/kodetrek'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+    
+    
     db.init_app(app)
-
+    
+    sock.init_app(app)
+    
     from .views import views
     from .user_control import user_control
     from .api_handles import api_handles
@@ -48,8 +77,13 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(api_handles, url_prefix='/')
     app.register_blueprint(user_control, url_prefix='/')
-
-
+    
+    app.debug = os.environ.get('FLASK_DEBUG', '0') == '1'
+    
+    if app.debug:
+        sock.init_app(app)
+        with app.app_context():
+            from . import sockets
 
 
     from .models import Users, UserType, Department, Vehicles, DriverCrew
@@ -210,4 +244,5 @@ def create_database(app):
 
     if not path.exists(db_path):
         print("Warning: Database file not found initially (but may have been created now).")
+
 
