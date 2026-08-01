@@ -7,9 +7,10 @@ import os, json, bleach, threading
 
 from flask_sock import Sock
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+from watchdog.events import FileSystemEventHandler, FileModifiedEvent
 
 from bleach.css_sanitizer import CSSSanitizer
+import time
 
 css_sanitizer = CSSSanitizer(
     allowed_css_properties=['color', 'font-family', 'font-size', 'font-style', 'font-weight', 'text-align',
@@ -31,30 +32,49 @@ DB_NAME = "OPS_DB.db"
 
 
 
-# WS for Smart Relaod
+# WS for Smart Reload
 sock = Sock()
 clients = []
 
 class ChangeHandler(FileSystemEventHandler):
-    def on_any_event(self, event):
-        if event.src_path.endswith(('.html', '.js', '.css')):
-            for ws in clients[:]:
-                try:
-                    ws.send("reload")
-                except Exception:
-                    clients.remove(ws)
+    def __init__(self):
+        self._last_triggered = {}
+        self._debounce_seconds = 0.5
+
+    def on_modified(self, event):
+        if event.is_directory:
+            return
+
+        if not isinstance(event, FileModifiedEvent):
+            return
+
+        if not event.src_path.endswith(('.html', '.js', '.css')):
+            return
+
+        now = time.time()
+        src = event.src_path
+
+        if src in self._last_triggered:
+            if now - self._last_triggered[src] < self._debounce_seconds:
+                return
+
+        self._last_triggered[src] = now
+
+        for ws in clients[:]:
+            try:
+                ws.send("reload")
+            except Exception:
+                clients.remove(ws)
 
 def watch_files():
     base_path = os.path.dirname(os.path.abspath(__file__))
-    
     static_path = os.path.join(base_path, 'static')
     templates_path = os.path.join(base_path, 'templates')
-
     observer = Observer()
     observer.schedule(ChangeHandler(), path=static_path, recursive=True)
     observer.schedule(ChangeHandler(), path=templates_path, recursive=True)
     observer.start()
-    
+
 threading.Thread(target=watch_files, daemon=True).start()
 
 

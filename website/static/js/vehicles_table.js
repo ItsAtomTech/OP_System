@@ -135,12 +135,12 @@ function tableLoader(data){
 	
 		
 	function generateTableDataRows(data, index = undefined){
-		let record_id = (data.subject_id);
+		let record_id = (data.id);
 			let headTr = make("tr");
 				headTr.classList.add("padded_colms","clickable_row");
 				headTr.setAttribute("onclick","clickedOnRow("+record_id+")");
 				headTr.setAttribute("data_id",record_id);
-				headTr.setAttribute("code_id",data.code);
+				headTr.setAttribute("code_id",record_id);
 				
 			//check columns
 		let table_check = make("td");
@@ -673,10 +673,10 @@ function clickedOnRow(){
 	
 	let parent_attrib = (ev.target.parentNode);
 	
-	if(!parent_attrib.getAttribute('code_id')){
+	if(!parent_attrib.getAttribute('data_id')){
 		return;
 	};
-
+	
 	
 }
 

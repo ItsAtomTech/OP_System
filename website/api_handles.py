@@ -1081,6 +1081,7 @@ def save_fuel_req():
         activity_type         = data.get("activity_type")
         crewoccupants1        = data.get("crewoccupants1")
         crewoccupants2        = data.get("crewoccupants2")
+        destination        = data.get("destination")
 
         if not vehicle_id:
             return {"type": "error", "message": "Missing required fields"}
@@ -1099,6 +1100,7 @@ def save_fuel_req():
             activity_type=activity_type,
             crewoccupants1=crewoccupants1,
             crewoccupants2=crewoccupants2,
+            destination=destination,
             last_fuel_recordltrs=last_fuel_recordltrs,
             status=None,
             json_data=fuel_data,
@@ -1255,6 +1257,7 @@ def get_fuel_request_data_by_id():
                 "no_of_ltrs": record.no_of_ltrs,
                 "prev_costltr": record.prev_costltr,
                 "activity_type": record.activity_type,
+                "destination": record.destination,
                 "crewoccupants1": record.crewoccupants1,
                 "crewoccupants2": record.crewoccupants2,
                 "last_fuel_recordltrs": record.last_fuel_recordltrs,

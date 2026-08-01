@@ -9,13 +9,6 @@ let statNames = {
 }
 
 
-let semName = {
-	"1": "1st Sem",
-	"2": "2nd Sem",
-	"3": "Summer", 
-	"all": "All",
-	
-}
 
 async function getPrintableData(){
 	qBuilder.server_address = "_";
@@ -124,13 +117,9 @@ async function generateDataOnDoc(dataraw) {
     _('activity_type').innerText = fuel_req.activity_type    || '--';
     _('crew_1').innerText        = fuel_req.crewoccupants1   || '--';
     _('crew_2').innerText        = fuel_req.crewoccupants2   || '--';
-}
-
-
-function removeZeroSemData(datasets) {
-  return datasets.filter((dataset) =>
-    dataset.data.some(([sem, val]) => val !== 0)
-  );
+	
+    _('destination').innerText = parseDestination(fuel_req.destination)    || '--';
+	
 }
 
 
@@ -150,13 +139,26 @@ function addUniqueString(targetArray, newString) {
 }
 
 
-
-
 function generateTableData(data){
 
 }
 
 	
+
+
+function parseDestination(data){
+	try{
+		let parsed = JSON.parse(data);
+		let extracted = parsed.join(", ");	
+		return extracted;
+	}catch(e){
+		//--
+	}
+	
+	return "--";
+}
+
+
 
 //Calls this function when the page is done loading
 getPrintableData();

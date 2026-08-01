@@ -664,6 +664,8 @@ function clickedOnRow(elm){
 			tag('date_requested',     _('view_stat_1'))[0].innerText = utility.formatDate(fuel_req.date);
 			tag('frs_number',         _('view_stat_1'))[0].innerText = fuel_req.fuel_requisition_no;
 			tag('supplier_name',      _('view_stat_1'))[0].innerText = fuel_req.supplier_vendor_name;
+			
+			tag('destination',      _('view_stat_1'))[0].innerText = parseDestination(fuel_req.destination);
 
 			// Fuel Request Details
 			_('view_no_of_ltrs').value    = raw_json.no_of_ltrs;
@@ -718,6 +720,18 @@ function itemNotifyUpdate(data){
 }
 
 
+
+function parseDestination(data){
+	try{
+		let parsed = JSON.parse(data);
+		let extracted = parsed.join(", ");	
+		return extracted;
+	}catch(e){
+		//--
+	}
+	
+	return "--";
+}
 
 
 //Printing Logics
