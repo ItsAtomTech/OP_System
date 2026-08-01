@@ -680,10 +680,12 @@ function clickedOnRow(elm){
 			_('view_actual_fuel_beg').value   = raw_json.actual_fuel_beg_l      || '--';
 			_('view_actual_fuel_end').value   = raw_json.actual_fuel_endl       || '--';
 			_('view_theo_end').value          = raw_json.theo_end_l             || '--';
-			_('view_surplus_over').value      = isNaN(parseFloat(raw_json.so_theoactl_end_l)) 
-												? '--' 
-												: parseFloat(raw_json.so_theoactl_end_l).toFixed(2);
-
+			_('view_surplus_over').value      = raw_json.so_theoactl_end_l 
+												? raw_json.so_theoactl_end_l 
+												: "--";
+				
+				console.log(raw_json.so_theoactl_end_l);
+				
 			// Activity & Crew
 			_('view_activity_type').value = fuel_req.activity_type;
 			_('view_crew_1').value        = fuel_req.crewoccupants1;

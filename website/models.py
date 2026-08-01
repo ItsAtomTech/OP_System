@@ -63,6 +63,7 @@ class FuelRequisitionRecords(db.Model):
     crewoccupants2 = db.Column(db.String(256))
     status = db.Column(db.String(50))
     last_fuel_recordltrs = db.Column(db.String(256))
+    destination = db.Column(db.String(1024))
     
     json_data = db.Column(db.String(10000))
     misc = db.Column(db.String(1024))

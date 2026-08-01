@@ -529,24 +529,60 @@ let formStructure = {
         },
         {
             "type": "text",
-            "events": {
-                "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
-                "type": "hideon",
-                "targetIndex": "2",
-                "value": "2"
-            },
             "value": "",
             "label": "Activity Type",
             "fancy": true,
             "required": false,
             "description": "",
-			"list": "activity_types",
+			"list": "activity_types_list",
             "group": "g_5145d6e5-19d8-47df-b15d-531c9258d721",
             "row_span": null,
             "col_span": null,
             "span_column": false,
             "id": "activity_type",
             "index": 22
+        },
+		{
+            "type": "table",
+            "value": "",
+            "config": {
+                "config": {
+                    "min": "0",
+                    "max": "0",
+                    "custom_row": true,
+                    "row_count": "1"
+                },
+                "items": [
+                    "Destination"
+                ],
+                "itemsConfig": [
+                    {
+                        "type": "select",
+                         "attributes": {
+							"list":"destination_list"
+						 },
+                        "required": true,
+						"list":"destination_list",
+                    }
+                ],
+                "rowed": true,
+                "fullspan": false,
+                "responsivespan": true
+            },
+            "rowed": true,
+            "fullspan": true,
+            "responsivespan": true,
+            "label": "Destination",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_5145d6e5-19d8-47df-b15d-531c9258d721",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "onchange": "",
+            "id": "destination",
+            "index": 33
         },
         {
             "type": "text",
@@ -627,21 +663,6 @@ let formStructure = {
         }
     ]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

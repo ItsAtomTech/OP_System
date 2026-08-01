@@ -1,7 +1,7 @@
 
 
 //For Saving User
-function submitForm(){
+function submitForm(confirmed){
 	let values = formMaker.retriveFormInput(true);
 	let params = [
 		{
@@ -14,6 +14,19 @@ function submitForm(){
 	if(!validateRequired(formIdCollections)){
 		return;
 	};
+	
+	
+		
+	if(confirmed == undefined){
+		askUser("You are about to save this form entry, are you sure that all fields are correct? ",submitForm,arguments);
+		return;
+	}
+	destroy_dia();
+	
+	if(confirmed != "pass"){
+		return;
+	}
+	
 	
 	//for updating
 	if(pageType == "edit_request"){
@@ -244,6 +257,8 @@ function calculateDistTravelled(elm){
 	
 	calculateEstFuelConsumed();
 	calculateSOEnd();
+	
+	calculateTheoEnd();
 	addFancyPlaceholder();
 	
 	// console.log(odoData, calculation);	
@@ -288,13 +303,9 @@ function calculateEstFuelConsumed(elm){
 	
 	
 	_("est_fuel_consumed").value = (distTravel / averageKM).toFixed(2);
-	
-	
 	return;
 	
-	console.log(_("est_fuel_consumed").value);
-	
-	
+	// console.log(_("est_fuel_consumed").value);
 }
 
 
@@ -310,17 +321,11 @@ function calculateTheoEnd(){
 	// console.log(b);	
 	
 	let c = parseFloat(_("est_fuel_consumed").value);
-	
 	calculatedValue = (a + b) - c;
-		
 	_("theo_end_l").value = calculatedValue;
 	
-	
 	proccessFuelWarn(calculatedValue, FUEL_CAPACITY);
-	
-	
 	calculateSOEnd();
-	
 	addFancyPlaceholder();
 }
 
@@ -335,6 +340,14 @@ function calculateSOEnd(){
 	
 	
 	calculatedValue = (a - b);
+	
+	parseFloat(calculatedValue).toFixed(2);
+	
+	if(calculatedValue <= 0){
+		calculatedValue = Math.abs(calculatedValue);
+	}else if(calculatedValue >= 0){
+		calculatedValue = "("+(calculatedValue)+")";
+	}
 	
 	
 	_("so_theoactl_end_l").value = calculatedValue;

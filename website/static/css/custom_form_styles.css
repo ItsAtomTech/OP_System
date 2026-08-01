@@ -19,10 +19,7 @@ div.tabs_input_table.rowed_table.span_width > div > div > label{
 
 
 .editor_main_con{
-	max-width:1000px;	
-	
-	
-	
+	max-width:1000px;		
 }
 
 .bottom_toolbar{
@@ -32,8 +29,6 @@ div.tabs_input_table.rowed_table.span_width > div > div > label{
 .fancy_form_df{
 	border-color: var(--secondary_color_faded);
 	border-width: 1px !important; 
-	
-	
 }
 
 .cols_con_:has(input:disabled){
@@ -60,3 +55,4 @@ div.tabs_input_table.rowed_table.span_width > div > div > label{
 .fgroup:hover{
 	box-shadow:0 0 2px -2px rgba(40,40,40, 0.5) !important;
 }
+

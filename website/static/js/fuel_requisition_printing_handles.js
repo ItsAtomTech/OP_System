@@ -108,10 +108,10 @@ async function generateDataOnDoc(dataraw) {
     _('actual_fuel_beg').innerText   = raw_json.actual_fuel_beg_l   || '--';
     _('actual_fuel_end').innerText   = raw_json.actual_fuel_endl    || '--';
     _('theo_end').innerText          = raw_json.theo_end_l          || '--';
-    _('surplus_over').innerText      = isNaN(parseFloat(raw_json.so_theoactl_end_l))
-                                       ? '--'
-                                       : parseFloat(raw_json.so_theoactl_end_l).toFixed(2);
-
+    _('surplus_over').innerText      = raw_json.so_theoactl_end_l 
+									? raw_json.so_theoactl_end_l 
+									: "--";
+									
     // Current Fuel Request
     _('supplier_name').innerText  = fuel_req.supplier_vendor_name || '--';
     _('no_of_ltrs').innerText     = raw_json.no_of_ltrs           || '--';
