@@ -672,13 +672,32 @@ function clickedOnRow(){
 	let ev = event;
 	
 	let parent_attrib = (ev.target.parentNode);
-	
+	let dataId;
 	if(!parent_attrib.getAttribute('data_id')){
 		return;
 	};
 	
+	dataId = parent_attrib.getAttribute('data_id');
+	console.log(dataId);
+	
+	let params = [
+		{"name": "", "value": ""},	
+	];
+	
+	
+	qBuilder.sendQuery(showDataView,'get_fuel_s_o',params);	
 	
 }
+
+
+function showDataView(data){
+	    let res_data = (JSON.parse(data.responseText));
+	
+		console.log(res_data);
+	
+}
+
+
 
 
 let selectedItemId;
