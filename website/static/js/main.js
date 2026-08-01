@@ -1224,6 +1224,29 @@ function decople(arr){
 	
 }
 
+function deepCloneWithFunctions(obj) {
+    if (obj === null || typeof obj !== 'object') return obj;
+
+    if (Array.isArray(obj)) {
+        return obj.map(item => deepCloneWithFunctions(item));
+    }
+
+    let clone = {};
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            let val = obj[key];
+            if (typeof val === 'function') {
+                clone[key] = val;
+            } else if (typeof val === 'object' && val !== null) {
+                clone[key] = deepCloneWithFunctions(val);
+            } else {
+                clone[key] = val;
+            }
+        }
+    }
+    return clone;
+}
+
 
 function modifyValue(mode, id){
 	let target = _(id);

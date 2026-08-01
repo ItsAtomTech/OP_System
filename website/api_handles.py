@@ -1081,8 +1081,16 @@ def save_fuel_req():
         activity_type         = data.get("activity_type")
         crewoccupants1        = data.get("crewoccupants1")
         crewoccupants2        = data.get("crewoccupants2")
-        destination        = data.get("destination")
-
+        destination           = data.get("destination")
+        so_theoactl_end_l     = data.get("so_theoactl_end_l", None)
+        
+        if so_theoactl_end_l is not None:
+            s = str(so_theoactl_end_l).strip()
+            if s.startswith("(") and s.endswith(")"):
+                so_theoactl_end_l = float(s[1:-1])
+            else:
+                so_theoactl_end_l = -float(s)
+        
         if not vehicle_id:
             return {"type": "error", "message": "Missing required fields"}
 
@@ -1102,6 +1110,7 @@ def save_fuel_req():
             crewoccupants2=crewoccupants2,
             destination=destination,
             last_fuel_recordltrs=last_fuel_recordltrs,
+            so_theoactl_end_l=so_theoactl_end_l,
             status=None,
             json_data=fuel_data,
             misc=None,
@@ -1249,7 +1258,6 @@ def get_fuel_request_data_by_id():
                 "fuel_requisition_no": record.fuel_requisition_no,
                 "requested_by": record.requested_by,
                 "driver_name": driver_name,
-                "driver_position": driver_position,
                 "branch_id": record.branch_id,
                 "actual_fuel_beg_l": record.actual_fuel_beg_l,
                 "actual_fuel_endl": record.actual_fuel_endl,
@@ -1262,7 +1270,6 @@ def get_fuel_request_data_by_id():
                 "crewoccupants2": record.crewoccupants2,
                 "last_fuel_recordltrs": record.last_fuel_recordltrs,
                 "status": record.status,
-                "misc": record.misc,
                 "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
             },
             "json_data": record.json_data
@@ -1270,7 +1277,107 @@ def get_fuel_request_data_by_id():
 
     except Exception as e:
         return {"type": "error", "message": str(e)}       
+
+
  
+@api_handles.route('/get_fuel_s_o', methods=['POST', 'GET'])
+@login_required
+def get_fuel_s_o():
+    try:
+        vehicle_id = request.form.get("vehicle_id") or request.args.get("vehicle_id")
+        if not vehicle_id:
+            return {"type": "error", "message": "Missing vehicle_id"}
+
+        try:
+            current_page = int(request.form.get("page") or request.args.get("page") or 1)
+        except ValueError:
+            current_page = 1
+
+        per_page = post_per_page
+
+        base_query = db.session.query(
+            FuelRequisitionRecords,
+            DriverCrew.name.label("driver_name"),
+            DriverCrew.position.label("driver_position")
+        ).outerjoin(
+            DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
+        ).filter(
+            FuelRequisitionRecords.vehicle_id == int(vehicle_id),
+            FuelRequisitionRecords.so_theoactl_end_l.isnot(None)
+        ).order_by(
+            FuelRequisitionRecords.date.desc()
+        )
+
+        pagination = base_query.paginate(page=current_page, per_page=per_page, error_out=False)
+        
+        # Fetch vehicle details
+        vehicle = Vehicles.query.get(int(vehicle_id))
+        if not vehicle:
+            return {"type": "error", "message": "Vehicle not found"}
+
+        vehicle_data = {
+            "id": vehicle.id,
+            "plate_no": vehicle.plate_no,
+            "average_km": vehicle.average_km,
+            "capacity_l": vehicle.capacity_l,
+            "description": vehicle.description,
+            "misc": vehicle.misc,
+        }
+        
+        s_list = []
+        o_list = []
+
+        for record, driver_name, driver_position in pagination.items:
+            entry = {
+                "id": record.id,
+                "fuel_requisition_no": record.fuel_requisition_no,
+                "vehicle_id": record.vehicle_id,
+                "requested_by": record.requested_by,
+                "driver_name": driver_name,
+                "driver_position": driver_position,
+                "branch_id": record.branch_id,
+                "actual_fuel_beg_l": record.actual_fuel_beg_l,
+                "actual_fuel_endl": record.actual_fuel_endl,
+                "supplier_vendor_name": record.supplier_vendor_name,
+                "no_of_ltrs": record.no_of_ltrs,
+                "prev_costltr": record.prev_costltr,
+                "activity_type": record.activity_type,
+                "crewoccupants1": record.crewoccupants1,
+                "crewoccupants2": record.crewoccupants2,
+                "status": record.status,
+                "last_fuel_recordltrs": record.last_fuel_recordltrs,
+                "destination": record.destination,
+                "so_theoactl_end_l": record.so_theoactl_end_l,
+                "misc": record.misc,
+                "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
+            }
+
+            try:
+                val = float(record.so_theoactl_end_l)
+                if val > 0:
+                    o_list.append(entry)
+                else:
+                    s_list.append(entry)
+            except (TypeError, ValueError):
+                pass
+
+        return {
+            "type": "success",
+            "vehicle_id": int(vehicle_id),
+            "vehicle": vehicle_data,
+            "vehicle_id": int(vehicle_id),
+            "s": s_list,
+            "o": o_list,
+            "pagination": {
+                "current_page": current_page,
+                "total_pages": pagination.pages,
+                "total_results": pagination.total
+            }
+        }
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
 
 
 @api_handles.route('/remove_fuel_request_file', methods=['POST'])

@@ -668,39 +668,144 @@ function toggleSelectOption(visible=false){
 
 
 // Misc Functions ====
-function clickedOnRow(){
+let qBuilder2 = deepCloneWithFunctions(qBuilder);
+
+function clickedOnRow(id){
 	let ev = event;
+	let parent_attrib;
+	try{
+		parent_attrib = (ev.target.parentNode);
+	}catch(e){
+		parent_attrib = {};
+	}
 	
-	let parent_attrib = (ev.target.parentNode);
-	let dataId;
-	if(!parent_attrib.getAttribute('data_id')){
-		return;
-	};
 	
-	dataId = parent_attrib.getAttribute('data_id');
+	let dataId = id;
+
+	
+
 	console.log(dataId);
 	
 	let params = [
-		{"name": "", "value": ""},	
+		{"name": "vehicle_id", "value": dataId},	
 	];
 	
 	
-	qBuilder.sendQuery(showDataView,'get_fuel_s_o',params);	
-	
+		qBuilder2.sendQuery(generateDataView,'get_fuel_s_o',params);	
+		selectedItemId = dataId;
+
 }
-
-
-function showDataView(data){
-	    let res_data = (JSON.parse(data.responseText));
-	
-		console.log(res_data);
-	
-}
-
-
-
 
 let selectedItemId;
+
+
+
+function generateDataView(data) {
+			let res_data = JSON.parse(data.responseText);
+			let s_list   = res_data.s;
+			let o_list   = res_data.o;
+			let pagination = res_data.pagination;
+			
+			console.log(res_data);
+			
+			
+			if(s_list.length  == 0 && o_list.length == 0){
+				showToast("This vehicle has no history yet!");
+				closeModalContent("view_stat_1");
+				return;
+			}
+			
+			// Vehicle Info
+			tag('plate_no',     _('view_stat_1'))[0].innerText = res_data.vehicle.plate_no      || '--';
+			tag('vehicle_desc', _('view_stat_1'))[0].innerText = res_data.vehicle.description   || '--';
+			tag('capacity_l',   _('view_stat_1'))[0].innerText = res_data.vehicle.capacity_l    || '--';
+			tag('avg_kml',      _('view_stat_1'))[0].innerText = res_data.vehicle.average_km    || '--';
+
+			
+			
+			// Clear tables first
+			_('shortage_table_body').innerHTML = '';
+			_('over_table_body').innerHTML     = '';
+
+			// Shortage Table
+			let shortage_total = 0;
+			if (s_list.length === 0) {
+				_('shortage_table_body').innerHTML = '<tr><td colspan="4" class="centered small">No shortage records found.</td></tr>';
+			} else {
+				s_list.forEach(record => {
+					let row = document.importNode(_('shortage_row_template').content, true);
+					tag('frs_no',      row)[0].innerText = record.fuel_requisition_no || '--';
+					tag('driver_name', row)[0].innerText = record.driver_name         || '--';
+					tag('so_value',    row)[0].innerText = Math.abs(record.so_theoactl_end_l)   || '--';
+					
+					
+					tag('date',        row)[0].innerText = record.date                || '--';
+					
+					_('shortage_table_body').appendChild(row);
+					shortage_total += parseFloat(record.so_theoactl_end_l) || 0;
+				});
+			}
+			tag('shortage_total', _('view_stat_1'))[0].innerText = Math.abs(shortage_total.toFixed(2));
+
+			// Over Table
+			let over_total = 0;
+			if (o_list.length === 0) {
+				_('over_table_body').innerHTML = '<tr><td colspan="4" class="centered small">No over records found.</td></tr>';
+			} else {
+				o_list.forEach(record => {
+					let row = document.importNode(_('over_row_template').content, true);
+					tag('frs_no',      row)[0].innerText = record.fuel_requisition_no || '--';
+					tag('driver_name', row)[0].innerText = record.driver_name         || '--';
+					tag('so_value',    row)[0].innerText = "("+record.so_theoactl_end_l + ")"   || '--';
+					tag('date',        row)[0].innerText = record.date                || '--';
+					_('over_table_body').appendChild(row);
+					over_total += parseFloat(record.so_theoactl_end_l) || 0;
+				});
+			}
+			tag('over_total', _('view_stat_1'))[0].innerText = "("+ over_total.toFixed(2) +")";
+
+			// Pagination
+			let pag_html = '';
+			
+			
+			let generated = generatePagination(pagination,'paginatesSub', 'jumpToPageSub');
+			
+			console.log(generated);
+			
+			_('so_pagination').innerHTML = generated.innerHTML || '';
+
+		showModalContent("view_stat_1");
+}
+		
+		
+
+
+		
+function jumpToPageSub(page_n){
+	page = page_n;
+	
+	let params = [
+		{"name": "vehicle_id", "value": selectedItemId},	
+		{"name": "page", "value": page},	
+	];
+	
+	
+	qBuilder2.sendQuery(generateDataView,'get_fuel_s_o',params);	
+}
+
+
+
+function paginatesSub(dir){
+	qBuilder2.paginate(dir,true);
+		let params = [
+		{"name": "vehicle_id", "value": selectedItemId},	
+
+	];
+	
+	qBuilder2.sendQuery(generateDataView,'get_fuel_s_o', params);	
+};
+
+
 function itemNotifyUpdate(data){
 	
 	if(!data.responseText){

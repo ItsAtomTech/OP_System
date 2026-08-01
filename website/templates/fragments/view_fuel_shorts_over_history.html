@@ -1,0 +1,95 @@
+<div class="modal_main_backdrop padded" id="view_stat_1" inert>
+    <div class="modal_container_box larger_">
+        <!-- Modal Header -->
+        <div class="top_header">
+            <div class="title_form_top">Fuel S/(O) History Details</div>
+            <div class="close_modal_tright" tabindex='1' onclick="closeModalContent('view_stat_1')">&times;</div>
+        </div>
+        <!-- Modal Contents Container -->
+        <div class="option_main_container">
+            <br />
+            <!-- Vehicle Info -->
+            <div class="normal info_items"><span class="fa fa-car"></span> Plate No: <span class="bold" tag="plate_no"> -- </span></div>
+            <div class="normal info_items"><span class="fa fa-truck"></span> Vehicle Description: <span class="bold" tag="vehicle_desc"> -- </span></div>
+            <div class="normal info_items"><span class="fa fa-tint"></span> Fuel Capacity(L): <span class="bold" tag="capacity_l"> -- </span></div>
+            <div class="normal info_items"><span class="fa fa-tachometer"></span> Average Km/L: <span class="bold" tag="avg_kml"> -- </span></div>
+            
+			
+
+            <!-- Shortage Table -->
+            <div class="medium bold info_items centered">
+                <span class="fa fa-exclamation-triangle"></span> Shortage
+            </div>
+
+            <div class="normal info_items centered main_table_container mini_table">
+                <table id="shortage_table" class="">
+                    <thead>
+                        <tr class="small sticky_header padded_header primary_color_invert secondary_background">
+                            <th class="minimum_width">FRS No.</th>
+                            <th class="minimum_width">Driver</th>
+                            <th class="minimum_width">Shortage (L)</th>
+                            <th class="sticky_column_right secondary_background">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shortage_table_body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="normal info_items">
+                Total Shortage: <span class="bold" tag="shortage_total"> -- </span> L
+            </div>
+
+            <br/>
+
+            <!-- Over Table -->
+            <div class="medium bold info_items centered">
+                <span class="fa fa-check"></span> Over
+            </div>
+
+            <div class="normal info_items centered main_table_container mini_table">
+                <table id="over_table" class="">
+                    <thead>
+                        <tr class="small sticky_header padded_header primary_color_invert secondary_background">
+                            <th class="minimum_width">FRS No.</th>
+                            <th class="minimum_width">Driver</th>
+                            <th class="minimum_width">Over (L)</th>
+                            <th class="sticky_column_right secondary_background">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="over_table_body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="normal info_items">
+                Total Over: <span class="bold" tag="over_total"> -- </span> L
+            </div>
+
+            <br/>
+
+            <!-- Pagination -->
+            <div class="normal info_items centered" id="so_pagination">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Shortage Row Template -->
+<template id="shortage_row_template">
+    <tr class="padded_colms small">
+        <td class="tiny" tag="frs_no"> -- </td>
+        <td class="tiny" tag="driver_name"> -- </td>
+        <td class="tiny" tag="so_value"> -- </td>
+        <td class="tiny sticky_column_right primary_background" tag="date"> -- </td>
+    </tr>
+</template>
+
+<!-- Over Row Template -->
+<template id="over_row_template">
+    <tr class="padded_colms small">
+        <td class="tiny" tag="frs_no"> -- </td>
+        <td class="tiny" tag="driver_name"> -- </td>
+        <td class="tiny" tag="so_value"> -- </td>
+        <td class="tiny sticky_column_right primary_background" tag="date"> -- </td>
+    </tr>
+</template>
