@@ -30,7 +30,7 @@ loopback_url_query: str = ""
 db = SQLAlchemy()
 DB_NAME = "OPS_DB.db"
 
-
+version_name = "v1.0 beta"
 
 # WS for Smart Reload
 sock = Sock()
@@ -135,12 +135,11 @@ def create_app():
        
        
         
-    # @app.context_processor
-    # def get_program_():
-        # def get_programs():
-            # deps = Department.query.order_by(Department.name.asc()).all()
-            # return deps
-        # return dict(get_programs=get_programs)     
+    @app.context_processor
+    def get_version_():
+        def get_version():
+            return version_name
+        return dict(get_version=get_version)     
 
         
     @app.context_processor

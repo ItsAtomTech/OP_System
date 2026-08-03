@@ -64,7 +64,8 @@
 				<span class='pass_visib primary_color' onclick='toggle_pass(this, "password-")'>show</span>
 				<input class='log3_in primary_color' type='password' id='password-'  name='password' required placeholder="Enter password"> </input>
 			</div>
-		
+			
+			
 		</div>
 			<div class='form_cons_mid_bar'>
 				<input type='checkbox' id="remember_check" name='remember'><label for="remember_check" class='label small'>Remember Login</label>
@@ -80,6 +81,9 @@
 			<div class='form_cons_bottom_bar'>
 				<input type='hidden' value='{{ nextpage }}' name='nextpage'>
 			</div>
+			
+				<span class="version_number small primary_color_faded"> {{ get_version() }} </span>
+			
 		</form>
 
 	

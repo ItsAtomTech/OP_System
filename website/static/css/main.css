@@ -1011,3 +1011,14 @@ Project Specific Styles
     align-items: center;
 	justify-content:center;
 }
+
+.coming_soon_banner{
+	padding:10px;
+	width:100%;
+	height:100%;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	max-height:600px;
+	
+}

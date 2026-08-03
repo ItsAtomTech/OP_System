@@ -683,9 +683,6 @@ function clickedOnRow(id){
 	let dataId = id;
 
 	
-
-	console.log(dataId);
-	
 	let params = [
 		{"name": "vehicle_id", "value": dataId},	
 	];
@@ -705,10 +702,8 @@ function generateDataView(data) {
 			let s_list   = res_data.s;
 			let o_list   = res_data.o;
 			let pagination = res_data.pagination;
-			
-			console.log(res_data);
-			
-			
+
+						
 			if(s_list.length  == 0 && o_list.length == 0){
 				
 				qBuilder2.page = 1;
@@ -748,10 +743,15 @@ function generateDataView(data) {
 					shortage_total += parseFloat(record.so_theoactl_end_l) || 0;
 				});
 			}
-			tag('shortage_total', _('view_stat_1'))[0].innerText = Math.abs(shortage_total.toFixed(2));
+			
+			let short_total = Math.abs(shortage_total.toFixed(2))
+			
+			tag('shortage_total', _('view_stat_1'))[0].innerText = short_total;
 
 			// Over Table
 			let over_total = 0;
+			
+			
 			if (o_list.length === 0) {
 				_('over_table_body').innerHTML = '<tr><td colspan="4" class="centered small">No over records found.</td></tr>';
 			} else {
@@ -765,15 +765,29 @@ function generateDataView(data) {
 					over_total += parseFloat(record.so_theoactl_end_l) || 0;
 				});
 			}
-			tag('over_total', _('view_stat_1'))[0].innerText = "("+ over_total.toFixed(2) +")";
+			
+			let overTotal = over_total.toFixed(2);
+			
+			over_total = "("+ over_total.toFixed(2) +")";
+			tag('over_total', _('view_stat_1'))[0].innerText = over_total;
+			
+			
+			let overAllTotal = parseFloat(overTotal) + short_total*-1;	
 
+
+			if(overAllTotal <= 0){
+				overAllTotal = Math.abs(overAllTotal);
+			}else if(overAllTotal >= 0){
+				overAllTotal = "("+(overAllTotal)+")";
+			}
+			
+			tag("overallTotal", _('view_stat_1'))[0].innerText = overAllTotal;
+			
 			// Pagination
 			let pag_html = '';
 			
 			
 			let generated = generatePagination(pagination,'paginatesSub', 'jumpToPageSub');
-			
-			console.log(generated);
 			
 			_('so_pagination').innerHTML = generated.innerHTML || '';
 
@@ -781,7 +795,6 @@ function generateDataView(data) {
 }
 		
 		
-
 
 		
 function jumpToPageSub(page_n){
