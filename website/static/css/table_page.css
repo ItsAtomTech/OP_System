@@ -33,6 +33,11 @@
 }
 
 
+
+
+
+
+
 .table_title_con{
 	width:50%;
 	/* border:solid white 1px; */
@@ -626,6 +631,29 @@ th.sortable::after {
 .larger_modal_width{
 	max-width:1200px;
 }
+
+.total_bottom{
+	text-align:right;
+	padding:10px !important;
+}
+
+
+
+#so_pagination > a.disabled{
+	color:var(--primary_color_faded);
+}
+
+#so_pagination > a{
+	color:var(--primary_color);
+	cursor:pointer;
+	user-select:none;
+}
+
+
+#so_pagination > a.active{
+	color:var(--secondary_color);
+}
+
 
 @media (max-width:600px){
 	.top_toolbar_con {

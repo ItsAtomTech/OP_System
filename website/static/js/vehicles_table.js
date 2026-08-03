@@ -710,6 +710,9 @@ function generateDataView(data) {
 			
 			
 			if(s_list.length  == 0 && o_list.length == 0){
+				
+				qBuilder2.page = 1;
+				
 				showToast("This vehicle has no history yet!");
 				closeModalContent("view_stat_1");
 				return;
@@ -786,8 +789,9 @@ function jumpToPageSub(page_n){
 	
 	let params = [
 		{"name": "vehicle_id", "value": selectedItemId},	
-		{"name": "page", "value": page},	
 	];
+	
+	qBuilder2.page = page;
 	
 	
 	qBuilder2.sendQuery(generateDataView,'get_fuel_s_o',params);	
