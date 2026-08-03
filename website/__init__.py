@@ -5,9 +5,7 @@ from flask_login import LoginManager
 from flask_login import current_user
 import os, json, bleach, threading
 
-from flask_sock import Sock
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, FileModifiedEvent
+
 
 from bleach.css_sanitizer import CSSSanitizer
 import time
@@ -30,53 +28,55 @@ loopback_url_query: str = ""
 db = SQLAlchemy()
 DB_NAME = "OPS_DB.db"
 
-version_name = "v1.0 beta"
+version_name = "1.0 beta"
 
 # WS for Smart Reload
-sock = Sock()
-clients = []
 
-class ChangeHandler(FileSystemEventHandler):
-    def __init__(self):
-        self._last_triggered = {}
-        self._debounce_seconds = 0.5
+try:
+    from flask_sock import Sock
+    from watchdog.observers import Observer
+    from watchdog.events import FileSystemEventHandler, FileModifiedEvent
 
-    def on_modified(self, event):
-        if event.is_directory:
-            return
+    sock = Sock()
+    clients = []
 
-        if not isinstance(event, FileModifiedEvent):
-            return
+    class ChangeHandler(FileSystemEventHandler):
+        def __init__(self):
+            self._last_triggered = {}
+            self._debounce_seconds = 0.5
 
-        if not event.src_path.endswith(('.html', '.js', '.css')):
-            return
-
-        now = time.time()
-        src = event.src_path
-
-        if src in self._last_triggered:
-            if now - self._last_triggered[src] < self._debounce_seconds:
+        def on_modified(self, event):
+            if event.is_directory:
                 return
+            if not isinstance(event, FileModifiedEvent):
+                return
+            if not event.src_path.endswith(('.html', '.js', '.css')):
+                return
+            now = time.time()
+            src = event.src_path
+            if src in self._last_triggered:
+                if now - self._last_triggered[src] < self._debounce_seconds:
+                    return
+            self._last_triggered[src] = now
+            for ws in clients[:]:
+                try:
+                    ws.send("reload")
+                except Exception:
+                    clients.remove(ws)
 
-        self._last_triggered[src] = now
+    def watch_files():
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        static_path = os.path.join(base_path, 'static')
+        templates_path = os.path.join(base_path, 'templates')
+        observer = Observer()
+        observer.schedule(ChangeHandler(), path=static_path, recursive=True)
+        observer.schedule(ChangeHandler(), path=templates_path, recursive=True)
+        observer.start()
 
-        for ws in clients[:]:
-            try:
-                ws.send("reload")
-            except Exception:
-                clients.remove(ws)
+    threading.Thread(target=watch_files, daemon=True).start()
 
-def watch_files():
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    static_path = os.path.join(base_path, 'static')
-    templates_path = os.path.join(base_path, 'templates')
-    observer = Observer()
-    observer.schedule(ChangeHandler(), path=static_path, recursive=True)
-    observer.schedule(ChangeHandler(), path=templates_path, recursive=True)
-    observer.start()
-
-threading.Thread(target=watch_files, daemon=True).start()
-
+except ImportError:
+    pass
 
 def create_app():
 
@@ -90,7 +90,6 @@ def create_app():
     
     db.init_app(app)
     
-    sock.init_app(app)
     
     from .views import views
     from .user_control import user_control
@@ -106,11 +105,14 @@ def create_app():
     
     app.debug = os.environ.get('FLASK_DEBUG', '0') == '1'
     
-    if app.debug:
-        sock.init_app(app)
-        with app.app_context():
-            from . import sockets
-
+    try:
+        if app.debug:
+            sock.init_app(app)
+            with app.app_context():
+                from . import sockets
+    
+    except ImportError:
+        pass
 
     from .models import Users, UserType, Department, Vehicles, DriverCrew
 
