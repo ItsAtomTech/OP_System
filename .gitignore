@@ -3,3 +3,5 @@ main.py.lock
 webiste/__pycache__
 .env
 .env
+instance/OPS_DB.db
+OPS_DB.db
