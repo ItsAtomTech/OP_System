@@ -5,3 +5,4 @@ webiste/__pycache__
 .env
 instance/OPS_DB.db
 OPS_DB.db
+/website/__pycache__
