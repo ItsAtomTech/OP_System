@@ -260,16 +260,13 @@ window.addEventListener('message', (event) => {
 	const iframes = document.getElementsByTagName('iframe');
 	let originatingIframe = null;
 	
-	
 		for (let i = 0; i < iframes.length; i++) {
             if (iframes[i].contentWindow === event.source) {
                 originatingIframe = iframes[i];  // This is the iframe that sent the message
                 break;
             }
         }
-	
-	
-	
+		
 	
     // Handle the accepted messages
     const message = event.data;
@@ -411,6 +408,7 @@ function __MONITOR_UNLOADED_MODALFRAME(elm=undefined){
 	}
 	
 }
+
 
 
 try{

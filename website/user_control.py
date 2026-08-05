@@ -150,7 +150,7 @@ def create_account():
             add_account = Users(email=email,
                                 username=user_name,
                         password=generate_password_hash(password, method='pbkdf2:sha256'),
-                                type=1,
+                                type=2,
                                 avatar='user',
                                 status='pending')
             db.session.add(add_account)
@@ -210,7 +210,7 @@ def create_account_json():
             email=email,
             username=user_name,
             password=generate_password_hash(password, method='pbkdf2:sha256'),
-            type=1,
+            type=2,
             avatar='user',
             status='pending'
         )
