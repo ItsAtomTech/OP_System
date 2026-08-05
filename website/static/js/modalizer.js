@@ -1,4 +1,4 @@
-// Modalizer JS by Atomtech v1.2.3
+// Modalizer JS by Atomtech v1.3
 
 // left: 37, up: 38, right: 39, down: 40,
 // spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
@@ -10,7 +10,8 @@ if(typeof(opened_modal) == 'undefined'){
 }
 
 
-
+let REFRESH_HANDLER = undefined;
+let isMinimized = false;
 
 function preventDefault(e) {
   e.preventDefault();
@@ -53,13 +54,13 @@ function enableScroll(elm) {
 var opened_modals = [];
 
 
-function open_modal(link, custom_class=undefined, targetElm=undefined, dialog=false,onclose=undefined){
+function open_modal(link, custom_class=undefined, targetElm=undefined, dialog=false,onclose=undefined, prevent_reload = false){
 	if (window.self !== window.top) {
 		return console.warn("Modalizer not allowed inside iframe window");
 	}
 	let modal_iframe_con
 	
-
+	
 	
 	if(dialog){
 		 modal_iframe_con = document.createElement("dialog");
@@ -103,7 +104,19 @@ function open_modal(link, custom_class=undefined, targetElm=undefined, dialog=fa
 	//setup modal variables
 	let modalID = document.getElementById("md_"+removeSpecialChars(link));
 	
-	if(modalID != null){
+	if(modalID){
+		let hasThis = modalID.classList.remove("minimized_modal");
+		modalID.classList.remove("fade_out_circle");
+		
+		
+		if(hasThis){
+			modalID.classList.add("fade_in_top");
+		}
+		
+
+	}
+	
+	if(modalID != null && prevent_reload == false){
 		//should update the link instead of generating another one.
 		modalID.getElementsByClassName("modal_iframe")[0].src = link;
 		if(custom_class){
@@ -112,6 +125,19 @@ function open_modal(link, custom_class=undefined, targetElm=undefined, dialog=fa
 	
 		let pdata = {'id': modal_iframe_con.getAttribute('id'), time: 10};
 		opened_modal.push(pdata);
+		
+		return modalID;
+		
+	}else if(modalID != null && prevent_reload){
+		//should update the link instead of generating another one.
+		if(custom_class){
+			modalID.classList.add(custom_class);
+		}
+	
+		let pdata = {'id': modal_iframe_con.getAttribute('id'), time: 10, 'prevent_reload': prevent_reload,};
+		opened_modal.push(pdata);
+		
+		postMessageToModal(modalID.getAttribute("id"), "refreshEvent");
 		
 		return modalID;
 	}else{
@@ -183,6 +209,29 @@ function close_modalizer(elm){
 }
 
 
+function minimize_modalizer(elm){
+	let parent = elm.parentNode;
+	parent.classList.add("fade_out_circle");
+	parent.dispatchEvent(new CustomEvent("beforeRemove", { bubbles: true }));
+	
+	let parent_id = parent.getAttribute("id");
+	
+	postMessageToModal(parent_id, "minimized");
+	
+    setTimeout(function() {
+		
+		try{
+			parent.close();
+		}catch(e){
+			// console.log(e);
+		}
+		
+		parent.classList.add("minimized_modal");
+        // parent.remove();
+    }, 500); // 0.5 second delay
+}
+
+
 //Communication
 // Iframe (child) script
 function postMessageToParent(message) {
@@ -191,7 +240,8 @@ function postMessageToParent(message) {
 
 
 function postMessageToModal(id,data){
-	let ids = _("md_"+id);
+	let ids = _("md_"+id) || _(id);
+	
 	let targetIframe = ids.getElementsByTagName("iframe")[0];
 	
 	if (targetIframe && targetIframe.contentWindow) {
@@ -286,6 +336,16 @@ window.addEventListener('message', (event) => {
 		//console.log(originatingIframe, "Status 200");
 		__MONITOR_UNLOADED_MODALFRAME(originatingIframe);
 	};
+	
+	if(message.startsWith('refreshEvent')){
+		
+		if(REFRESH_HANDLER != undefined){
+			REFRESH_HANDLER();
+		}
+	}else if(message.startsWith('minimized')){
+		isMinimized = true;
+	}
+	
 });
 
 
@@ -329,7 +389,7 @@ function __MONITOR_UNLOADED_MODALFRAME(elm=undefined){
 			
 			if(each.time < 1){
 				try{
-					if(_(each.id).checkVisibility()){
+					if(_(each.id).checkVisibility() && each.prevent_reload == false){
 						showToast("Failed to Load Page...");	
 					}
 					close_modalizer(_(each.id).getElementsByTagName("iframe")[0]);
@@ -379,5 +439,4 @@ document.addEventListener('keydown', function(e) {
         return false;
     }
 });
-
 

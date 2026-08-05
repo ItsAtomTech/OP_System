@@ -751,4 +751,13 @@ async function printDoc(){
 }
 
 
-
+REFRESH_HANDLER = function(){
+	
+	if(isMinimized){
+		isMinimized = false;
+		return;
+	}
+	
+	showToast("You are already here!");
+	
+}

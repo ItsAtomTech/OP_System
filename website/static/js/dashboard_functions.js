@@ -29,10 +29,10 @@ function showSubjectManagementPage(elm){
 	
 }
 
-function showRequestForms(elm){
+function xshowRequestForms(elm){
 	activate(elm);
 
-	let page = open_modal("subject_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
+	let page = open_modal("subject_table", 'modal_on_container,no_close_button,page_containment', _('general_container'), false, undefined, true);
 	closeAllPages(page);
 	hideDashboardContents(true);
 	
@@ -68,8 +68,8 @@ function showSettingsPage(elm){
 function showAdminTools(elm){
 	activate(elm);
 
-	let page = open_modal("admin_tools_page", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
+	let page = open_modal("admin_tools_page", 'modal_on_container,no_close_button,page_containment', _('general_container'),false, undefined, true);
+	closeAllPages(page, true);
 	hideDashboardContents(true);
 	
 }
@@ -95,8 +95,8 @@ function showAdminTools(elm){
 function showRequestForms(elm){
 	activate(elm);
 
-	let page = open_modal("request_forms", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
+	let page = open_modal("request_forms", 'modal_on_container,no_close_button,page_containment', _('general_container'),false, undefined, true);
+	closeAllPages(page,true);
 	hideDashboardContents(true);
 	
 }
@@ -107,8 +107,8 @@ function showRequestForms(elm){
 function showRequestFilesPage(elm){
 	activate(elm);
 
-	let page = open_modal("request_files", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
+	let page = open_modal("request_files", 'modal_on_container,no_close_button,page_containment', _('general_container'),false, undefined, true);
+	closeAllPages(page,true);
 	hideDashboardContents(true);
 	
 }
@@ -118,7 +118,7 @@ function showRequestFilesPage(elm){
 
 
 
-function closeAllPages(exclude=undefined){
+function closeAllPages(exclude=undefined,retain_elements=false){
 	forceResize = true;
 	
 	let containment = _('general_container').getElementsByClassName('page_containment');
@@ -136,7 +136,17 @@ function closeAllPages(exclude=undefined){
 		}
 	
 		let close_link = (each.getElementsByClassName("close_modal_rev")[0]);
-		close_modalizer(close_link);
+		
+		if(retain_elements){
+			minimize_modalizer(close_link);
+		}else{
+			close_modalizer(close_link);
+		}
+		
+	
+		
+		
+		
 	}
 	
 }
