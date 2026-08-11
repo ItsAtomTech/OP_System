@@ -193,6 +193,27 @@ let formStructure = {
                 "value": "2"
             },
             "value": "",
+            "label": "Fuel Capacity(L)",
+            "fancy": true,
+            "required": false,
+            "description": "",
+			"disabled": true,
+            "group": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "fuel_capacity_disp",
+            "index": 8
+        },
+        {
+            "type": "text",
+            "events": {
+                "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
+                "type": "hideon",
+                "targetIndex": "2",
+                "value": "2"
+            },
+            "value": "",
             "label": "Vehicle Description",
 			"disabled": true,
             "fancy": true,
@@ -200,7 +221,7 @@ let formStructure = {
             "description": "",
             "group": "g_0e3acac6-a109-4fa7-ba37-f7aa66ef4a87",
             "row_span": null,
-            "col_span": null,
+            "col_span": 2,
             "span_column": false,
             "id": "vehicle_description",
             "index": 9

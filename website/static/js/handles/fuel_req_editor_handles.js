@@ -192,7 +192,8 @@ function loadRecentData(elm){
 		
 		FUEL_CAPACITY = setdata.vehicle.capacity_l;
 		
-		console.log();
+		
+		_("fuel_capacity_disp") ? _("fuel_capacity_disp").value = FUEL_CAPACITY : false;
 		
 		
 		if(setdata.has_recent){
