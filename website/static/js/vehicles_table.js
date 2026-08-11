@@ -435,7 +435,7 @@ function saveItem(){
 	
 	
 	qBuilder.sendQuery(feedBackSaving,"save_vehicle",params);
-	localStorage.setItem("shouldReload","true");
+	localStorage.setItem("shouldReloadVehicle","true");
 	
 }
 
@@ -450,7 +450,7 @@ function feedBackSaving(){
 	function close(){
 		closeModalContent("vehicle_modal");
 	}
-	localStorage.setItem("shouldReload","true");
+	localStorage.setItem("shouldReloadVehicle","true");
 
 }
 
@@ -458,7 +458,6 @@ function feedBackSaving(){
 
 function addNewEntry(){
 	saveMode = "new";
-	
 	
 	_("plate_no").value = "";
 	_("description").value = "";
@@ -498,7 +497,7 @@ function dateFormater(d){
 
 //Other functions
 loadRecords = loadAllItems;
-monitorChanges("shouldReload", loadAllItems);
+monitorChanges("shouldReloadVehicle", loadAllItems);
 
 
 
@@ -532,7 +531,7 @@ function feedBackRemoving(){
 	createDialogue(res_data.type, res_data.message);
 	
 	if(res_data.type == "success"){
-		localStorage.setItem("shouldReload","true");
+		localStorage.setItem("shouldReloadVehicle","true");
 	}	
 }
 
@@ -618,7 +617,7 @@ function parseStatus(data){
 
 
 function doNothing(){
-	localStorage.setItem("shouldReload","true");
+	localStorage.setItem("shouldReloadVehicle","true");
 }
 
 

@@ -71,8 +71,6 @@
 			</div>
 			
 
-			<!-- <a href="#" onclick="addNewEntry()" class="create-action-btn small">  <span class="fa fa-user"> &nbsp;</span> <span> Add Entry</span></a> -->
-		
 			
 
 		</div>
@@ -196,8 +194,6 @@ function findById(arr, id) {
     return arr.find(item => item.id == id) || null;
 }
 
-
-
 </script>
 
 
@@ -205,12 +201,11 @@ function findById(arr, id) {
 
 {% block extra_js %}
 
-<script src="{{ url_for('static', filename='js/fuel_files_table.js') }}"></script>
+<script src="{{ url_for('static', filename='js/handles/fuel_files_table.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/lib/daimofuu_fancylabel.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/daimofuu_titlebar.js') }}"> </script>
-
 
 {% endblock %}
 

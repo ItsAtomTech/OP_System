@@ -38,6 +38,13 @@ let tableFormat = [
 		// parser:parseBranch,
 		
 	},
+	{	
+		label: "Date",
+		data_path: "date",
+		sort: true,
+		parser:utility.dateNormalize,
+		
+	},
 	
 	
 
@@ -392,7 +399,7 @@ function feedBackSaving(){
 	function close(){
 		closeModalContent("input_modal");
 	}
-	localStorage.setItem("shouldReload","true");
+	localStorage.setItem("shouldReloadFuel","true");
 
 }
 
@@ -421,6 +428,9 @@ function genPages(data){
 	_("paginations") ? _("paginations").innerHTML = generated.innerHTML : false;
 }
 
+
+
+
 function paginates(dir){
 	qBuilder.paginate(dir,true);
 	delayedQuerry();
@@ -440,7 +450,7 @@ function dateFormater(d){
 
 //Other functions
 loadRecords = loadAllItems;
-monitorChanges("shouldReload", loadAllItems);
+monitorChanges("shouldReloadFuel", loadAllItems);
 
 
 
@@ -474,7 +484,7 @@ function feedBackRemoving(){
 	createDialogue(res_data.type, res_data.message);
 	
 	if(res_data.type == "success"){
-		localStorage.setItem("shouldReload","true");
+		localStorage.setItem("shouldReloadFuel","true");
 	}	
 }
 
@@ -566,7 +576,7 @@ function parseDepartment(data){
 
 
 function doNothing(){
-	localStorage.setItem("shouldReload","true");
+	localStorage.setItem("shouldReloadFuel","true");
 }
 
 

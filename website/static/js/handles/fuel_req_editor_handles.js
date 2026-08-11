@@ -63,7 +63,7 @@ function feedBackSaving(data){
 		nextFormID = res_data.id;
 		askForPrint();
 	}
-	localStorage.setItem("shouldReloadRequests","true");
+	localStorage.setItem("shouldReloadFuel","true");
 	hasChanges = false;
 }
 
