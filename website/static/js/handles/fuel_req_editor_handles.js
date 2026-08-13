@@ -206,13 +206,17 @@ function loadRecentData(elm){
 			_("prev_costltr").value = setdata.latest_fuel_req.prev_costltr
 			_("actual_fuel_beg_l").value = setdata.latest_fuel_req.actual_fuel_endl
 			
-			console.log(setdata.vehicle);
 			
+			//disable if not empty
+			if(setdata.latest_fuel_req.actual_fuel_endl >= 1){
+				_("actual_fuel_beg_l").disabled = true;
+			}else{
+				_("actual_fuel_beg_l").removeAttribute("disabled");
+			}
 
 			processOPrevOdo(setdata.latest_fuel_req.last_fuel_recordltrs);
 			
-			
-			
+
 		}else{
 			
 			_("last_fuel_date").value = "";
@@ -285,16 +289,30 @@ function processOPrevOdo(data){
 		
 		setValues("last_fuel_recordltrs",JSON.stringify(partData),formDatas.forms[formIdCollections.indexOf("last_fuel_recordltrs")])
 		
+		let parent = _("table_last_fuel_recordltrs_");
+		let previousOdoInput = parent.querySelector('[column_name="Previous Odo"]');
+		
+		if(prevData.length >= 1){
+			previousOdoInput.disabled = true; 
+		}else{
+			previousOdoInput.removeAttribute('disabled');
+		}
+		
+		
 	}catch(e){
 		
 		let partData = [['', '']];
-		setValues("last_fuel_recordltrs",JSON.stringify(partData),formDatas.forms[formIdCollections.indexOf("last_fuel_recordltrs")])
-		
+		setValues("last_fuel_recordltrs",JSON.stringify(partData),formDatas.forms[formIdCollections.indexOf("last_fuel_recordltrs")]);
+		let parent = _("table_last_fuel_recordltrs_");
+		let previousOdoInput = parent.querySelector('[column_name="Previous Odo"]');
+			previousOdoInput.removeAttribute('disabled');
 		//
 	}
 	
 	
 }
+
+
 
 
 function calculateEstFuelConsumed(elm){

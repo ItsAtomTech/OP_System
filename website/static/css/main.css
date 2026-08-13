@@ -276,10 +276,9 @@ select > option{
   display: none;
 }
 
-.hide_main_con > *{
+.hide_main_con > *:not(.modal_iframe_con) {
   display: none !important;
 }
-
 
 .hide_from_view{
 	  display: none !important;
