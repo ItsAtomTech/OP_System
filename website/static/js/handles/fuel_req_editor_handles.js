@@ -29,14 +29,15 @@ function submitForm(confirmed){
 	
 	
 	//for updating
-	if(pageType == "edit_request"){
+	if(pageType == "fuel_requisition_edit"){
 		let custom_params = {
-		"name": "request_id",
-		"value": getparam('request_id'),
+		"name": "id",
+		"value": getparam('id')
+,
 		}
 		
 		params.push(custom_params);
-		qBuilder.sendQuery(feedBackSaving,"", params);
+		qBuilder.sendQuery(feedBackSaving,"fuel_requisition_update", params);
 		createDialogue("wait");
 		return;
 	}
@@ -55,7 +56,7 @@ function submitForm(confirmed){
 function feedBackSaving(data){
 	let res_data = (JSON.parse(event.target.responseText));
 	createDialogue("info", res_data.message);
-	if(res_data.type == "success" && pageType != "edit_purchase_request"){
+	if(res_data.type == "success" && pageType != "fuel_requisition_edit"){
 		window.setTimeout(close, 1000);
 	}
 	
@@ -98,7 +99,10 @@ function loadForEdit(){
 		"data": getparam('id'),
 		}
 	];
-	qBuilder.sendQuery(loadIntoForms,"", params);
+	
+	_("_0").value = "Fuel Request Edit";
+	
+	qBuilder.sendQuery(loadIntoForms,"get_fuel_request_data_by_id", params);
 	
 	//_("_0").value = "Update On Probation Student";
 	
@@ -107,17 +111,31 @@ function loadForEdit(){
 let userID = undefined;
 function loadIntoForms(){
 	let setdata = JSON.parse(event.target.responseText);
-	
-	console.log(setdata);
+	let extractedJSON;
 	
 	if(setdata.type != "success"){
 		return;
 	}
 	
-	userID = current_user_id;
+	if(setdata.json_data){
+		try{
+			extractedJSON = JSON.parse(setdata.json_data);
+		}catch(e){
+			extractedJSON = {};
+			//--	
+		}
+	}
 	
+	if(setdata.fuel_req.status == "approved"){
+		loadForms(1,0,1,1);
+		createDialogue("info", "It appears that this record can no longer be edited");
+	}
+	
+	
+	disablePreFields();	
+	userID = current_user_id;	
 	loadEvents();	
-	let datajs = setdata.student;
+	let datajs = extractedJSON;
 	
 	    for (let key in datajs) {
         if (datajs.hasOwnProperty(key)) {
@@ -135,12 +153,20 @@ function loadIntoForms(){
 			}
         }
     }
+		
 	addFancyPlaceholder();
 }
 
 
-if(pageType == "edit_student"){
+function disablePreFields(){
+	_("plate_no").disabled = true;
+		
+}
+
+
+if(pageType == "fuel_requisition_edit"){
 	loadForEdit();
+	
 }
 
 
@@ -149,8 +175,7 @@ function cancelEditor(){
 		postMessageToParent("close");
 		return;
 	}
-	
-	
+		
 	let conf = window.confirm("Are you sure to discard your changes? ");	
 	if(conf == true){
 		postMessageToParent("close");
@@ -182,9 +207,6 @@ function loadRecentData(elm){
 		if(setdata.type != "success"){
 			return createDialogue("error",setdata.message);
 		}
-		
-		
-		// console.log(setdata.latest_fuel_req);
 		
 		//Proccess Vehicle Details
 		_("vehicle_description").value = setdata.vehicle.description;
@@ -296,8 +318,7 @@ function processOPrevOdo(data){
 			previousOdoInput.disabled = true; 
 		}else{
 			previousOdoInput.removeAttribute('disabled');
-		}
-		
+		}		
 		
 	}catch(e){
 		
@@ -307,8 +328,7 @@ function processOPrevOdo(data){
 		let previousOdoInput = parent.querySelector('[column_name="Previous Odo"]');
 			previousOdoInput.removeAttribute('disabled');
 		//
-	}
-	
+	}	
 	
 }
 
@@ -319,8 +339,7 @@ function calculateEstFuelConsumed(elm){
 	
 	let distTravel = _("dist_travelled_kms").value;
 	let averageKM = _("average_kml").value;
-	
-	
+		
 	_("est_fuel_consumed").value = (distTravel / averageKM).toFixed(2);
 	return;
 	
@@ -358,8 +377,7 @@ function calculateSOEnd(){
 	let b = parseFloat(_("theo_end_l").value);
 	
 	
-	calculatedValue = (a - b);
-	
+	calculatedValue = (a - b);	
 	parseFloat(calculatedValue).toFixed(2);
 	
 	if(calculatedValue <= 0){
@@ -367,8 +385,7 @@ function calculateSOEnd(){
 	}else if(calculatedValue >= 0){
 		calculatedValue = "("+(calculatedValue)+")";
 	}
-	
-	
+		
 	_("so_theoactl_end_l").value = calculatedValue;
 	addFancyPlaceholder();
 	

@@ -42,6 +42,11 @@ div.tabs_input_table.rowed_table.span_width > div > div > label{
 	
 }
 
+select.form_display:disabled{
+	 border-color: rgba(200,200,200,0.5);
+	 
+}
+
 
 .cols_con_:has(input) input {
 	

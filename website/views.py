@@ -135,6 +135,16 @@ def fuel_requisition_():
     return render_template("forms/fuel_requisition_form.html", user=current_user, page=page)
     
     
+        
+    
+    
+@views.route('/update_fuelfile_editor', methods=['GET', 'POST'])
+def update_fuelfile_editor_():
+    page = 'fuel_requisition_edit'
+
+    return render_template("forms/fuel_requisition_form.html", user=current_user, page=page)
+    
+    
     
 
 

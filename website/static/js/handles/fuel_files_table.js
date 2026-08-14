@@ -371,13 +371,19 @@ function clearAll(el){
 function loadItemToEdit(id){
 	
 	let item_id = parseInt(id);	
-	let params = [{"name":"crew_id", "value": item_id}];
+	let params = [{"name":"id", "value": item_id}];
+	
+
+	
+	console.log(id);
+	
+	if(inIframe()){
+		postMessageToParent('openModal:{"link":"update_fuelfile_editor?id='+id+'","custom_class":"no_close_button,blurred"}');
+	}else{
+		open_modal('update_fuelfile_editor?id='+id,'no_close_button,blurred');
+	}
 	
 	
-	return showToast("Not yet implemented");
-	
-	//To-Do: 
-	// Open using modalizer the view for Fuel Req. Form
 }
 
 

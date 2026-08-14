@@ -315,12 +315,14 @@ let formStructure = {
                     {
                         "type": "text",
                         "attributes": {},
+						"required":true,
 						"disabled":false,
 						"onchange": "calculateDistTravelled(this)",
                     },
                     {
                         "type": "text",
                         "attributes": {},
+						"required":true,
 						"onchange": "calculateDistTravelled(this)",
                     }
                 ],

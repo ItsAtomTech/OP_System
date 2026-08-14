@@ -1127,6 +1127,76 @@ def save_fuel_req():
 
 
 
+@api_handles.route('/fuel_requisition_update', methods=['POST'])
+@login_required
+def fuel_requisition_update_():
+    if not is_admin():
+        return {"type": "error", "message": "No permission to perform this action"}
+    try:
+        fuel_data = request.form.get("form_data")
+        record_id = request.form.get("id")
+        if not fuel_data or not record_id:
+            return {"type": "error", "message": "Missing fuel_data or id"}
+        data = json.loads(fuel_data)
+        record = FuelRequisitionRecords.query.get(int(record_id))
+        if not record:
+            return {"type": "error", "message": "Record not found"}
+        
+        if (record.status == "approved"):
+            return {"type": "error", "message": "You can no longer edit this Data"}
+        
+        date_requested        = data.get("date_requested")
+        fuel_requisition_no   = data.get("fuel_requisition_no")
+        vehicle_id            = data.get("plate_no")
+        requested_by          = data.get("driverrequested_by")
+        branch_id             = data.get("branch_id")
+        last_fuel_recordltrs  = data.get("last_fuel_recordltrs")
+        actual_fuel_beg_l     = data.get("actual_fuel_beg_l")
+        actual_fuel_endl      = data.get("actual_fuel_endl")
+        supplier_vendor_name  = data.get("supplier_vendor_name")
+        no_of_ltrs            = data.get("no_of_ltrs")
+        prev_costltr          = data.get("prev_costltr")
+        activity_type         = data.get("activity_type")
+        crewoccupants1        = data.get("crewoccupants1")
+        crewoccupants2        = data.get("crewoccupants2")
+        destination           = data.get("destination")
+        so_theoactl_end_l     = data.get("so_theoactl_end_l", None)
+
+        if so_theoactl_end_l is not None:
+            s = str(so_theoactl_end_l).strip()
+            if s.startswith("(") and s.endswith(")"):
+                so_theoactl_end_l = float(s[1:-1])
+            else:
+                so_theoactl_end_l = -float(s)
+
+        if not vehicle_id:
+            return {"type": "error", "message": "Missing required fields"}
+
+        record.vehicle_id          = int(vehicle_id)
+        record.fuel_requisition_no = fuel_requisition_no
+        record.requested_by        = int(requested_by) if requested_by else None
+        record.branch_id           = branch_id
+        record.last_fuel_recordltrs= last_fuel_recordltrs
+        record.actual_fuel_beg_l   = actual_fuel_beg_l
+        record.actual_fuel_endl    = actual_fuel_endl
+        record.supplier_vendor_name= supplier_vendor_name
+        record.no_of_ltrs          = no_of_ltrs
+        record.prev_costltr        = prev_costltr
+        record.activity_type       = activity_type
+        record.crewoccupants1      = crewoccupants1
+        record.crewoccupants2      = crewoccupants2
+        record.destination         = destination
+        record.so_theoactl_end_l   = so_theoactl_end_l
+        record.json_data           = fuel_data
+        record.date                = datetime.strptime(date_requested, "%Y-%m-%d") if date_requested else record.date
+
+        db.session.commit()
+        return {"type": "success", "message": "Fuel Requisition updated successfully!", "id": record.id}
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+
+
 
 @api_handles.route('/get_latest_fuel_req_by_vehicle', methods=['POST','GET'])
 @login_required
