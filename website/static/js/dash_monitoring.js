@@ -134,12 +134,12 @@ let fetchDashboardStats = async function () {
 		let unknown = kpi_data.count_by_status["Unknown"];
 		let approved = kpi_data.count_by_status["approved"];
 		
-		
+				
 		if(unknown != undefined || approved != undefined){
-			PENDING_TOTAL += unknown;
-			TOTAL_APPROVED += approved;	
+			PENDING_TOTAL  += Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
+			TOTAL_APPROVED += Number.isNaN(Number(approved)) ? 0 : (approved || 0);
 		}
-		
+				
 		
 	}
 	

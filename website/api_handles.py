@@ -445,7 +445,7 @@ def get_purchase_request_by_id():
 def get_fuel_requisition_stats():
     try:
         data = json.loads(request.form.get('form_data', '{}'))
-        year_range = request.form.get("year_ranges") or "2000, 2023"
+        year_range = request.form.get("year_ranges") or "2000, 2027"
         year_range = [int(y.strip()) for y in year_range.split(",")]
         
         
