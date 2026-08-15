@@ -1,7 +1,7 @@
   // ========================================
   // UPDATE GREETING AND SEMESTER
   // ========================================
-  let isBannerArtOn = false;
+ let isBannerArtOn = false;
  
  
  function getArtParam() {
@@ -14,7 +14,7 @@
 
 
   
-  let updateGreeting = function () {
+ let updateGreeting = function () {
     const today = new Date();
     const formatted =
       (today.getMonth() + 1).toString().padStart(2, "0") +
@@ -82,64 +82,87 @@
     } else {
       semesterYear = currentYear - 1 + "-" + currentYear;
     }
-    const semesterEl = _("dash_semester");
-    if (semesterEl) semesterEl.textContent = semesterYear;
+    
+	
+	
   };
 
-  // ========================================
-  // FETCH DASHBOARD STATISTICS FROM DATABASE
-  // ========================================
-  let fetchDashboardStats = async function () {
-    try {
+// ========================================
+// FETCH DASHBOARD STATISTICS FROM DATABASE
+// ========================================
+
+
+let TOTAL_APPROVED = 0;
+let PENDING_TOTAL = 0;
+let TOTAL_RECORDS = 0;
+
+let firstRun = true;
+
+
+let fetchDashboardStats = async function () {
+	
+	if(!_("stat_grid").checkVisibility()){
+		return;
+	}
+	
+	applyFilterRange();
+	
+	let custom_param = [
+		{"name":"year_ranges", value: year_ranges},
+	];
+	
+	let stats = await qBuilder.sendPromise(getFuelRequisitionStats, "get_fuel_requisition_stats",custom_param);
+	
+	
+	if(firstRun){
+		firstRun = false;
+		return;
+	}
+	
+	processTotals();
+	
+	
+	function getFuelRequisitionStats(data){
+			TOTAL_APPROVED = 0;
+			PENDING_TOTAL = 0;
 		
-		if(!_("stat_grid").checkVisibility()){
-			return;
+		let resData = (JSON.parse(data.responseText));
+		let forms = resData;
+		
+		let kpi_data = forms.data.kpi;
+		
+		let unknown = kpi_data.count_by_status["Unknown"];
+		let approved = kpi_data.count_by_status["approved"];
+		
+		
+		if(unknown != undefined || approved != undefined){
+			PENDING_TOTAL += unknown;
+			TOTAL_APPROVED += approved;	
 		}
 		
-        
-       const params = new URLSearchParams({
-        filters: typeof(qBuilder) != 'undefined' ? JSON.stringify(qBuilder.filters) : undefined,
-      }); 
-        
-      const response = await fetch('/dashboard_stats', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString(),
-      });
-        
-        
-      const result = await response.json();
 		
+	}
+	
+	
+	
+	function processTotals(){
+			
+		TOTAL_RECORDS = TOTAL_APPROVED + PENDING_TOTAL;
 		
-      if (result.type === 'success') {
-        // Update stat numbers with animation
-        updateStatNumber('stat_probation', result.stats.probation);
-        updateStatNumber('stat_tracking', result.stats.tracking);
-        updateStatNumber('stat_failed', result.stats.failed);
-        updateStatNumber('stat_passed', result.stats.passed);
-        updateStatNumber('stat_shift', result.stats.advised_shift);
-        updateStatNumber('stat_transfer', result.stats.advised_transfer);
-      } else {
-        console.error('Failed to fetch stats:', result.message);
-        // Show error state
-        _('stat_probation').textContent = '--';
-        _('stat_tracking').textContent = '--';
-        _('stat_failed').textContent = '--';
-        _('stat_passed').textContent = '--';
-        _('stat_shift').textContent = '--';
-        _('stat_transfer').textContent = '--';
-      }
-    } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
-      // Show error state
-      _('stat_probation').textContent = '--';
-      _('stat_tracking').textContent = '--';
-      _('stat_failed').textContent = '--';
-      _('stat_passed').textContent = '--';
-    }
-  };
+		updateStatNumber("stat_total",TOTAL_RECORDS);
+		updateStatNumber("stat_approved",TOTAL_APPROVED);
+		updateStatNumber("stat_pending",PENDING_TOTAL);
+		
+	}
+	
+	
+
+	//To-Do: Fetch Dashboard Data here
+	
+
+};
+  
+  
 
   // ========================================
   // ANIMATE NUMBER UPDATES
@@ -178,14 +201,17 @@
   // INITIALIZE DASHBOARD
   // ========================================
   updateGreeting();
+  applyFilterRange();
   fetchDashboardStats();
 
   // Refresh greeting every 5 seconds
   window.setInterval(updateGreeting, 5000);
   
   // Refresh stats every 5 seconds
-  window.setInterval(fetchDashboardStats, 5000);
+  window.setInterval(fetchDashboardStats, 3000);
   
+  
+  _("year_filter_end") ? _("year_filter_end").value = getCurrentYear() : false;
   
   
   // Other interactive functions:
@@ -306,123 +332,7 @@ async function initPrintReport(elm){
 
 
 
-
-
-
-//=== Extented Dashboard Charts Breakdown Logic ===
-async function getExpandedReport(elm){
-	let currentFilters = decople(qBuilder.filters);
-	let stat_filters = getActiveTagsCard();
-	
-	
-	let combined_filters = {
-		currentFilters,
-		stat_filters,
-	}
-	
-	
-	
-	let params =  [
-		{ 
-			"name":"currentFilters",
-			"value": JSON.stringify(currentFilters),
-		},
-		{ 
-			"name":"stat_filters",
-			"value": JSON.stringify(stat_filters),
-		}
-	];
-	
-	
-	qBuilder.sendQuery(processData,'get_data_per_stat',params);	
-	
-	
-	function processData(dataraw){
-		let data = (JSON.parse(dataraw.responseText));
-		let stats = data.data_per_stat;
-	
-	let charts = tag("breakdown_charts",_("more_charts"));
-		
-
-	for(each of charts){
-		each.parentNode.parentNode.classList.add("hide_chart");
-	}
-		
-		
-	for(each of stats){
-			
-			_("breakdown_"+each.stat_name).parentNode.parentNode.classList.remove("hide_chart");
-			
-			generateMultiBarChart(
-			  removeZeroSemData(each.departments),
-			  "breakdown_"+each.stat_name,
-			  false  
-			);
-		
-		}
-	}
-	
-	
-	function removeZeroSemData(datasets) {
-		return datasets.filter((dataset) =>
-		dataset.data.some(([sem, val]) => val !== 0)
-		);
-	}
-	
-	
-}
-
-
-function proccessExpandedCharts(){
-	showToast("Generating Results...");
-	getExpandedReport();
-	
-};
-
-
-function changeLayout(){
-	_("more_charts").classList.toggle("grid_layout_expanded");
-	
-	
-}
-
-
 // expanded Chart Button  
-
-(function () {
-    var more = _("more_charts");
-    var arrow = _("revealArrow");
-
-    // Show arrow when user scrolls down far enough
-    function onScroll() {
-      if (window.scrollY > 120) {
-        arrow.classList.add("show");
-      } else {
-        arrow.classList.remove("show");
-      }
-    }
-
-    function reveal() {
-      more.classList.add("show");
-      arrow.classList.remove("show");
-	
-		proccessExpandedCharts();
-			
-      setTimeout(function () {
-        utility.smoothScroll(_("more_charts"), "start")}, 50);
-
-      arrow.classList.add("hidden");
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      window.addEventListener("scroll", onScroll, { passive: true });
-      arrow.addEventListener("click", reveal);
-
-      onScroll();
-    });
-  })();
-
-
 
 
 
@@ -459,8 +369,6 @@ function observeNewNotification(data){
         return;
     }
     
-    
-
     
     if(res.unseen_notifications >= 1){
         _("notification_button").classList.add("new_notification"); 

@@ -36,12 +36,6 @@ const datasets = [
   
 ];
 
-generateMultiLineChart(
-  datasets,
-  'probationLineChart',
-  false  // asPercentage = false for raw numbers
-);
-
 
 
 
@@ -50,46 +44,12 @@ qBuilder.server_address = "_";
 //getsems_progdata
 
 
-
-
-
-function getSemServerData(){
-	qBuilder.filters["department_filter"] = program_filter.join(",");
-	qBuilder.filters["year_range"] = year_range;
-	qBuilder.filters["semester"] = _("probation_filter_semester").value || "all";
-	
-	if(!_("stat_grid").checkVisibility()){// when stats grid is hidden, don't call on server
-		return;
-	}
-	
-	
-	let querys = qBuilder.sendQuery(renderToGraph,"getsems_progdata",[],undefined);
-
-	
-}
-
-
-function renderToGraph(data){
-	let setsdata = JSON.parse(event.target.responseText);
-	// console.log(setsdata);
-	
-	generateMultiLineChart(
-	  setsdata.data,
-	  'probationLineChart',
-	  false  // asPercentage = false for raw numbers
-	);
-	
-	
-}
-
-
-
+let year_ranges = "2000,2026";
 
 
 //Filters and Modal Pickers Function:
 
 let program_filter = [];
-let year_range = ""
 
 
  function searchProgramOptions(searchText) {
@@ -156,13 +116,7 @@ function saveSelection(){
 	
 	showToast("Selections Applied");
 	
-	try{
-		getSemServerData();
-		showSelectionOnButton();
-	}catch(e){
-		//---
-	}
-	
+
 		
 	try{
 		fetchDashboardStats();
@@ -244,6 +198,7 @@ _("year_filter_end").value = current_year_value;
 function filterOnYears(){
 	let start = _("year_filter_start").value;
 	let end = _("year_filter_end").value;
+		
 	
 	if (!start) {
         let min = _("year_filter_start").getAttribute("min");
@@ -253,9 +208,13 @@ function filterOnYears(){
     if (!end) {
         end = current_year_value;
     }
-
-    year_range = `${start},${end}`;	
+	
+	
+	
+    year_ranges = start+","+end;	
 }
+
+
 
 function applyFilterRange(){
 	filterOnYears();
@@ -264,12 +223,6 @@ function applyFilterRange(){
 		return false;
 	};
 	
-	try{
-		getSemServerData();
-	}catch(e){
-		//---
-	}
-	
 		
 	try{
 		fetchDashboardStats();
@@ -277,6 +230,3 @@ function applyFilterRange(){
 		//
 	}
 }
-
-getSemServerData();
-window.setInterval(getSemServerData, 4000);

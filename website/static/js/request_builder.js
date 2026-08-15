@@ -1,4 +1,4 @@
-//request builder v1.2
+//request builder v1.3
 const qBuilder = {
 	
 	//params instances
@@ -118,6 +118,23 @@ const qBuilder = {
 		
 	},
 	
+	sendPromise: function(func=undefined, customURL=undefined, customParams=[], errorHandler=undefined){
+		return new Promise((resolve, reject) => {
+			this.sendQuery(
+				function(response){
+					if(func) func(response);
+					resolve(response);
+				},
+				customURL,
+				customParams,
+				function(err){
+					if(errorHandler) errorHandler(err);
+					reject(err);
+				}
+			);
+		});
+	},
+		
 	server_response: undefined,
 	
 	

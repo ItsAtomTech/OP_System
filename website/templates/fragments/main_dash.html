@@ -1,0 +1,259 @@
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/main_home_dash.css') }}"
+/>
+
+
+<style>
+  /* Loader spinner for loading state */
+  .loader-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: currentColor;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Make stat cards clickable */
+  .dash_stat_card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .dash_stat_card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .dash_stat_card:active {
+    transform: translateY(-2px);
+  }
+</style>
+
+
+
+
+<div class="dash_contents_con">
+  
+  <!-- Greeting Banner -->
+  <div class="dash_greeting_banner primary_background" id="dash_greeting_banner">
+  
+  
+<div class="dash_greeting_avatar">
+  <img
+    src="{% if current_user.is_authenticated %}
+            {{ url_for('static', filename='images/' + current_user.avatar + '.png') }}
+         {% else %}
+            {{ url_for('static', filename='images/user.png') }}
+         {% endif %}"
+    alt="User Avatar"
+    class="greeting_avatar_img"
+    onerror="
+      this.style.background = '#4a5a9a';
+      this.src = '';
+      this.onerror = null;
+    "
+  />
+</div>
+
+<div class="dash_greeting_text">
+  <div class="dash_greeting_name primary_color_invert">
+    <span id="dash_greeting_time">Hello</span>, 
+    {% if current_user.is_authenticated %}
+      {{ current_user.username }} <span class="role_text normal">({{ get_user_type(current_user.type).type }})</span>
+    {% else %}
+      Visitor
+    {% endif %}
+  </div>
+
+  <div class="dash_greeting_meta primary_color_invert">
+    <span>Date: <span id="dash_today_date">--/--/----</span></span>
+    
+	
+  </div>
+</div>
+    
+    <div class="bg_banner"></div>
+  </div>
+<div class=" filter_bar">
+
+<section class="chart_filter_bar">
+  <div class="chart_filter_item">
+    <label
+      class="chart_filter_label primary_color bold small "
+      for="probation-filter-program"
+      >File Categories</label
+    >
+    <input type="button"
+	class="df_button flexed full_width secondary_background primary_color_invert"
+      id="probation-filter-program"
+      class="chart_filter_select primary_color"
+	  value="Select Categories"
+	  
+	  onclick='showToast("Coming Soon...");showModalContent("department_modal");'
+    />
+	
+	
+	
+
+  </div>
+
+  <div class="chart_filter_item">
+    <label
+      class="chart_filter_label primary_color bold small"
+      for="year_filter_start"
+      >Year Range</label
+    >
+    <div class="flexed padded_gap input_styles">
+      <input
+      id="year_filter_start"
+      class="chart_filter_select primary_color "
+      type="number"
+      name="year"
+      min="1921"
+      value="2000"
+	  onchange="applyFilterRange();"
+    >
+
+    </input>
+	
+	
+    <input
+      id="year_filter_end"
+      class="chart_filter_select primary_color"
+      type="number"
+      value="2000"
+      name="year"
+      min="1900"
+	  onchange="applyFilterRange();"
+    >
+
+    </input>  
+    
+	<div class="df_button_flat primary_color flexed medium center_all" tooltip="Print Reports" onclick="showToast('Coming Soon...'); //initPrintReport(this)" > 
+		<span class="fa fa-print"  > </span>
+	</div>
+	
+    </div>
+    
+  </div>
+  
+  <div class="chart_filter_item input_styles">
+    <!-- <label -->
+      <!-- class="chart_filter_label primary_color bold small" -->
+      <!-- for="probation-filter-semester" -->
+      <!-- >Semester Range</label -->
+    <!-- > -->
+	
+	
+	<div class="flexed padded_gap input_styles">
+	
+		<!-- <select -->
+		  <!-- id="probation_filter_semester" -->
+		  <!-- class="chart_filter_select primary_color" -->
+		  <!-- onchange="getSemServerData();" -->
+		<!-- > -->
+		  <!-- <option value="all">All Semesters</option> -->
+		  <!-- <option value="1">1st Semester</option> -->
+		  <!-- <option value="2">2nd Semester</option> -->
+		  <!-- <option value="3">Summer</option> -->
+		<!-- </select> -->
+		
+
+	
+	</div>
+
+	
+  </div>
+  
+</section>
+
+</div>
+
+
+  
+  <!-- Stat Cards -->
+  <div class="dash_cards_grid" id="stat_grid">
+
+	<!-- Approved Card -->
+	<div class="dash_stat_card primary_background" tag="on_tracking">
+	  <div class="dash_stat_label primary_color small">Approved Files</div>
+	  <div class="dash_stat_body">
+		<span class="dash_stat_icon dash_stat_icon_success">
+		  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+			<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+		  </svg>
+		</span>
+		<span class="dash_stat_number primary_color" id="stat_approved">
+		  <span class="loader-spinner"></span>
+		</span>
+	  </div>
+	</div>
+
+
+
+	<!-- Pending Card -->
+	<div class="dash_stat_card primary_background" tag="total_failed">
+	  <div class="dash_stat_label primary_color small">Pending Files</div>
+	  <div class="dash_stat_body">
+		<span class="dash_stat_icon dash_stat_icon_warn">
+		  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+			<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+					 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+		  </svg>
+		</span>
+		<span class="dash_stat_number primary_color" id="stat_pending">
+		  <span class="loader-spinner"></span>
+		</span>
+	  </div>
+	</div>
+
+
+
+	<!-- Totality Card -->
+	<div class="dash_stat_card primary_background" tag="total_passed">
+	  <div class="dash_stat_label primary_color small">Total Records</div>
+	  <div class="dash_stat_body">
+		<span class="dash_stat_icon dash_stat_icon_success">
+		  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+			<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0
+					 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5
+					 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7
+					 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12
+					 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>
+		  </svg>
+		</span>
+		<span class="dash_stat_number primary_color" id="stat_total">
+		  <span class="loader-spinner"></span>
+		</span>
+	  </div>
+	</div>
+
+    <div class="dash_stat_card primary_color primary_background action_done" onclick="endSelectionCards(this);proccessExpandedCharts();" ontouchend="endSelectionCards(this);proccessExpandedCharts()">
+    
+    <span class="medium"><span class="fa fa-check"> </span> Done </span>
+    </div>
+    
+	
+	
+  </div>
+</div>
+
+
+<div class="padded center medium primary_color faded"> 
+
+<p> Pretty Charts Coming very soon...
+
+</div>
+
+
+
+{% block extra_js %}
+<script defer src="{{ url_for('static', filename='js/dash_monitoring.js') }}"> </script>
+{% endblock %}
+

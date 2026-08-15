@@ -700,7 +700,6 @@ function search_(id){
 }
 
 function getCurrentYear() {
-  // Muku gathers the present moment and extracts just the year for thee!
   return new Date().getFullYear();
 }
 

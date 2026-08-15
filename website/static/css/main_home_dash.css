@@ -1,0 +1,585 @@
+/* Styles for the the Main Dashboard Fragment */
+@-webkit-keyframes pulse {
+  0%   { opacity: 0.6; }
+  50%  { opacity: 1;   }
+  100% { opacity: 0.6; }
+}
+
+@keyframes pulse {
+  0%   { opacity: 0.6; }
+  50%  { opacity: 1;   }
+  100% { opacity: 0.6; }
+}
+
+
+/* =====================================================
+   Main Home Dashboard Styles
+   ===================================================== */
+
+
+
+.dash_contents_con {
+	box-sizing: border-box;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	font-family: Gotham Rounded, sans-serif;
+}
+
+/* ---- Greeting Banner ---- */
+.dash_greeting_banner {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 18px 24px;
+	border-radius: 15px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+	
+	background-color:rgba(30,30,30,0.2);
+	background-image:url('../images/day_v1.png');
+		background-color:rgba(30,30,30,0.2);
+	background-size:cover;
+	
+	background-position: center center; /* or just center */
+    background-repeat: no-repeat;
+	position:relative;
+	overflow:hidden;
+	-webkit-transition:2s;
+	transition:2s;
+	min-height: 90px;
+}
+
+
+
+.dash_greeting_banner.afternoon {
+		background-image:url('../images/afternoon_v1.png');
+}
+
+
+
+.dash_greeting_banner.evening {
+		background-image:url('../images/night_v1.png');
+}
+
+
+.dash_greeting_banner.nobanner_art{
+	background-image:unset;
+}
+
+.dash_greeting_banner > .bg_banner{
+	
+	position:absolute;
+	width:100%;
+	left:0px;
+	height:100%;
+	background:rgba(20,20,20, 0.07);
+	z-index:1;
+	
+}
+
+
+
+/* ---- Greeting Banner End ---- */
+
+
+
+
+
+.dash_greeting_avatar {
+	width: 65px;
+	height: 65px;
+	border-radius: 50%;
+	overflow: hidden;
+	flex-shrink: 0;
+	/* background: var(--secondary_background, #3f51b5); */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index:2;
+}
+
+.greeting_avatar_img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+.dash_greeting_text {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	z-index:2;
+}
+
+.role_text{
+	text-transform:capitalize;
+}
+
+
+.dash_greeting_name {
+	font-size: 1.55em;
+	font-weight: bold;
+	line-height: 1.2;
+}
+
+.dash_greeting_meta {
+	font-size: 0.85em;
+	opacity: 0.75;
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.meta_sep {
+	opacity: 0.4;
+}
+
+/* ---- Stat Cards Grid ---- */
+.dash_cards_grid {
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+}
+
+.dash_stat_card {
+	box-sizing: border-box;
+	border-radius: 12px;
+	padding: 18px 20px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	-webkit-transition: transform 0.2s ease, box-shadow 0.2s ease;
+	min-height: 130px;
+	user-select:none;
+}
+
+.dash_stat_card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.dash_stat_label {
+	font-weight: bold;
+    font-family: 'Gotham Rounded';
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	opacity: 0.85;
+}
+
+.dash_stat_body {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex: 1;
+}
+
+.dash_stat_icon {
+	width: 50px;
+	height: auto;
+    padding: 8px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    background-color: var(--secondary_color_faded);
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+}
+
+.dash_stat_icon svg {
+	width: 100%;
+	height: 100%;
+}
+
+.dash_stat_icon_warn {
+	color: #e0a020;
+	width: 50px;
+	height: auto;
+    padding: 8px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    background-color: var(--secondary_color_faded1);
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+}
+
+.dash_stat_icon_warn svg {
+	width: 100%;
+	height: 100%;
+}
+
+.dash_stat_icon_success {
+	color: #3aaa5c;
+	width: 50px;
+	height: auto;
+    padding: 8px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    background-color: var(--secondary_color_faded2);
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+
+}
+
+.dash_stat_icon_success svg {
+	width: 100%;
+	height: 100%;
+}
+
+.dash_stat_number {
+	font-size: 2.4em;
+	font-weight: bold;
+	line-height: 1;
+}
+
+
+
+
+#hide_from_view{
+	display:none;
+}
+
+
+.full_width{
+	max-width:unset;
+	width:100%;
+}
+
+
+.centered_flex{
+	justify-content:center;
+	align-items:center;
+	
+}
+
+
+.df_form_con{
+	box-shadow:none;
+}
+
+.df_form_con:hover{
+	box-shadow:none;
+}
+
+
+/* Filter Bars and other  */
+
+#probation_chart_con {
+box-sizing: border-box;
+border-radius: 12px;
+padding: 18px 20px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+margin: 20px auto;
+/* max-width: 900px; */
+}
+
+#probation_chart_con .chart_title {
+text-transform: uppercase;
+letter-spacing: 0.5px;
+opacity: 0.85;
+margin-bottom: 16px;
+text-align: center;
+}
+
+#probation_chart_con canvas {
+max-height: 350px;
+}
+
+.probation_chart_con {
+box-sizing: border-box;
+border-radius: 12px;
+padding: 18px 20px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+margin: 20px auto;
+/* max-width: 900px; */
+}
+
+.probation_chart_con .chart_title {
+text-transform: uppercase;
+letter-spacing: 0.5px;
+opacity: 0.85;
+margin-bottom: 16px;
+text-align: center;
+}
+
+.probation_chart_con canvas {
+max-height: 350px;
+}
+
+.padded_container {
+padding: 20px;
+}
+
+.chart_filter_bar {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+padding: 0 20px 8px;
+margin: 0 auto;
+background-color: var(--primary_background);
+padding: 18px 20px;
+border-radius: 12px;
+}
+
+.chart_filter_item {
+min-width: 190px;
+flex: 1 1 220px;
+}
+
+.chart_filter_label {
+display: block;
+margin-bottom: 6px;
+text-transform: uppercase;
+letter-spacing: 0.4px;
+opacity: 0.85;
+font-family: "Gotham Rounded";
+}
+
+.chart_filter_select {
+width: 100%;
+padding: 8px 10px;
+border-radius: 8px;
+border: 1px solid rgba(0, 0, 0, 0.15);
+background: transparent;
+outline: none;
+}
+
+.padded_gap{
+gap:10px;
+}
+
+  
+.filter_bar{
+	padding-bottom:0px !important;
+}
+
+.input_styles > input{
+	min-height:40px;
+}
+.input_styles > select{
+	min-height:40px;
+}
+
+
+
+/* Animations */
+.add_hover_effect:not(.action_done){
+	transform:scale(0.9,0.9) !important;
+	transition:0.2s !important;
+	transition-delay:0.2s !important;
+	opacity:0.5;
+	cursor:pointer;
+}
+
+.selection_started > .dash_stat_card{
+	-webkit-animation: pulse 1s ease-in-out infinite;
+	animation:pulse 1s ease-in-out infinite;
+	cursor:pointer;
+}
+
+
+.dash_stat_card.action_done{
+	justify-content:center;
+	align-items:center;
+	user-select:none;
+	pointer-events:none;
+	
+	opacity:0;	
+	height:0px;
+	display:none;
+}
+
+
+
+.selection_started > .dash_stat_card.action_done{
+	justify-content:center;
+	align-items:center;
+	pointer-events:all;
+	animation:none;
+	opacity:1;	
+	display:flex;
+}
+
+
+.de_selected_card{
+	opacity:0.95 !important;
+	animation:none !important;
+	border:dashed 2px gray;
+	-webkit-transform:scale(0.98,0.98) !important;
+	transform:scale(0.98,0.98) !important;
+	cursor:help;
+	
+}
+
+
+  /* Hide extra charts by default; reveal with `.show` */
+  #more_charts {
+    display: none;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 360ms ease;
+  }
+  #more_charts.show {
+    display: block;
+    opacity: 1;
+    max-height: 4000px;
+  }
+
+
+  /* Floating reveal arrow */
+  #revealArrow {
+    position: absolute;
+    bottom: 15px;
+    background: var(--primary_background);
+    color: var(--primary_color);
+    width: 50px;
+    height: 20px;
+    border-radius: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    z-index: 120;
+  }
+  #revealArrow.show {
+    display: flex;
+  }
+  #revealArrow .arrow {
+    transform: translateY(0);
+    transition: transform 220ms ease;
+  }
+  #revealArrow:hover .arrow {
+    transform: translateY(2px);
+  }
+
+  /* Small helper to hide arrow after reveal if desired */
+  #revealArrow.hidden {
+    display: none !important;
+  }
+  /* Shared chart container style so all charts have same design */
+  .chart_container {
+    position: relative;
+  }
+
+.centered{
+	align-items:center;
+	justify-content:center;
+
+}
+
+.padded_side{
+	padding-left:12px;
+	padding-right:12px;
+}
+
+
+.hide_chart{
+	display:none;
+	
+}
+.less_padding_top{
+	padding-top:0px !important;
+}
+
+.gap{
+	gap:10px;
+}
+
+.hide_main_con > .show.grid_layout_expanded{
+	display:none !important;
+	
+}
+
+
+/* Layout Options and Views */
+.grid_layout_expanded {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 5px; 
+	max-height:350px;
+}
+
+
+.grid_layout_expanded .action_button {
+    grid-column: 1 / -1; 
+}
+
+
+.grid_layout_expanded > .padded_container {
+	overflow:hidden;
+}
+
+
+@media (max-width: 1000px) {
+	.dash_cards_grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 600px) {
+	.dash_contents_con {
+		padding: 12px;
+		gap: 14px;
+	}
+	.padded_container {
+		padding: 12px !important;
+		
+	}
+
+	.dash_cards_grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+	}
+
+	.dash_stat_card {
+		min-height: 100px;
+		padding: 14px;
+	}
+
+	.dash_stat_number {
+		font-size: 1.8em;
+	}
+
+	.dash_greeting_name {
+		font-size: 1.15em;
+	}
+
+	.dash_greeting_avatar {
+		width: 48px;
+		height: 48px;
+	}
+	
+	.less_padding_top{
+	padding-top:0px !important;
+	
+	}
+	
+
+}
+
+@media (max-width: 400px) {
+	.dash_cards_grid {
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+
+
+@media (min-width: 1280px) {
+    .grid_layout_expanded {
+        grid-template-columns: 1fr 1fr;
+    }
+}

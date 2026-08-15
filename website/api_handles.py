@@ -438,6 +438,200 @@ def get_purchase_request_by_id():
 
 
 # ================================
+# Dashboard APIs Start
+# ===========================-----
+@api_handles.route('/get_fuel_requisition_stats', methods=['POST', 'GET'])
+@login_required
+def get_fuel_requisition_stats():
+    try:
+        data = json.loads(request.form.get('form_data', '{}'))
+        year_range = request.form.get("year_ranges") or "2000, 2023"
+        year_range = [int(y.strip()) for y in year_range.split(",")]
+        
+        
+        query = db.session.query(
+            FuelRequisitionRecords.destination,
+            FuelRequisitionRecords.no_of_ltrs,
+            FuelRequisitionRecords.so_theoactl_end_l,
+            FuelRequisitionRecords.status,
+            FuelRequisitionRecords.type,
+            FuelRequisitionRecords.date,
+            FuelRequisitionRecords.activity_type,
+            Vehicles.plate_no,
+            DriverCrew.name.label('driver_name'),
+        ).join(Vehicles, FuelRequisitionRecords.vehicle_id == Vehicles.id, isouter=True) \
+         .join(DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id, isouter=True)
+
+        if year_range and len(year_range) == 2:
+            start_year = datetime(year_range[0], 1, 1)
+            end_year = datetime(year_range[1], 12, 31, 23, 59, 59)
+            query = query.filter(
+                FuelRequisitionRecords.date >= start_year,
+                FuelRequisitionRecords.date <= end_year
+            )
+
+        records = query.all()
+
+        # ── helpers ──────────────────────────────────────────────
+        def to_float(val):
+            try:
+                v = str(val).strip()
+                if v.startswith('(') and v.endswith(')'):
+                    return float(v[1:-1])
+                return float(v)
+            except:
+                return 0.0
+
+        def is_shortage(val):
+            try:
+                v = str(val).strip()
+                if v.startswith('(') and v.endswith(')'):
+                    return True
+                return float(v) <= 0
+            except:
+                return False
+
+        # ── KPI ──────────────────────────────────────────────────
+        total_records = len(records)
+        total_liters = sum(to_float(r.no_of_ltrs) for r in records)
+
+        liters_by_status = {}
+        count_by_status = {}
+        for r in records:
+            s = r.status or 'Unknown'
+            liters_by_status[s] = liters_by_status.get(s, 0.0) + to_float(r.no_of_ltrs)
+            count_by_status[s] = count_by_status.get(s, 0) + 1
+
+        count_by_type = {}
+        for r in records:
+            t = r.type or 'Unknown'
+            count_by_type[t] = count_by_type.get(t, 0) + 1
+
+        # ── Vehicle-based ─────────────────────────────────────────
+        vehicle_liters = {}
+        vehicle_count = {}
+        for r in records:
+            vname = r.plate_no or 'Unknown'
+            vehicle_liters[vname] = vehicle_liters.get(vname, 0.0) + to_float(r.no_of_ltrs)
+            vehicle_count[vname] = vehicle_count.get(vname, 0) + 1
+
+        top_vehicles_by_liters = sorted(vehicle_liters.items(), key=lambda x: x[1], reverse=True)[:10]
+        top_vehicles_by_count = sorted(vehicle_count.items(), key=lambda x: x[1], reverse=True)[:10]
+        avg_liters_per_vehicle = {k: round(vehicle_liters[k] / vehicle_count[k], 2) for k in vehicle_liters}
+
+        # ── Driver-based ──────────────────────────────────────────
+        driver_liters = {}
+        driver_count = {}
+        for r in records:
+            dname = r.driver_name or 'Unknown'
+            driver_liters[dname] = driver_liters.get(dname, 0.0) + to_float(r.no_of_ltrs)
+            driver_count[dname] = driver_count.get(dname, 0) + 1
+
+        top_drivers_by_count = sorted(driver_count.items(), key=lambda x: x[1], reverse=True)[:10]
+        top_drivers_by_liters = sorted(driver_liters.items(), key=lambda x: x[1], reverse=True)[:10]
+
+        # ── Time-based ────────────────────────────────────────────
+        count_by_month = {}
+        liters_by_month = {}
+        count_by_day = {}
+        for r in records:
+            if r.date:
+                month_key = r.date.strftime('%Y-%m')
+                day_key = r.date.strftime('%Y-%m-%d')
+                count_by_month[month_key] = count_by_month.get(month_key, 0) + 1
+                liters_by_month[month_key] = liters_by_month.get(month_key, 0.0) + to_float(r.no_of_ltrs)
+                count_by_day[day_key] = count_by_day.get(day_key, 0) + 1
+
+        # ── Shortage / Over ───────────────────────────────────────
+        shortage_count = 0
+        over_count = 0
+        shortage_by_vehicle = {}
+        shortage_by_driver = {}
+        for r in records:
+            vname = r.plate_no or 'Unknown'
+            dname = r.driver_name or 'Unknown'
+            if r.so_theoactl_end_l and str(r.so_theoactl_end_l).strip() not in ('', 'None'):
+                if is_shortage(r.so_theoactl_end_l):
+                    shortage_count += 1
+                    shortage_by_vehicle[vname] = shortage_by_vehicle.get(vname, 0) + 1
+                    shortage_by_driver[dname] = shortage_by_driver.get(dname, 0) + 1
+                else:
+                    over_count += 1
+
+        # ── Destination / Activity ────────────────────────────────
+        top_destinations = {}
+        for r in records:
+            try:
+                dest_list = json.loads(r.destination or '[]')
+                for item in dest_list:
+                    dest = item[0] if isinstance(item, list) and item else str(item)
+                    top_destinations[dest] = top_destinations.get(dest, 0) + 1
+            except:
+                dest = r.destination or 'Unknown'
+                top_destinations[dest] = top_destinations.get(dest, 0) + 1
+
+        top_destinations = sorted(top_destinations.items(), key=lambda x: x[1], reverse=True)[:10]
+
+        count_by_activity = {}
+        for r in records:
+            act = r.activity_type or 'Unknown'
+            count_by_activity[act] = count_by_activity.get(act, 0) + 1
+
+        # ── Response ──────────────────────────────────────────────
+        return jsonify({
+            'type': 'success',
+            'data': {
+                'kpi': {
+                    'total_records': total_records,
+                    'total_liters': round(total_liters, 2),
+                    'liters_by_status': liters_by_status,
+                    'count_by_status': count_by_status,
+                    'count_by_type': count_by_type,
+                },
+                'vehicle': {
+                    'top_by_liters': top_vehicles_by_liters,
+                    'top_by_count': top_vehicles_by_count,
+                    'avg_liters': avg_liters_per_vehicle,
+                },
+                'driver': {
+                    'top_by_count': top_drivers_by_count,
+                    'top_by_liters': top_drivers_by_liters,
+                },
+                'time': {
+                    'count_by_month': dict(sorted(count_by_month.items())),
+                    'liters_by_month': dict(sorted(liters_by_month.items())),
+                    'count_by_day': dict(sorted(count_by_day.items())),
+                },
+                'shortage_over': {
+                    'shortage_count': shortage_count,
+                    'over_count': over_count,
+                    'shortage_by_vehicle': sorted(shortage_by_vehicle.items(), key=lambda x: x[1], reverse=True)[:10],
+                    'shortage_by_driver': sorted(shortage_by_driver.items(), key=lambda x: x[1], reverse=True)[:10],
+                },
+                'destination_activity': {
+                    'top_destinations': top_destinations,
+                    'count_by_activity': count_by_activity,
+                },
+            }
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+        
+        
+# ===========================-----
+# Dashboard API End
+# ================================
+
+
+
+
+
+
+
+
+# ================================
 # Vehicles Section
 # ================================
 @api_handles.route('/save_vehicle', methods=['POST'])

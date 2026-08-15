@@ -78,6 +78,13 @@ function isDataDifferent(oldData, newData) {
   return false; // No differences found
 }
 
+function parseProgramName(){
+	
+	
+	return null;
+}
+
+
 function generatePieChart(
   data,
   elementId = "myGraph",
