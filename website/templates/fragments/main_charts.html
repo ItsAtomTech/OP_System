@@ -1,0 +1,163 @@
+
+<!-- Floating reveal arrow (appears when user scrolls) - placed just outside the first chart -->
+
+<div class="flexed centered padded hidden">
+
+	<div id="revealArrow" title="Show more charts" aria-hidden="true">
+	  <svg
+		class="arrow"
+		width="22"
+		height="22"
+		viewBox="0 0 24 24"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+	  >
+		<path d="M12 16L6 10H18L12 16Z" fill="currentColor" />
+	  </svg>
+	</div>
+
+</div>
+
+
+
+
+<div id="more_charts" class="show grid_layout_expanded" tag="fuel_requisition_charts">
+	<div class="flexed padded_container less_padding_top gap action_button">
+		<button class="df_button_flat primary_background primary_color" onclick="generateFuelRequisitionCharts()" tooltip="Refresh the Expanded Chart Views">
+			<span class="fa fa-refresh"></span>
+		</button>	
+		<button class="df_button_flat primary_background primary_color" onclick="changeLayout()" tooltip="Toggle layout">
+			<span class="fa fa-columns"></span>
+		</button>
+	</div>
+	
+	
+
+<div class="flexed padded_container less_padding_top gap medium primary_color action_button"> 
+	<div class="fuel-chart-title-wrap">
+    <span class="fuel-chart-title-icon fa fa-bar-chart"></span>
+    <div class="fuel-chart-title-text">
+        Fuel & Fleet Performance Dashboard
+        <div class="fuel-chart-title-sub">Requisition Analytics at a Glance</div>
+    </div>
+</div>
+</div>
+
+	
+	<!-- Activity Distribution -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Activity Distribution</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_activity_distribution"></canvas>
+		</div>
+	</div>
+
+	<!-- Top Destinations -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Top Destinations</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_top_destinations"></canvas>
+		</div>
+	</div>
+
+	<!-- Vehicle Trip Count -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Vehicle Trip Count</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_vehicle_trip_count"></canvas>
+		</div>
+	</div>
+
+	<!-- Vehicle Liters Consumed -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Vehicle Liters Consumed</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_vehicle_liters"></canvas>
+		</div>
+	</div>
+
+	<!-- Vehicle Average Liters -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Vehicle Average Liters per Trip</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_vehicle_avg_liters"></canvas>
+		</div>
+	</div>
+
+	<!-- Driver Trip Count -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Driver Trip Count</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_driver_trip_count"></canvas>
+		</div>
+	</div>
+
+	<!-- Driver Liters Consumed -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Driver Liters Consumed</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_driver_liters"></canvas>
+		</div>
+	</div>
+
+	<!-- Daily Trip Count -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Daily Trip Count</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_daily_count"></canvas>
+		</div>
+	</div>
+
+	<!-- Monthly Trip Count -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Monthly Trip Count</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_monthly_count"></canvas>
+		</div>
+	</div>
+
+	<!-- Monthly Liters -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Monthly Liters Consumed</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_monthly_liters"></canvas>
+		</div>
+	</div>
+
+	<!-- Shortage vs Over -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Shortage vs Over</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_shortage_vs_over"></canvas>
+		</div>
+	</div>
+
+	<!-- Shortage by Driver -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Shortage by Driver</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_shortage_by_driver"></canvas>
+		</div>
+	</div>
+
+	<!-- Shortage by Vehicle -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Shortage by Vehicle</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_shortage_by_vehicle"></canvas>
+		</div>
+	</div>
+
+	<!-- KPI: Status Count -->
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Records by Status</div>
+			<canvas tag="fuel_req_charts" id="fuel_chart_status_count"></canvas>
+		</div>
+	</div>
+
+
+</div>
+<script>
+
+</script>

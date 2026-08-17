@@ -97,7 +97,7 @@ let PENDING_TOTAL = 0;
 let TOTAL_RECORDS = 0;
 
 let firstRun = true;
-
+let collectedDatas = {};
 
 let fetchDashboardStats = async function () {
 	
@@ -128,7 +128,8 @@ let fetchDashboardStats = async function () {
 		
 		let resData = (JSON.parse(data.responseText));
 		let forms = resData;
-		
+			collectedDatas["fuel_requisition"] = forms;
+			
 		let kpi_data = forms.data.kpi;
 		
 		let unknown = kpi_data.count_by_status["Unknown"];
@@ -156,7 +157,9 @@ let fetchDashboardStats = async function () {
 	}
 	
 	
-
+	proccessChartEvents();
+	
+	
 	//To-Do: Fetch Dashboard Data here
 	
 
@@ -203,6 +206,10 @@ let fetchDashboardStats = async function () {
   updateGreeting();
   applyFilterRange();
   fetchDashboardStats();
+	
+  // Per chart fetching
+  
+
 
   // Refresh greeting every 5 seconds
   window.setInterval(updateGreeting, 5000);
@@ -408,3 +415,174 @@ window.setInterval(monitorNotifCounts, 3000);
 
 
 
+
+//Other Essential functions for chart generations
+
+
+function changeLayout(){
+	_("more_charts").classList.toggle("grid_layout_expanded");
+	
+	
+}
+
+
+
+
+// ====================================================
+// Chart functions ====================================
+// ====================================================
+function proccessChartEvents(){
+	
+	if (tag("fuel_requisition_charts")[0].checkVisibility())generateFuelRequisitionCharts(collectedDatas["fuel_requisition"].data);
+		
+}
+
+
+	
+function generateFuelRequisitionCharts(data) {
+	if(data == undefined){
+		return console.warn("generateFuelRequisitionCharts: didn't got a valid data");
+	};
+	
+	
+    const objTo2D = (obj) => Object.entries(obj).map(([k, v]) => [k, v]);
+	
+	// Lambda Funcitons for defered render
+	
+    let tasks = [
+
+        // -- destination_activity --------------------------------------
+
+        () => generatePieChart(
+            objTo2D(data.destination_activity.count_by_activity),
+            "fuel_chart_activity_distribution",
+            "Activity Distribution",
+            true
+        ),
+
+        () => generateHorizontalBarChart(
+            data.destination_activity.top_destinations,
+            "fuel_chart_top_destinations",
+            "Top Destinations",
+            materialColors,
+            true,
+            (value) => value
+        ),
+
+        // -- vehicle ---------------------------------------------------
+
+        () => generateHorizontalBarChart(
+            data.vehicle.top_by_count,
+            "fuel_chart_vehicle_trip_count",
+            "Vehicle Trip Count",
+            materialColors,
+            true,
+            (value) => value
+        ),
+
+        () => generateHorizontalBarChart(
+            data.vehicle.top_by_liters,
+            "fuel_chart_vehicle_liters",
+            "Vehicle Liters Consumed",
+            materialColors,
+            true,
+            (value) => abbreviateNumber(value).abbreviated
+        ),
+
+        () => generateVerticalBarChart(
+            objTo2D(data.vehicle.avg_liters),
+            "fuel_chart_vehicle_avg_liters",
+            "Avg Liters per Trip",
+            false
+        ),
+
+        // -- driver ----------------------------------------------------
+
+        () => generateHorizontalBarChart(
+            data.driver.top_by_count,
+            "fuel_chart_driver_trip_count",
+            "Driver Trip Count",
+            materialColors,
+            true,
+            (value) => value
+        ),
+
+        () => generateHorizontalBarChart(
+            data.driver.top_by_liters,
+            "fuel_chart_driver_liters",
+            "Driver Liters Consumed",
+            materialColors,
+            true,
+            (value) => abbreviateNumber(value).abbreviated
+        ),
+
+        // -- time ------------------------------------------------------
+
+        () => generateShadedLineChart(
+            objTo2D(data.time.count_by_day),
+            "fuel_chart_daily_count",
+            "Daily Trip Count",
+            false
+        ),
+
+        () => generateVerticalBarChart(
+            objTo2D(data.time.count_by_month),
+            "fuel_chart_monthly_count",
+            "Monthly Trip Count",
+            false
+        ),
+
+        () => generateVerticalBarChart(
+            objTo2D(data.time.liters_by_month),
+            "fuel_chart_monthly_liters",
+            "Monthly Liters",
+            false
+        ),
+
+        // -- shortage_over ---------------------------------------------
+
+        () => generatePieChart(
+            [
+                ["Shortage", data.shortage_over.shortage_count],
+                ["Over",     data.shortage_over.over_count]
+            ],
+            "fuel_chart_shortage_vs_over",
+            "Shortage vs Over",
+            true
+        ),
+
+        () => generateHorizontalBarChart(
+            data.shortage_over.shortage_by_driver,
+            "fuel_chart_shortage_by_driver",
+            "Shortage by Driver",
+            materialColors,
+            true,
+            (value) => value
+        ),
+
+        () => generateHorizontalBarChart(
+            data.shortage_over.shortage_by_vehicle,
+            "fuel_chart_shortage_by_vehicle",
+            "Shortage by Vehicle",
+            materialColors,
+            true,
+            (value) => value
+        ),
+
+        // -- kpi -------------------------------------------------------
+
+        () => generatePieChart(
+            objTo2D(data.kpi.count_by_status),
+            "fuel_chart_status_count",
+            "Records by Status",
+            true
+        ),
+
+
+
+    ];
+
+    tasks.forEach((task, i) => {
+        setTimeout(task, i * 30);
+    });
+}

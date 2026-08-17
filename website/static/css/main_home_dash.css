@@ -523,6 +523,41 @@ gap:10px;
 }
 
 
+
+.fuel-chart-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-left: 4px solid var(--secondary_color_faded2, #2196F3);
+    margin-bottom: 8px;
+}
+
+.fuel-chart-title-icon {
+    font-size: 1.8rem;
+    color: var(--primary_color, #2196F3);
+    opacity: 0.85;
+}
+
+.fuel-chart-title-text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary_color);
+    letter-spacing: 0.4px;
+    line-height: 1.2;
+}
+
+.fuel-chart-title-sub {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--primary_color);
+    opacity: 0.55;
+    letter-spacing: 0.6px;
+    margin-top: 2px;
+}
+
+
+
 @media (max-width: 1000px) {
 	.dash_cards_grid {
 		grid-template-columns: repeat(2, 1fr);
