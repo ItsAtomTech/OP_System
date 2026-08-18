@@ -708,7 +708,15 @@ function clickedOnRow(elm){
 			_('view_activity_type').value = fuel_req.activity_type;
 			_('view_crew_1').value        = fuel_req.crewoccupants1;
 			_('view_crew_2').value        = fuel_req.crewoccupants2;
-
+			
+			
+			console.log(fuel_req.status);
+			
+			
+			_("status_option_").value = (fuel_req.status == "approved" ? "approved" : "pending" );
+			
+			
+			
 			addFancyPlaceholder();
 		}
 	
@@ -716,6 +724,32 @@ function clickedOnRow(elm){
 	showModalContent("view_stat_1");
 }
 
+
+async function assignedReqStatus(elm){
+	if (targetID == undefined){
+		return;
+	}
+	
+	let values = elm.value;
+	
+	let itemvalue = [
+		{"name":"request_id", "value": targetID},
+		{"name":"status", "value": values},
+	];
+	
+	createDialogue("wait");
+	await qBuilder.sendPromise(updateListen,"updateFuelReqStatus",itemvalue);
+	destroy_dia();
+	
+	function updateListen(data){
+			let res_data = (JSON.parse(data.responseText));
+			showToast(res_data.message);
+			
+			
+		
+	}
+	
+}
 
 
 

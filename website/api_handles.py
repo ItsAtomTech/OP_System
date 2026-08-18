@@ -1644,6 +1644,34 @@ def get_fuel_s_o():
 
 
 
+@api_handles.route('/updateFuelReqStatus', methods=['POST'])
+@login_required
+def updateFuelReqStatus():
+    try:
+        if not is_admin():
+            return jsonify({'type': 'error', 'message': 'Unauthorized'})
+
+        request_id = request.form.get("request_id")
+        status = request.form.get("status")
+
+        if not all([request_id, status]):
+            return jsonify({'type': 'error', 'message': 'Missing required fields'})
+
+        record = FuelRequisitionRecords.query.get(request_id)
+        if not record:
+            return jsonify({'type': 'error', 'message': 'Record not found'})
+
+        record.status = status
+        db.session.commit()
+
+        return jsonify({'type': 'success', 'message': 'Status updated successfully'})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+
+
+
 @api_handles.route('/remove_fuel_request_file', methods=['POST'])
 @login_required
 def remove_fuel_request_file():
