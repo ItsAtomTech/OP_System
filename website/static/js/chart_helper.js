@@ -78,10 +78,8 @@ function isDataDifferent(oldData, newData) {
   return false; // No differences found
 }
 
-function parseProgramName(){
-	
-	
-	return null;
+function parseProgramName(name) {
+    return name;
 }
 
 
@@ -755,6 +753,9 @@ function applyChartTheme() {
 // Example usage: note the data format is 2d arrays
 // let datas = [['Some Long', 3], ['data2', 1], ['data3', 3]];
 // generatePieChart(datas);
+
+
+
 
 // ====================
 // Pie Chart Generators End

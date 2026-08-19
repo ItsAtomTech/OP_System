@@ -431,10 +431,12 @@ gap:10px;
     overflow: hidden;
     transition: all 360ms ease;
   }
+  
   #more_charts.show {
     display: block;
     opacity: 1;
-    max-height: 4000px;
+    max-height: unset;
+	
   }
 
 
