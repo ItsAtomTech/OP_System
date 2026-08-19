@@ -28,7 +28,7 @@ loopback_url_query: str = ""
 db = SQLAlchemy()
 DB_NAME = "OPS_DB.db"
 
-version_name = "1.2 beta"
+version_name = "1.3 beta"
 
 # WS for Smart Reload
 
