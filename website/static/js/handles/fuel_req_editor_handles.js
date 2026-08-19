@@ -198,6 +198,10 @@ function loadRecentData(elm){
 		return;
 	}
 	
+	if(_("date_requested").value.length > 0){
+		custom_param.push({"name": "date_requested", value: _("date_requested").value });
+	}
+	
 	qBuilder.sendQuery(proccess,"get_latest_fuel_req_by_vehicle", custom_param);
 	
 	
@@ -255,6 +259,11 @@ function loadRecentData(elm){
 		addFancyPlaceholder();
 	}
 	
+}
+
+
+function dateChangedRequested(elm){
+	loadRecentData(_("plate_no"));
 }
 
 

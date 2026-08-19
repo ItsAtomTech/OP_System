@@ -71,6 +71,7 @@ let formStructure = {
             "fancy": true,
             "required": true,
             "description": "",
+			"onchange":"dateChangedRequested(this)",
             "group": "g_f5fe8977-fba1-420d-a9bc-36017b845383",
             "row_span": null,
             "col_span": null,

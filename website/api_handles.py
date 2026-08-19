@@ -1397,14 +1397,24 @@ def fuel_requisition_update_():
 def get_latest_fuel_req_by_vehicle():
     try:
         vehicle_id = request.form.get("plate_no") or request.args.get("plate_no")
+        fuel_request_date = request.form.get("date_requested") or request.args.get("date_requested")
+        
         if not vehicle_id:
             return {"type": "error", "message": "Missing vehicle_id"}
 
-        # Fetch vehicle details first
+        # Fetch vehicle details here
         vehicle = Vehicles.query.get(int(vehicle_id))
         if not vehicle:
             return {"type": "error", "message": "Vehicle not found"}
+        
 
+        if fuel_request_date:
+            from datetime import datetime
+            ref_date = datetime.strptime(fuel_request_date, "%Y-%m-%d")
+        else:
+            ref_date = None
+        
+        
         vehicle_data = {
             "id": vehicle.id,
             "plate_no": vehicle.plate_no,
@@ -1418,8 +1428,8 @@ def get_latest_fuel_req_by_vehicle():
         last_record = FuelRequisitionRecords.query.order_by(FuelRequisitionRecords.id.desc()).first()
         next_id = (last_record.id + 1) if last_record else 1
 
-        # Fetch latest fuel requisition record with driver join
-        latest_record = db.session.query(
+        # Fetch latest fuel requisition record with driver join        
+        query = db.session.query(
             FuelRequisitionRecords,
             DriverCrew.name.label("driver_name"),
             DriverCrew.position.label("driver_position")
@@ -1427,10 +1437,13 @@ def get_latest_fuel_req_by_vehicle():
             DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
         ).filter(
             FuelRequisitionRecords.vehicle_id == int(vehicle_id)
-        ).order_by(
-            FuelRequisitionRecords.date.desc()
-        ).first()
+        )
+        
+        if ref_date:
+            query = query.filter(FuelRequisitionRecords.date <= ref_date)
 
+        latest_record = query.order_by(FuelRequisitionRecords.date.desc()).first()
+        
         # No recent record found, still return vehicle details
         if not latest_record:
             return {
