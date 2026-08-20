@@ -116,8 +116,11 @@ function saveSelection(){
 	
 	localStorage.setItem("savedSelections", JSON.stringify(program_filter));
 	
-	showToast("Selections Applied");
-	
+	try{	
+		showToast("Selections Applied");	
+	}catch{
+		//----
+	}
 
 		
 	try{
