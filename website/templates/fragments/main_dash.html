@@ -116,8 +116,7 @@
       type="number"
       name="year"
       min="1921"
-      value="2000"
-	  onchange="applyFilterRange();"
+	  onchange="applyFilterRange();saveDashYearStartUser(this);"
     >
 
     </input>
@@ -127,7 +126,6 @@
       id="year_filter_end"
       class="chart_filter_select primary_color"
       type="number"
-      value="2000"
       name="year"
       min="1900"
 	  onchange="applyFilterRange();"

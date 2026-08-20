@@ -103,7 +103,9 @@ function selectAllProgram(el) {
 
   
 function deselectAll(el) {
-    document.getElementById('check_all_').checked = false;
+	if(document.getElementById('check_all_')){
+		   document.getElementById('check_all_').checked = false;
+	}
 }
 
 
@@ -195,6 +197,26 @@ let current_year_value = new Date().getFullYear();
 _("year_filter_end").value = current_year_value;
 
 
+function initilizeUserStartYear(elm){
+	
+	let userSavedYear = localStorage.getItem("USER_DASH_START_YEAR");
+	if(userSavedYear != null && userSavedYear.length >= 1){
+		elm.value = parseInt(userSavedYear);
+	}
+}
+
+
+function saveDashYearStartUser(elm){
+	let elmValue = parseInt(elm.value);
+	
+	if(typeof(elmValue) == 'number'){
+		localStorage.setItem("USER_DASH_START_YEAR",elmValue)
+	}
+}
+
+
+initilizeUserStartYear(_("year_filter_start"));
+
 function filterOnYears(){
 	let start = _("year_filter_start").value;
 	let end = _("year_filter_end").value;
@@ -209,21 +231,29 @@ function filterOnYears(){
         end = current_year_value;
     }
 	
+	//If no user defined input, put before current year 
+	if(_("year_filter_start").value.length <= 0){
+		_("year_filter_start").value = current_year_value - 1;
+	}
 	
 	
     year_ranges = start+","+end;	
 }
 
 
+filterOnYears();
+
 
 function applyFilterRange(){
 	filterOnYears();
-	
-	if(utility.spammingJam()){
-		return false;
-	};
-	
-		
+	try{
+		if(utility.spammingJam()){
+			return false;
+		};		
+	}catch(e){
+		//---
+	}
+
 	try{
 		fetchDashboardStats();
 	}catch(e){

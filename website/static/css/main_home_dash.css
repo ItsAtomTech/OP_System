@@ -423,58 +423,58 @@ gap:10px;
 }
 
 
-  /* Hide extra charts by default; reveal with `.show` */
-  #more_charts {
-    display: none;
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: all 360ms ease;
-  }
-  
-  #more_charts.show {
-    display: block;
-    opacity: 1;
-    max-height: unset;
-	
-  }
+/* Hide extra charts by default; reveal with `.show` */
+#more_charts {
+display: none;
+opacity: 0;
+max-height: 0;
+overflow: hidden;
+transition: all 360ms ease;
+}
+
+#more_charts.show {
+display: block;
+opacity: 1;
+max-height: unset;
+
+}
 
 
-  /* Floating reveal arrow */
-  #revealArrow {
-    position: absolute;
-    bottom: 15px;
-    background: var(--primary_background);
-    color: var(--primary_color);
-    width: 50px;
-    height: 20px;
-    border-radius: 10px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-    cursor: pointer;
-    z-index: 120;
-  }
-  #revealArrow.show {
-    display: flex;
-  }
-  #revealArrow .arrow {
-    transform: translateY(0);
-    transition: transform 220ms ease;
-  }
-  #revealArrow:hover .arrow {
-    transform: translateY(2px);
-  }
+/* Floating reveal arrow */
+#revealArrow {
+position: absolute;
+bottom: 15px;
+background: var(--primary_background);
+color: var(--primary_color);
+width: 50px;
+height: 20px;
+border-radius: 10px;
+display: none;
+align-items: center;
+justify-content: center;
+box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+cursor: pointer;
+z-index: 120;
+}
+#revealArrow.show {
+display: flex;
+}
+#revealArrow .arrow {
+transform: translateY(0);
+transition: transform 220ms ease;
+}
+#revealArrow:hover .arrow {
+transform: translateY(2px);
+}
 
-  /* Small helper to hide arrow after reveal if desired */
-  #revealArrow.hidden {
-    display: none !important;
-  }
-  /* Shared chart container style so all charts have same design */
-  .chart_container {
-    position: relative;
-  }
+/* Small helper to hide arrow after reveal if desired */
+#revealArrow.hidden {
+display: none !important;
+}
+/* Shared chart container style so all charts have same design */
+.chart_container {
+position: relative;
+}
 
 .centered{
 	align-items:center;
@@ -504,6 +504,53 @@ gap:10px;
 	display:none !important;
 	
 }
+
+
+/* Skeleton Loading Styles for Chart */
+
+.chart_container {
+    position: relative;
+}
+
+.chart_skeleton {
+    position: absolute;
+    top: 40px; /* offset below the chart title */
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    border-radius: 8px;
+    background-color: var(--primary_background_darker);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.5),
+        rgba(255, 255, 255, 0)
+    );
+    background-size: 40px 100%;
+    background-repeat: no-repeat;
+    background-position: left -40px top 0;
+	
+    -webkit-animation: skeleton_shine 1s ease infinite;
+    animation: skeleton_shine 1s ease infinite;
+}
+
+@-webkit-keyframes skeleton_shine {
+    to {
+        background-position: right -40px top 0;
+    }
+}
+
+@keyframes skeleton_shine {
+    to {
+        background-position: right -40px top 0;
+    }
+}
+
+.chart_skeleton.hidden {
+    display: none;
+}
+
+
 
 
 /* Layout Options and Views */

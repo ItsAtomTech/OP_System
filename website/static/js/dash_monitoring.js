@@ -105,7 +105,7 @@ let fetchDashboardStats = async function () {
 		return;
 	}
 	
-	applyFilterRange();
+	//applyFilterRange();
 	
 	let custom_param = [
 		{"name":"year_ranges", value: year_ranges},
@@ -115,6 +115,7 @@ let fetchDashboardStats = async function () {
 	
 	
 	if(firstRun){
+		applyFilterRange();
 		firstRun = false;
 		return;
 	}
@@ -439,13 +440,21 @@ function proccessChartEvents(){
 
 
 	
-function generateFuelRequisitionCharts(data) {
+async function generateFuelRequisitionCharts(data) {
 	if(data == undefined){
 		return console.warn("generateFuelRequisitionCharts: didn't got a valid data");
 	};
 	
+	let allLoadingSkeletons = tag("loading_skeleton",_("more_charts"));
+
+	for (each of allLoadingSkeletons){
+		each.remove();
+	}
+		
 	
-    const objTo2D = (obj) => Object.entries(obj).map(([k, v]) => [k, v]);
+    let objTo2D = (obj) => Object.entries(obj).map(([k, v]) => [k, v]);
+	
+	let chartSkeletons = tag("more_charts")
 	
 	// Lambda Funcitons for defered render
 	
