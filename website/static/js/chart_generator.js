@@ -171,11 +171,15 @@ function showSelectionOnButton(){
 
 
 function randomizeLoadout(counts = 10) {
-	if(utility.spammingJam()){
-		showToast("Too many actions... please relax a bit!");
-		return false;
-	};
 	
+	try{
+		if(utility.spammingJam()){
+			showToast("Too many actions... please relax a bit!");
+			return false;
+		};
+	}catch{
+		return;
+	}
 
     const allChecks = Array.from(document.querySelectorAll('.check_options_input:not(#check_all_)'));
     
