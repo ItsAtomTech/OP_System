@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 from . import db
 from datetime import datetime, timedelta
-from .models import Users, Department, PurchaseRequests, Notification, Vehicles, DriverCrew, FuelRequisitionRecords
+from .models import Users, Department, PurchaseRequests, Notification, Vehicles, DriverCrew, FuelRequisitionRecords, Company
 
 
 plt = ""  # empty this var when on live website
@@ -53,9 +53,9 @@ def list_users():
 
     token = request.form.get("token") or 0
     per_page = 40
-    query = Users.query
+    
+    query = Users.query.outerjoin(Company, Users.company_id == Company.id)
 
-    # Require login or valid token
 
     # Filters
     filters_raw = request.form.get("filters")
@@ -85,7 +85,8 @@ def list_users():
                 Users.email.ilike(search_term),
                 Users.type.ilike(search_term),
                 Users.user_id.ilike(search_term),
-                Users.status.ilike(search_term)
+                Users.status.ilike(search_term),
+                Company.name.ilike(search_term)
             )
         )
 
@@ -117,7 +118,9 @@ def list_users():
             'type': u.type,
             'status': getattr(u, 'status', None),
             'level': getattr(u, 'level', None),
-            'date': u.date.isoformat() if u.date else None
+            'date': u.date.isoformat() if u.date else None,
+            'company_id': u.company_id,
+            'company_name': u.company_name.name if u.company_name else None
         })
 
     return {

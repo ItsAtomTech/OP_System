@@ -32,6 +32,13 @@ let tableFormat = [
 		
 	},
 	{	
+		label: "Company",
+		data_path: "company_name",
+		sort: true,
+		parser:parseUserCompany,
+		
+	},
+	{	
 		label: "Account Activation",
 		data_path: "status",
 		sort: true,
@@ -619,6 +626,24 @@ function parseUserType(data){
 		return userTypesRepo[data];
 	}
 }
+
+
+
+function parseUserCompany(data){
+	try{
+		if(data.length){
+			return data;
+		}else{
+			return "--";
+		}
+		
+	}catch(e){
+			return "--";
+	}
+	
+	
+}
+
 
 
 //Check Functions End
