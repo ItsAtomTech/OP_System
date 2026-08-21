@@ -23,10 +23,10 @@
 
 <div id="more_charts" class="show grid_layout_expanded" tag="fuel_requisition_charts">
 	<div class="flexed padded_container less_padding_top gap action_button">
-		<button class="df_button_flat primary_background primary_color" onclick="generateFuelRequisitionCharts()" tooltip="Refresh the Expanded Chart Views">
+		<button class="df_button_flat primary_background primary_color" onclick="fetchDashboardStats();showToast('Refreshing Data...');" aria-label="Chart Refresh Button" tooltip="Refresh the Expanded Chart Views">
 			<span class="fa fa-refresh"></span>
 		</button>	
-		<button class="df_button_flat primary_background primary_color" onclick="changeLayout()" tooltip="Toggle layout">
+		<button class="df_button_flat primary_background primary_color" onclick="changeLayout()"  aria-label="Toggle Layout for Charts" tooltip="Toggle layout">
 			<span class="fa fa-columns"></span>
 		</button>
 	</div>

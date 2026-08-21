@@ -18,6 +18,9 @@ class Users(db.Model, UserMixin):
     type = db.Column(db.Integer, db.ForeignKey('user_type.type_id'))   
     misc = db.Column(db.String(1024))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))   
+    
+    company_name = db.relationship('Company', backref='users', lazy=True)
     
     def get_id(self):
         return str(self.user_id)  # Flask-Login will use user_id instead of default
@@ -85,6 +88,14 @@ class FuelRequisitionRecords(db.Model):
 # Others Section Start
 # =========================
 
+class Company(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    logo_link = db.Column(db.String(512))
+    address = db.Column(db.String(1024))
+    date = db.Column(db.DateTime(timezone=True), default=manila_time)
+    
+    
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
