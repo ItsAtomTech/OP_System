@@ -1443,7 +1443,7 @@ def get_latest_fuel_req_by_vehicle():
         )
         
         if ref_date:
-            query = query.filter(FuelRequisitionRecords.date <= ref_date)
+            query = query.filter(FuelRequisitionRecords.date < ref_date)
 
         latest_record = query.order_by(FuelRequisitionRecords.date.desc()).first()
         
