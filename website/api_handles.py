@@ -1949,6 +1949,7 @@ def load_config():
     
 load_config()
 
+
 # =============================
 # Configuration Process End ===
 # =============================
@@ -1965,6 +1966,70 @@ def is_admin(silent=False):
     else:
         return 0
 
+
+
+@api_handles.route('/get_logo_assets', methods=['GET'])
+@login_required
+def get_logo_assets():
+    try:
+        logo_dir = os.path.join(
+            current_app.root_path,
+            'static', 'images', 'logos'
+        )
+        
+        allowed_extensions = {'.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'}
+        
+        files = [
+            f for f in os.listdir(logo_dir)
+            if os.path.isfile(os.path.join(logo_dir, f))
+            and os.path.splitext(f)[1].lower() in allowed_extensions
+        ]
+        
+        return jsonify({'type': 'success', 'files': files})
+    
+    except Exception as e:
+        return jsonify({'type': 'error', 'message': str(e)})
+        
+
+
+@api_handles.route('/remove_logo_asset', methods=['POST','GET'])
+@login_required
+def remove_logo_asset():
+    if not is_admin():
+        return jsonify({'type': 'error', 'message': 'Unauthorized'})
+    
+    try:
+        filename = request.form.get('filename') or request.args.get('filename')
+        
+        if not filename:
+            return jsonify({'type': 'error', 'message': 'No filename provided'})
+        
+        safe_name = secure_filename(filename)
+        
+        if not safe_name:
+            return jsonify({'type': 'error', 'message': 'Invalid filename'})
+        
+        allowed_extensions = {'.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'}
+        if os.path.splitext(safe_name)[1].lower() not in allowed_extensions:
+            return jsonify({'type': 'error', 'message': 'Invalid file type'})
+
+        logo_dir = os.path.join(current_app.root_path, 'static', 'images', 'logos')
+        target = os.path.join(logo_dir, safe_name)
+
+        # Safety check - ensures that resolved path is still inside logo_dir
+        if not os.path.abspath(target).startswith(os.path.abspath(logo_dir)):
+            return jsonify({'type': 'error', 'message': 'Invalid file path'})
+
+        if not os.path.isfile(target):
+            return jsonify({'type': 'error', 'message': 'File not found'})
+
+        os.remove(target)
+        return jsonify({'type': 'success', 'message': f'{safe_name} has been removed'})
+    
+    except Exception as e:
+        return jsonify({'type': 'error', 'message': str(e)})
+        
+        
 # ================================
 # Other Section End
 # ================================
