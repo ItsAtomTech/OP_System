@@ -316,6 +316,7 @@
 	height:100%;
 	padding-left:5px;
 	max-width:100px;
+	gap:10px;
 	
 }
 .action_cols_td > div > div{
