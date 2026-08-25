@@ -174,6 +174,7 @@ def save_user():
             username=data.get("username"),
             email=data.get("email"),
             type=data.get("type"),
+            company_id=data.get("company_id"),
             password=generate_password_hash(data.get("password"), method="pbkdf2:sha256"),
             status="pending",
             avatar="user",
@@ -293,6 +294,9 @@ def save_user_update():
 
         if data.get("type"):
             user.type = data["type"]
+            
+        if data.get("company_id"):
+            user.company_id = data["company_id"]
             
 
         if data.get("email") and data["email"] != user.email:

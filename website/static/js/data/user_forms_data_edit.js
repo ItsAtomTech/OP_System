@@ -106,6 +106,29 @@ let configForm = {
             "id": "college",
             "list": "college_list",
             "index": 5
+        },
+        {
+            "type": "select",
+            "events": {
+                "targetIndex": "none",
+                "type": "none",
+                "value": "3",
+                "condition": ""
+            },
+            "value": "",
+            "label": "Company",
+            "fancy": true,
+			"hidden":false,
+            "required": false,
+            "description": "",
+            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "company_id",
+            "list": "company",
+            "index": 6,
+			"col_span": 2
         }
 
 

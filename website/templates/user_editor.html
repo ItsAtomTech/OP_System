@@ -55,8 +55,12 @@
 </datalist>
 
 
-<datalist id="college_list">
 
+<datalist id="company">
+		<option value=""> </option>
+	{% for comp in get_company() %}
+		<option value="{{ comp.id }}">{{ comp.name }}</option>
+	{% endfor %}
 </datalist>
 
 

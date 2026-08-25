@@ -114,7 +114,7 @@ def create_app():
     except ImportError:
         pass
 
-    from .models import Users, UserType, Department, Vehicles, DriverCrew
+    from .models import Users, UserType, Department, Vehicles, DriverCrew, Company
 
     create_database(app)
     
@@ -158,6 +158,14 @@ def create_app():
             deps = DriverCrew.query.order_by(DriverCrew.name.asc()).all()
             return deps
         return dict(get_drivers=get_drivers)  
+        
+    @app.context_processor
+    def get_company_():
+        def get_company():
+            coms = Company.query.order_by(Company.name.asc()).all()
+            return coms
+        return dict(get_company=get_company)  
+        
         
     @app.context_processor
     def get_departments_():
