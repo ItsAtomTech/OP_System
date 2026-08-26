@@ -12,8 +12,8 @@ window.addEventListener('resize', () => {
 function showUserManageTable(elm){
 	activate(elm);
 
-	let page = open_modal("user_table", 'modal_on_container,no_close_button,page_containment', _('general_container'));
-	closeAllPages(page);
+	let page = open_modal("user_table", 'modal_on_container,no_close_button,page_containment', _('general_container'),false, undefined, true);
+	closeAllPages(page, true);
 	hideDashboardContents(true);
 	
 }
@@ -77,10 +77,30 @@ function showAdminTools(elm){
 
 
 
+// ==========================
+// Admin Functions Ends Here.
+// ==========================
+
 
 
 // ==========================
-// Admin Functions Ends Here.
+// Super Admin Functions Ends Here.
+// ==========================
+
+
+
+function showCompanyListTable(elm){
+	activate(elm);
+
+	let page = open_modal("companies_mgr_page", 'modal_on_container,no_close_button,page_containment', _('general_container'),false, undefined, true);
+	closeAllPages(page, true);
+	hideDashboardContents(true);
+	
+}
+
+
+// ==========================
+// Super Admin Functions End.
 // ==========================
 
 

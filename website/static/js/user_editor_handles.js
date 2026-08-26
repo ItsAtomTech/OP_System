@@ -57,8 +57,6 @@ function feedBackSaving(){
 
 
 
-
-
 function loadForEdit(){
 	let params = [
 		{
@@ -69,6 +67,8 @@ function loadForEdit(){
 	qBuilder.sendQuery(loadIntoForms,"get_user_by_id", params);
 	
 }
+
+
 
 let userID = undefined;
 function loadIntoForms(){
@@ -101,8 +101,8 @@ function loadIntoForms(){
     }
 	addFancyPlaceholder();
 	toggleDepColFields(_("type"));
-	
 }
+
 
 
 if(pageType == "edit_user"){

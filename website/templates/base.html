@@ -90,25 +90,35 @@
 		<!-- For Admin side bar -->
 		
 	
-		{%if current_user.type == 1 %}
+		{%if current_user.type == 2 %}
 		
 		
 		<div class="sidebar_box_con" >
 			<div class="sidebar_button df_button primary_color" onclick="showUserManageTable(this);" > <span class="fa fa-users" tooltip="Manage User Roles / Add User"> </span> <span class="normal nav_text"> User Management </span> </div>
+		</div>		
+		
+		
+		<div class="sidebar_box_con" >
+			<div class="sidebar_button df_button primary_color" onclick="showCompanyListTable(this);" > <span class="fa fa-briefcase" tooltip="Manage List of Companies"> </span> <span class="normal nav_text"> Company Management </span> </div>
 		</div>
 		
 		{% endif %}
 		
+		
+		{%if current_user.type == 1 or current_user.type == 3 %}
 		
 		<div class="sidebar_box_con" >
 			<div class="sidebar_button df_button primary_color" onclick="showRequestForms(this);" > <span class="fa fa-file" tooltip="Open the Forms Page"> </span> <span class="normal nav_text">Request Forms </span> </div>
 		</div>
 		
 		
-
+		{% endif %}
+		
 		
 		{%if current_user.type == 1 %}
-						
+			
+
+			
 			<div class="sidebar_box_con" >
 				<div class="sidebar_button df_button primary_color" onclick="showRequestFilesPage(this);" > <span class="fa fa-database" tooltip="Open Page for Reques Files"> </span> <span class="normal nav_text">Request Files </span> </div>
 			</div>

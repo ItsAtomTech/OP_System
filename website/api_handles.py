@@ -1724,6 +1724,142 @@ def remove_fuel_request_file():
 # ================================
 
 
+# ================================
+# Company Section Start
+# ================================
+
+
+@api_handles.route('/list_companies', methods=['POST', 'GET'])
+def list_companies():
+    try:
+        current_page = int(request.form.get("page") or 1)
+    except ValueError:
+        current_page = 1
+    per_page = 40
+
+    query = Company.query
+
+    # Search
+    search = request.form.get("search")
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                Company.name.ilike(search_term),
+                Company.address.ilike(search_term),
+            )
+        )
+
+    # Sorting
+    sortby = request.form.get("sort") or None
+    order = request.form.get("order_by", "asc").lower() or None
+    if sortby and hasattr(Company, sortby):
+        sort_column = getattr(Company, sortby)
+        if order == "desc":
+            query = query.order_by(desc(sort_column))
+        else:
+            query = query.order_by(asc(sort_column))
+    else:
+        query = query.order_by(Company.name.asc())
+
+    # Pagination
+    pagination = query.paginate(page=current_page, per_page=per_page, error_out=False)
+    companies = pagination.items
+    total_pages = pagination.pages
+    total_results = pagination.total
+
+    company_list = []
+    for c in companies:
+        company_list.append({
+            'id': c.id,
+            'name': c.name,
+            'logo_link': c.logo_link,
+            'address': c.address,
+            'date': c.date.isoformat() if c.date else None
+        })
+
+    return {
+        "type": "success",
+        "companies": company_list,
+        "pagination_data": {
+            "current_page": current_page,
+            "total_pages": total_pages,
+            "total_results": total_results
+        }
+    }
+
+ 
+ 
+@api_handles.route('/add_company', methods=['POST'])
+@login_required
+def add_company():
+    try:
+        form_data = json.loads(request.form.get('form_data'))
+        name = form_data.get('name')
+        logo_link = form_data.get('logo_link')
+        address = form_data.get('address')
+
+        new_company = Company(
+            name=name,
+            logo_link=logo_link,
+            address=address
+        )
+        db.session.add(new_company)
+        db.session.commit()
+        return jsonify({'type': 'success', 'id': new_company.id})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+
+
+
+@api_handles.route('/edit_company', methods=['POST'])
+@login_required
+def edit_company():
+    try:
+        form_data = json.loads(request.form.get('form_data'))
+        company_id = form_data.get('id')
+        company = Company.query.get(company_id)
+        if not company:
+            return jsonify({'type': 'error', 'message': 'Company not found'})
+
+        company.name = form_data.get('name', company.name)
+        company.logo_link = form_data.get('logo_link', company.logo_link)
+        company.address = form_data.get('address', company.address)
+
+        db.session.commit()
+        return jsonify({'type': 'success', 'id': company.id})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+
+
+@api_handles.route('/remove_company', methods=['POST'])
+@login_required
+def remove_company():
+    try:
+        form_data = json.loads(request.form.get('form_data'))
+        company_id = form_data.get('id')
+        company = Company.query.get(company_id)
+        if not company:
+            return jsonify({'type': 'error', 'message': 'Company not found'})
+
+        db.session.delete(company)
+        db.session.commit()
+        return jsonify({'type': 'success'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+ 
+
+
+
+ 
+# ================================
+# Company Section End
+# ================================
+
+
 
 
 
@@ -1966,6 +2102,8 @@ load_config()
 # ================================
 def is_admin(silent=False):
     if current_user.type == 1 or current_user.type == '1':
+        return 1    
+    elif current_user.type == 2 or current_user.type == '2':
         return 1
     else:
         return 0

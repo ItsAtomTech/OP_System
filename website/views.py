@@ -216,6 +216,26 @@ def fuel_files_table_():
 
 
 
+# ========================
+# Super Admin Section Start
+# ========================
+
+    
+@views.route('/companies_mgr_page', methods=['GET', 'POST'])
+def companies_mgr_page_():
+    page = 'companies_mgr_page'
+
+    return render_template("companies_table.html", user=current_user, page=page)
+        
+
+
+# =======================
+# Super Admin Section End
+# =======================
+
+
+
+
 
 
 # =======================
