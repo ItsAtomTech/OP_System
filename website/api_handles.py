@@ -1794,10 +1794,10 @@ def list_companies():
 @login_required
 def add_company():
     try:
-        form_data = json.loads(request.form.get('form_data'))
-        name = form_data.get('name')
-        logo_link = form_data.get('logo_link')
-        address = form_data.get('address')
+        name = request.form.get('name')
+        logo_link = request.form.get('logo_link')
+        address = request.form.get('address')
+
 
         new_company = Company(
             name=name,
@@ -1806,7 +1806,7 @@ def add_company():
         )
         db.session.add(new_company)
         db.session.commit()
-        return jsonify({'type': 'success', 'id': new_company.id})
+        return jsonify({'type': 'success', 'id': new_company.id, 'message': "New Entry Was Added"})
     except Exception as e:
         db.session.rollback()
         return jsonify({'type': 'error', 'message': str(e)})
@@ -1817,20 +1817,44 @@ def add_company():
 @login_required
 def edit_company():
     try:
-        form_data = json.loads(request.form.get('form_data'))
-        company_id = form_data.get('id')
+        company_id = request.form.get('id')
         company = Company.query.get(company_id)
         if not company:
             return jsonify({'type': 'error', 'message': 'Company not found'})
 
-        company.name = form_data.get('name', company.name)
-        company.logo_link = form_data.get('logo_link', company.logo_link)
-        company.address = form_data.get('address', company.address)
+        company.name = request.form.get('name') or company.name
+        company.logo_link = request.form.get('logo_link') or company.logo_link
+        company.address = request.form.get('address') or company.address
 
         db.session.commit()
-        return jsonify({'type': 'success', 'id': company.id})
+        return jsonify({'type': 'success', 'id': company.id, 'message': "Company was Updated!"})
     except Exception as e:
         db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+        
+        
+
+
+@api_handles.route('/get_company_by_id', methods=['POST'])
+@login_required
+def get_company_by_id():
+    try:
+        company_id = request.form.get('id')
+        company = Company.query.get(company_id)
+        if not company:
+            return jsonify({'type': 'error', 'message': 'Company not found'})
+
+        return jsonify({
+            'type': 'success',
+            'data': {
+                'id': company.id,
+                'name': company.name,
+                'logo_link': company.logo_link,
+                'address': company.address,
+                'date': company.date.isoformat() if company.date else None
+            }
+        })
+    except Exception as e:
         return jsonify({'type': 'error', 'message': str(e)})
 
 
@@ -1838,15 +1862,14 @@ def edit_company():
 @login_required
 def remove_company():
     try:
-        form_data = json.loads(request.form.get('form_data'))
-        company_id = form_data.get('id')
+        company_id = request.form.get('id')
         company = Company.query.get(company_id)
         if not company:
             return jsonify({'type': 'error', 'message': 'Company not found'})
 
         db.session.delete(company)
         db.session.commit()
-        return jsonify({'type': 'success'})
+        return jsonify({'type': 'success', 'message': 'Company removed successfully'})
     except Exception as e:
         db.session.rollback()
         return jsonify({'type': 'error', 'message': str(e)})
@@ -2110,7 +2133,7 @@ def is_admin(silent=False):
 
 
 
-@api_handles.route('/get_logo_assets', methods=['GET'])
+@api_handles.route('/get_logo_assets', methods=['GET','POST'])
 @login_required
 def get_logo_assets():
     try:

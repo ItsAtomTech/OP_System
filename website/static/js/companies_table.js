@@ -365,9 +365,9 @@ function clearAll(el){
 function loadItemToEdit(id){
 	
 	let item_id = parseInt(id);	
-	let params = [{"name":"crew_id", "value": item_id}];
+	let params = [{"name":"id", "value": item_id}];
 	
-	qBuilder.sendQuery(openModal,"/get_driver_crew_by_id",params);
+	qBuilder.sendQuery(openModal,"/get_company_by_id",params);
 	
 	
 	function openModal(data){
@@ -379,12 +379,11 @@ function loadItemToEdit(id){
 			// console.log(res_data.student);
 			showModalContent('input_modal');
 			
-			res_data = res_data.driver_crew;
+			res_data = res_data.data;
 					
 			_("name").value = res_data.name;
-			_("position").value = res_data.position;
-			_("department").value = res_data.department_id;
-			_("status").value = res_data.status;
+			_("address").value = res_data.address;
+			_("logo_asset").value = res_data.logo_link;
 							
 			
 			addFancyPlaceholder();
@@ -404,36 +403,32 @@ function saveItem(){
 		"value": _("name").value,
 	},
 	{
-		"name": "position",
-		"value": _("position").value,
+		"name": "address",
+		"value": _("address").value,
 	},
 	{
-		"name": "department_id",
-		"value": _("department").value,
+		"name": "logo_link",
+		"value": _("logo_asset").value,
 		
-	},
-	{
-		"name": "status",
-		"value": _("status").value,	
 	}
 	];
 	
 		//for updating
 	if(saveMode == "edit"){
 		let custom_params = {
-		"name": "crew_id",
+		"name": "id",
 		"value": selectedItemId,
 		}
 		
 		params.push(custom_params);
-		qBuilder.sendQuery(feedBackSaving,"update_driver_crew", params);
+		qBuilder.sendQuery(feedBackSaving,"edit_company", params);
 		createDialogue("wait");
 		return;
 	}
 	
 	
 	
-	qBuilder.sendQuery(feedBackSaving,"save_driver_crew",params);
+	qBuilder.sendQuery(feedBackSaving,"add_company",params);
 	localStorage.setItem("shouldReloadCopanies","true");
 	
 }
@@ -460,14 +455,44 @@ function addNewEntry(){
 	
 	
 	_("name").value = "";
-	_("position").value = "";
-	_("department").value = "";
-	_("status").value = "";
+	_("address").value = "";
+	_("logo_asset").value = "";
 	
 	showModalContent('input_modal');
 	
 }
 
+
+
+function populateLogoSelections(){
+	
+	qBuilder.sendQuery(proccessData,"get_logo_assets");
+	
+	function proccessData(data){
+		let res_data = (JSON.parse(data.responseText));
+		
+		if(res_data.files.length >= 1){
+			_("logo_asset").innerHTML = "";
+			let empty = make("option");
+			
+			
+			_("logo_asset").appendChild(empty);
+			
+			for (each of res_data.files){
+				let option = make("option");	
+					option.innerText = each;
+					_("logo_asset").appendChild(option);
+			}
+			
+		}
+		console.log(res_data);
+		
+	}
+		
+}
+
+
+populateLogoSelections();
 
 
 
@@ -564,8 +589,8 @@ function moveToTrash(confirmed = undefined,silent=false){
 	if(confirmed == 'fail'){
 		return;
 	}
-	let itemvalue = [{"name":"crew_id", "value": idSelected}];
-	qBuilder.sendQuery(feedBackRemoving,"/remove_driver_crew",itemvalue);
+	let itemvalue = [{"name":"id", "value": idSelected}];
+	qBuilder.sendQuery(feedBackRemoving,"/remove_company",itemvalue);
 }
 
 
