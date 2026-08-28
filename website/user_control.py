@@ -9,7 +9,7 @@ from . import db
 from .global_vars import Avatars
 from .mailing import mailing
 from .models import Users
-# from .api_handles import add_notification
+from .api_handles import add_notification
 
 user_control = Blueprint('user_control', __name__)
 
@@ -378,11 +378,25 @@ def save_new_pass():
         return redirect(url_for('user_control.ch_pass') + '?sent=true')
         
         
+    if len(code) <= 3:
+        flash("Confirmation code is not valid!", category="error")
+        return redirect(url_for('user_control.ch_pass') + '?sent=true')
+        
+        
     if user_i.misc == code and len(str(code)) > 2:
         user_i.password = new_pass
         db.session.commit()
         flash("Password is now changed!", category="success")
-
+        
+        super_admins = Users.query.filter_by(type=2).all()
+        for admin in super_admins:
+            add_notification(
+                title="Password Changed",
+                details=f"User '{user_i.username}' has changed their password.",
+                notif_type="security",
+                user_id=admin.user_id
+            )
+ 
     else:
         flash("The code seems not valid!", category="error")
         user_i.misc = ""
@@ -467,7 +481,6 @@ def save_recover_pass():
         pass1 = "?"
 
     if pass1 == pass2:
-
         new_pass = generate_password_hash(pass1, method='pbkdf2:sha256')
 
     else:
@@ -482,7 +495,11 @@ def save_recover_pass():
         return {"type": "error", "message": "Password must contain both letters and numbers"}
     
     user_id = recovery_email_id
-
+    
+    if len(code) <= 3:
+        flash("Confirmation code is not valid", category="error")
+        return redirect(url_for('user_control.recover_page') + '?sent=')
+    
     if recovery_email_id == "":
         flash("Enter email first!", category="error")
         return redirect(url_for('user_control.recover_page') + '?sent=')
@@ -494,6 +511,16 @@ def save_recover_pass():
         db.session.commit()
         login_user(user_i, remember=True)
         flash("Password recovered!, account now unlocked!", category="success")
+        
+        super_admins = Users.query.filter_by(type=2).all()
+        for admin in super_admins:
+            add_notification(
+                title="Password Changed",
+                details=f"User '{user_i.username}' has changed their password from recovery.",
+                notif_type="security",
+                user_id=admin.user_id
+            )
+        
         return redirect(url_for('user_control.show_profile') + '')
 
     else:

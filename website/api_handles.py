@@ -137,7 +137,7 @@ def list_users():
 @api_handles.route('/save_user', methods=['POST'])
 @login_required
 def save_user():
-    if not is_admin(True):
+    if not is_admin(2):
         return jsonify({"type": "error", "message": "No permission to perform this action"})
 
     try:
@@ -195,7 +195,7 @@ def save_user():
 @login_required
 def remove_user():
     # --- Ensure only admins can perform this action ---
-    if not is_admin():
+    if not is_admin(2):
         return jsonify({"type": "error", "message": "No permission to perform this action"})
 
     try:
@@ -264,7 +264,7 @@ def get_user_by_id():
 @api_handles.route('/save_user_update', methods=['POST'])
 @login_required
 def save_user_update():
-    if not is_admin():
+    if not is_admin(2):
         return jsonify({"type": "error", "message": "No permission to perform this action"})
 
     try:
@@ -1793,11 +1793,14 @@ def list_companies():
 @api_handles.route('/add_company', methods=['POST'])
 @login_required
 def add_company():
+    if not is_admin(2):
+        return {"type": "error", "message": "No permission to perform this action"}
+
     try:
+        
         name = request.form.get('name')
         logo_link = request.form.get('logo_link')
         address = request.form.get('address')
-
 
         new_company = Company(
             name=name,
@@ -1816,6 +1819,9 @@ def add_company():
 @api_handles.route('/edit_company', methods=['POST'])
 @login_required
 def edit_company():
+    if not is_admin(2):
+        return {"type": "error", "message": "No permission to perform this action"}
+
     try:
         company_id = request.form.get('id')
         company = Company.query.get(company_id)
@@ -1858,9 +1864,13 @@ def get_company_by_id():
         return jsonify({'type': 'error', 'message': str(e)})
 
 
+
 @api_handles.route('/remove_company', methods=['POST'])
 @login_required
 def remove_company():
+    if not is_admin(2):
+        return {"type": "error", "message": "No permission to perform this action"}
+ 
     try:
         company_id = request.form.get('id')
         company = Company.query.get(company_id)
@@ -1873,9 +1883,6 @@ def remove_company():
     except Exception as e:
         db.session.rollback()
         return jsonify({'type': 'error', 'message': str(e)})
- 
-
-
 
  
 # ================================
@@ -2123,13 +2130,9 @@ load_config()
 # ================================
 # Other Section
 # ================================
-def is_admin(silent=False):
-    if current_user.type == 1 or current_user.type == '1':
-        return 1    
-    elif current_user.type == 2 or current_user.type == '2':
-        return 1
-    else:
-        return 0
+def is_admin(*allowed_types):
+    types = allowed_types if allowed_types else (1,)
+    return current_user.type in types
 
 
 
