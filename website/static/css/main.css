@@ -1,11 +1,22 @@
-  @font-face {
-    font-family: 'Comfortaa';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Comfortaa'), url('comfortaa_regular.ttf') format('ttf');
-    src: url('comfortaa_regular.ttf') format('ttf');
-    src: url('comfortaa_regular.ttf');
-    }
+/* View Transition for already supported browsers */
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root){
+	animation-duration:0.3s;
+}
+
+
+@font-face {
+font-family: 'Comfortaa';
+font-style: normal;
+font-weight: normal;
+src: local('Comfortaa'), url('comfortaa_regular.ttf') format('ttf');
+src: url('comfortaa_regular.ttf') format('ttf');
+src: url('comfortaa_regular.ttf');
+}
 
 	
 @keyframes zoomOutWithCircle {
