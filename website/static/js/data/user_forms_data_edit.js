@@ -85,28 +85,7 @@ let configForm = {
             "onchange": "updatesOn(this)",
             "index": 4
         },
-        {
-            "type": "select",
-            "events": {
-                "targetIndex": "none",
-                "type": "none",
-                "value": "3",
-                "condition": ""
-            },
-            "value": "",
-            "label": "College",
-            "fancy": true,
-			"hidden":true,
-            "required": false,
-            "description": "",
-            "group": "g_280bbbd8-6fda-41b7-8377-636eb6328b6a",
-            "row_span": null,
-            "col_span": null,
-            "span_column": false,
-            "id": "college",
-            "list": "college_list",
-            "index": 5
-        },
+
         {
             "type": "select",
             "events": {
@@ -131,7 +110,6 @@ let configForm = {
 			"col_span": 2
         }
 
-
     ],
     "groups": [
         {
@@ -143,3 +121,4 @@ let configForm = {
         }
     ]
 }
+

@@ -248,6 +248,7 @@ def get_user_by_id():
             "type": user.type,
             "status": user.status,
             "avatar": user.avatar,
+            "company_id": user.company_id,
             # "department": user.department_id,
             # "college": user.college_id,
             "misc": user.misc,
