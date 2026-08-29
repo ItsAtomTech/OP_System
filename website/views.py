@@ -1,6 +1,6 @@
 import os, json
 
-from flask import Blueprint, render_template, request, flash, jsonify, Flask, url_for, session, send_from_directory
+from flask import Blueprint, render_template, request, flash, jsonify, Flask, url_for, session, send_from_directory, make_response
 from flask_login import login_required, current_user
 from sqlalchemy import asc, desc, distinct, table, func
 from werkzeug.utils import redirect
@@ -298,14 +298,29 @@ def themes():
 
 # PWA Expiremental Setup =====
 
+# PWA Experimental Setup =====
 @views.route('/sw.js')
 def service_worker():
-    return app.send_static_file('sw.js')
-    
+    response = make_response(app.send_static_file('sw.js'))
+    response.headers['Content-Type'] = 'application/javascript'
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
+
 @views.route('/manifest.json')
 def manifest():
-    return app.send_static_file('manifest.json')
+    response = make_response(app.send_static_file('manifest.json'))
+    response.headers['Content-Type'] = 'application/manifest+json'
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
+
+@views.after_request
+def add_cache_headers(response):
+    if request.path.startswith('/static/'):
+        response.headers['Cache-Control'] = 'public, max-age=31536000'
+    else:
+        response.headers['Cache-Control'] = 'public, max-age=0, must-revalidate'
+    return response
 
 
 @views.route('/emoticons/<path:path>')
@@ -317,6 +332,8 @@ def get_upl(path):
 
     print(filepath)
     return send_from_directory(filepath, path)
+
+
 
 
 
