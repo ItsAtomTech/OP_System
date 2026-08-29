@@ -296,6 +296,16 @@ def themes():
     return theme
 
 
+# PWA Expiremental Setup =====
+
+@views.route('/sw.js')
+def service_worker():
+    return app.send_static_file('sw.js')
+    
+@views.route('/manifest.json')
+def manifest():
+    return app.send_static_file('manifest.json')
+
 
 
 @views.route('/emoticons/<path:path>')
