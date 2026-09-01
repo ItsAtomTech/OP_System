@@ -14,7 +14,16 @@ function loadAllFormsToView(){
 		if(!each.filed){
 			continue;
 		}
-	
+		
+		if(each.company_id){
+			
+			let companyCheck = checkCompanyFilePolicy(each.company_id);
+			if(!companyCheck){
+				continue;
+			}
+		}
+		
+		
 		let clone = document.importNode(_("form_card").content, true);
 		let name = tag("name",clone)[0];
 		let text_details = tag("text_details",clone)[0];
@@ -39,6 +48,22 @@ function loadAllFormsToView(){
 	
 	
 }
+
+// Custom Company check:
+
+function checkCompanyFilePolicy(comID){
+	if(typeof(current_user_company) == 'undefined'){
+		return true;
+	};
+	comID = parseInt(comID);
+	if(comID == current_user_company){
+		return true;
+	}
+	
+	return false;
+	
+}
+
 
 
 //Simulating the Server Query, if ever implemented for backend use.

@@ -206,7 +206,13 @@ def fuel_files_table_():
         
 
 
-    
+# Purchase Request ==========
+
+@views.route('/purchase_files_table', methods=['GET', 'POST'])
+def purchase_files_table_():
+    page = 'purchase_files_table'
+
+    return render_template("purchase_files_table.html", user=current_user, page=page)   
 
 
 # =======================

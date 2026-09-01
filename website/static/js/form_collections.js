@@ -6,12 +6,12 @@ const formCollections =  [
 		"small_description": "A blank request form for PRF.",
 		"link":"purchase_request",
 		"form_id": 1,
-		"filed": false, //Indicates Wheter this item also shows as File on Request Files
+		"filed": true, //Indicates Wheter this item also shows as File on Request Files
 		
 		"file_name": "Purchase Request Files",
 		"file_link": "purchase_files_table",
 		"file_description": "Request files of PRF.",
-		
+		"company_id": "2",
 		
 	},
 	{
@@ -20,6 +20,7 @@ const formCollections =  [
 		"link":"fuel_requisition",
 		"form_id": 2,
 		"filed": true,
+		"company_id": "1",
 		
 				
 		"file_name": "Fuel Requisition Files",

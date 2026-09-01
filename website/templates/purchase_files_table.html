@@ -1,0 +1,212 @@
+{% extends "base_headless.html" %}
+
+{% block title%} Purchase Request Files {% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_formeditor.css') }}">
+
+<link id='' rel="stylesheet" href="{{ url_for('static', filename='css/table_page.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_titlebar.css') }}">
+
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/action_bars_v2.css') }}">
+
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/extra_tablestyles.css') }}">
+
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_fancylabel.css') }}">
+
+
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/dashstyles.css') }}"> -->
+
+
+
+<!-- <script src="{{ url_for('static', filename='js/data/profiling_config.js') }}"></script> -->
+{% endblock %}
+
+
+{% block contents %}
+
+<!-- Top Tool Bar -->
+
+	<div class="df_titlebar_main_con center third_background_faded primary_color_invert glass">
+		<div class="title_container">
+		
+			<div class="text_banner big"> Purchase Request Files</div>					
+		</div>
+	</div>
+
+
+	<div class="user-management-container padded">
+	
+
+
+		<!-- Search, Filter, and Create Account button -->
+		<div class="search-filter-container">
+			<div class="search_and_select primary_color">
+			<div class="input_class_rounded primary_color_invert">  
+				<label class="small"> <span class="fa fa-search"> </span> Search: </label>
+				<input class="small primary_color_invert" id="search_input" type="text" placeholder="Name, No etc.." onblur="delayedQuerry()" onchange="delayedQuerry()" oninput="delayedQuerry()">
+			 </div>   
+
+			
+			
+			
+			
+			 <!-- <div class="input_class_rounded"> -->
+				<!-- <label class="small"> Account Type: </label> -->
+				<!-- <select class="small primary_color" oninput="delayedQuerry()" id="account_type"> -->
+					<!-- <option value="" > All </option> -->
+					<!-- <option value="student" > Student </option> -->
+					<!-- <option value="teacher" > Teacher </option> -->
+					<!-- <option value="admin" > Admin </option> -->
+				<!-- </select> -->
+			<!-- </div> -->
+			
+			
+			 
+			</div>
+			
+
+			
+
+		</div>
+	</div>
+
+<!-- Filter Ribbons -->
+<div class="filter_toolbar_con padded_left_right" style="" id="">
+	<span class="fa fa-arrow-left go_back_arrow" onclick="go_to('request_files')"> </span>
+	
+
+	
+	<span class="normal"> <span class="normal"> Request Files / Purchase Request Files / </span>
+	
+	<button class="df_button_flat primary_background_darker primary_color" onclick="delayedQuerry()" tooltip="Refresh Data"> <span class="fa fa-refresh button"> </span> </button>
+	
+</div>
+
+<!-- <div class="top_container"> -->
+	<!-- <span class="fa fa-file go_back_arrow" onclick=""> </span> -->
+
+
+	<!-- <span class="normal"> <span class="normal"> Admin Tools / </span> -->
+
+
+<!-- </div> -->
+
+
+
+<div class="multi_select_option" id="selection_options">
+
+		
+	{% if page == 'trash' %}
+		<span onclick="removePermanentItemMulti()" class="df_button_flat primary_background_darker hidden_op" tag="trash"><span class="fa fa-trash medium primary_color"> </span></span>
+	{% else %}
+		<span onclick="moveToTrashMulti()" class="df_button_flat primary_background_darker hidden_op" tag="trash"><span class="fa fa-trash medium primary_color"> </span></span>
+	{% endif %}
+
+
+	
+	<span onclick="restoreItemMulti()" class="df_button_flat primary_background_darker hidden_op" tag="restore"><span class="fa fa-refresh medium primary_color"> </span></span>
+</div>
+
+<!-- Table Element -->
+<section class="table_wrapper padded padded_left_right ">
+	<div class="main_table_container primary_color primary_background tiny">
+		<table>
+		
+			<thead id="header_generative">
+			<tr class="sticky_header padded_header primary_color_invert primary_background_darker">
+				<th class="sticky_column_left primary_background_darker check_cols"> <input class="check_input"  type="checkbox" onclick="selectAllhandle()" title="Select All"/> </th>			
+				<th> id</th>			
+				<th> Col 1</th>	
+				<th> Col 2</th>	
+				<th class="sticky_column_right action_cols"> Actions </th>
+			</tr>
+
+			
+			</thead>
+			<tbody id="data_generative">
+				<tr class="padded_colms">
+					<td  class="sticky_column_left primary_color primary_background_darker"> C</td>			
+					<td> id</td>		
+					<td> Col data</td>		
+					<td> Col data</td>		
+					<td class="sticky_column_right primary_color primary_background_darker"> Col data</td>	
+				</tr>
+
+		
+			</tbody>
+		
+		
+		</table>
+	
+	</div>
+</section>
+
+
+<!-- Bottom Status/Tool Bar -->
+<div class="bottom_toolbar_con primary_color_invert third_background_faded ">
+
+		<div class="pagination primary_color_invert small" id="paginations">
+			<a href="#">Prev page</a>
+			<a href="#" class="active">1</a>
+			<a href="#">2</a>
+			<a href="#">Next page</a>
+		</div>
+
+
+</div>
+
+
+
+{% include "fragments/view_fuel_file_modal.html" %}
+
+
+<script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
+<script src="{{ url_for('static', filename='js/foreignKeys.js') }}"></script>
+
+<script>
+qBuilder.server_address = "list_fuel_req_files";
+current_role = "admin";
+//qBuilder.filters.status = "active";
+let pageType = "{{ page }}";
+let departments = [];
+let selectTypes = [];
+
+
+if(pageType == "trash"){
+	//qBuilder.filters.status = "deleted";
+	selectTypes = ["trash","restore"];
+}else{
+	selectTypes = ["trash"];
+}
+
+{% for department in get_departments() %}
+		departments.push({"id":"{{ department.id }}", "name": "{{ department.name }}"});
+{% endfor %}
+
+
+function findById(arr, id) {
+    return arr.find(item => item.id == id) || null;
+}
+
+</script>
+
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/handles/purchase_files_table.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/lib/daimofuu_fancylabel.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/daimofuu_titlebar.js') }}"> </script>
+
+{% endblock %}
+
+

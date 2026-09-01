@@ -43,6 +43,7 @@
 		{%if current_user.is_authenticated %}
 		const current_user_id = {{ current_user.user_id }};
 		const current_user_role = {{ current_user.type }};
+		let current_user_company = {{ current_user.company_id }};
 		
 		{% endif %}
 		
