@@ -470,7 +470,44 @@ tbody#data_generative tr:nth-child(even) {
 }
 
 
+/* Item Parser types style */
 
+
+.items_parsed_on{
+	border:solid transparent 1px;
+	overflow:auto;
+	overflow-x:hidden;
+	overflow-y:auto;
+	max-height:100px;
+}
+
+.items_parsed_on > .item_entry{
+	border:solid transparent 1px;
+	display:block;
+	padding:2px;
+	background:var(--secondary_background);
+	color:#263238;
+	border-radius:10px;
+	margin-bottom:4px;
+	box-shadow:0px 0px 2px 2px rgba(45,45,45,0.04);
+	text-align:left;
+	position:relative;
+}
+
+.items_parsed_on > .item_entry > span{
+	border:solid transparent 1px;
+	padding:5px;
+}
+
+.items_parsed_on > .item_entry > span.float_right{
+	text-align:right;
+	display:inline-block;
+	min-width:100px;
+
+}
+
+
+/* Item Parser types style end */
 
 
 .form-row-edit input,

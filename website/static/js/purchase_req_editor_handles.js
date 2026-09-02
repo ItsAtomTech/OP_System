@@ -129,4 +129,13 @@ function cancelEditor(){
 
 
 
+// Handlers and Parsers
 
+function dummyFunction(elm){
+	
+	let el = elm.parentNode.parentNode;
+	
+	console.log(el.querySelectorAll("[column_name='Total Ammount']"));
+	
+	
+}

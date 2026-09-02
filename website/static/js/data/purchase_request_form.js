@@ -33,7 +33,7 @@ let formStructure = {
             "value": "",
             "label": "Requesting Department",
             "fancy": true,
-            "required": true,
+            "required": false,
             "description": "",
             "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
             "row_span": null,
@@ -67,10 +67,11 @@ let formStructure = {
                     },
                     {
                         "type": "number",
-                        "attributes": {}
+                        "attributes": {},
+						"onchange": "dummyFunction(this)",
                     },
                     {
-                        "type": "textarea",
+                        "type": "text",
                         "attributes": {}
                     },
                     {
@@ -88,7 +89,7 @@ let formStructure = {
                 "fullspan": true,
                 "responsivespan": true
             },
-            "rowed": true,
+            "rowed": false,
             "fullspan": true,
             "responsivespan": true,
             "label": "Item Lists",

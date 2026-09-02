@@ -358,10 +358,14 @@ def update_my_email():
 
 
 # ================================
-#  User Forms API
+#  User Forms API start
 # ================================
 
-#Saving data into the sace
+
+
+# Purchase Request Section =====================================
+
+#Saving data into the purchase request
 @api_handles.route('/save_purchase_request', methods=['POST'])
 @login_required
 def save_purchase_request():
@@ -378,30 +382,38 @@ def save_purchase_request():
         date_required = data.get("date_required")
         department_id = data.get("department_id")
         
-        print(request_type, items, purpose)
-        
         if not all([request_type, items, purpose]):
             return {"type": "error", "message": "Incomplete purchase request data"}
+
+        # Compute total_amount from the 5th column (or at index 4) of each item
+        try:
+            items_list = json.loads(items) if isinstance(items, str) else items
+        except (json.JSONDecodeError, TypeError):
+            items_list = []
+
+        total_amount = 0.0
+        for row in items_list:
+            try:
+                total_amount += float(row[4])
+            except (IndexError, ValueError, TypeError):
+                pass
 
         new_purchase = PurchaseRequests(
             user_id            = current_user.user_id,
             type               = request_type,
             items              = items,
             purpose_of_request = purpose,
- 
+            total_amount       = total_amount,
             date_required      = date_required,
             department_id      = department_id,
         )
-
         db.session.add(new_purchase)
         db.session.commit()
-
         return {"type": "success", "message": "Purchase request saved successfully"}
     
     except Exception as e:
         db.session.rollback()
         return {"type": "error", "message": str(e)}
-
 
 
 
@@ -438,6 +450,133 @@ def get_purchase_request_by_id():
 
 
 
+@api_handles.route('/purchase_request_list', methods=['POST', 'GET'])
+@login_required
+def purchase_request_list():
+    try:
+        current_page = int(request.form.get("page") or 1)
+    except ValueError:
+        current_page = 1
+
+    per_page = post_per_page
+
+    # Join Users and Department
+    query = db.session.query(
+        PurchaseRequests,
+        Users.username.label("requestor_name"),
+        Department.name.label("department_name"),
+    ).outerjoin(
+        Users, PurchaseRequests.user_id == Users.user_id
+    ).outerjoin(
+        Department, PurchaseRequests.department_id == Department.id
+    )
+
+    # Filters
+    filters_raw = request.form.get("filters")
+    if filters_raw:
+        try:
+            filters = json.loads(filters_raw)
+
+            if 'type' in filters and filters['type']:
+                query = query.filter(PurchaseRequests.type == filters['type'])
+
+            if 'status' in filters and filters['status']:
+                query = query.filter(PurchaseRequests.status == filters['status'])
+
+            if 'department_id' in filters and filters['department_id']:
+                query = query.filter(PurchaseRequests.department_id == int(filters['department_id']))
+
+            if 'user_id' in filters and filters['user_id']:
+                query = query.filter(PurchaseRequests.user_id == int(filters['user_id']))
+
+        except json.JSONDecodeError:
+            pass
+
+    # Search
+    search = request.form.get("search")
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                PurchaseRequests.type.ilike(search_term),
+                PurchaseRequests.purpose_of_request.ilike(search_term),
+                PurchaseRequests.misc.ilike(search_term),
+                PurchaseRequests.items.ilike(search_term),
+                PurchaseRequests.status.ilike(search_term),
+                Users.username.ilike(search_term),
+                Department.name.ilike(search_term),
+            )
+        )
+
+    # Sorting
+    sortby = request.form.get("sort")
+    order = request.form.get("order_by", "asc").lower()
+
+    sortable_columns = {
+        "purchase_id": PurchaseRequests.purchase_id,
+        "type": PurchaseRequests.type,
+        "total_amount": PurchaseRequests.total_amount,
+        "status": PurchaseRequests.status,
+        "date": PurchaseRequests.date,
+        "date_required": PurchaseRequests.date_required,
+        "department_id": PurchaseRequests.department_id,
+        "user_id": PurchaseRequests.user_id,
+        "requestor_name": Users.username,
+        "department_name": Department.name,
+    }
+
+    if sortby in sortable_columns:
+        sort_column = sortable_columns[sortby]
+        if order == "desc":
+            query = query.order_by(desc(sort_column))
+        else:
+            query = query.order_by(asc(sort_column))
+    else:
+        query = query.order_by(PurchaseRequests.purchase_id.desc())
+
+    # Pagination
+    pagination = query.paginate(page=current_page, per_page=per_page, error_out=False)
+
+    results = pagination.items
+    total_pages = pagination.pages
+    total_results = pagination.total
+
+    purchase_req_list = []
+
+    for record, requestor_name, department_name in results:
+        try:
+            items = json.loads(record.items) if record.items else []
+        except (json.JSONDecodeError, TypeError):
+            items = []
+
+        purchase_req_list.append({
+            "purchase_id": record.purchase_id,
+            "user_id": record.user_id,
+            "requestor_name": requestor_name,
+            "department_id": record.department_id,
+            "department_name": department_name,
+            "type": record.type,
+            "items": items,
+            "purpose_of_request": record.purpose_of_request,
+            "total_amount": record.total_amount,
+            "misc": record.misc,
+            "status": record.status,
+            "date_required": record.date_required,
+            "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
+        })
+
+    return {
+        "type": "success",
+        "purchase_req_list": purchase_req_list,
+        "pagination_data": {
+            "current_page": current_page,
+            "total_pages": total_pages,
+            "total_results": total_results
+        }
+    }
+    
+    
+# Purchase Request End ==============================================
 
 # ================================
 # User Forms API End
