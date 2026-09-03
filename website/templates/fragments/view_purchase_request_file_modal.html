@@ -1,0 +1,78 @@
+<div class="modal_main_backdrop padded" id="view_purchase_1" inert>
+	<div class="modal_container_box larger_">
+
+		<!-- Modal Header -->
+		<div class="top_header">
+			<div class="title_form_top">Purchase Request Details</div>
+			<div class="close_modal_tright" tabindex='1' onclick="closeModalContent('view_purchase_1')">&times;</div>
+		</div>
+
+		<!-- Modal Contents Container -->
+		<div class="option_main_container">
+			<br />
+
+			<!-- Requestor Info -->
+			<div class="normal info_items"><span class="fa fa-user"></span> Requested By: <span class="bold" tag="requestor"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-building"></span> Department: <span class="bold" tag="department"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-calendar"></span> Date Requested: <span class="bold" tag="date_requested"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-calendar-check-o"></span> Date Required: <span class="bold" tag="date_required"> -- </span></div>
+
+			<hr class="line_2">
+
+			<!-- Purpose -->
+			<div class="normal info_items"><span class="fa fa-info-circle"></span> Purpose of Request: <span class="bold" tag="purpose"> -- </span></div>
+
+			<hr class="line_2">
+
+			<!-- Items -->
+			<div class="medium bold info_items centered">
+				<span class="fa fa-cube"></span> Items
+			</div>
+
+			<div class="normal centered main_table_container mini_table">
+				<table id="purchase_items_table">
+					<thead>
+						<tr class="small sticky_header padded_header primary_color_invert secondary_background">
+							<th class="minimum_width">Item Name</th>
+							<th class="minimum_width">Quantity</th>
+							<th class="minimum_width">Item Description</th>
+							<th class="minimum_width">Unit Cost</th>
+							<th class="sticky_column_right secondary_background">Total Amount</th>
+						</tr>
+					</thead>
+					<tbody id="purchase_items_table_body">
+					</tbody>
+				</table>
+			</div>
+
+
+
+			<hr class="line_2">
+
+			<!-- Total -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_total_amount">Total Amount</label>
+					<input type="text" id="view_total_amount" tag="total_amount" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<!-- Status -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input">
+					<label class="df_label_con placeholder_label" for="status_option_">Status</label>
+					<select {% if current_user.type != 1 %}disabled {% endif %} id="status_option_" onchange="assignedPurchaseReqStatus(this)" tag="status_option" class="fancy_form_df form_display">
+						<option value="approved">Approved</option>
+						<option value="pending">Pending</option>
+					</select>
+				</div>
+			</div>
+
+			<!-- Print Button -->
+			<div class="floating_print" onclick="printDoc();">
+				<span class="fa fa-print fa-2x"></span>
+			</div>
+
+		</div>
+	</div>
+</div>

@@ -427,26 +427,123 @@ def get_purchase_request_by_id():
         if not purchase_id:
             return {"type": "error", "message": "Missing purchase_id"}
 
-        purchase = PurchaseRequests.query.get(int(purchase_id))
-        if not purchase:
+        result = db.session.query(
+            PurchaseRequests,
+            Users.username.label("requestor_name"),
+            Department.name.label("department_name"),
+        ).outerjoin(
+            Users, PurchaseRequests.user_id == Users.user_id
+        ).outerjoin(
+            Department, PurchaseRequests.department_id == Department.id
+        ).filter(
+            PurchaseRequests.purchase_id == int(purchase_id)
+        ).first()
+
+        if not result:
             return {"type": "error", "message": "Purchase request not found"}
+
+        purchase, requestor_name, department_name = result
 
         purchase_data = {
             "purchase_id":          purchase.purchase_id,
             "user_id":              purchase.user_id,
+            "requestor_name":       requestor_name,
             "type":                 purchase.type,
             "items":                purchase.items,
             "purpose_of_request":   purchase.purpose_of_request,
             "misc":                 purchase.misc,
             "department_id":        purchase.department_id,
+            "department_name":      department_name,
+            "total_amount":         purchase.total_amount,
+            "status":               purchase.status,
             "date_required":        purchase.date_required,
             "date":                 purchase.date.strftime("%Y-%m-%d %H:%M:%S") if purchase.date else None,
         }
-
         return {"type": "success", "purchase": purchase_data}
-
     except Exception as e:
         return {"type": "error", "message": str(e)}
+
+
+#Updating data in the purchase request
+@api_handles.route('/update_purchase_request', methods=['POST'])
+@login_required
+def update_purchase_request():
+    try:
+        purchase_data = request.form.get("purchase_data")
+        purchase_id = request.form.get("purchase_id")
+        
+        if not purchase_data:
+            return {"type": "error", "message": "Missing purchase_data"}
+        
+        data = json.loads(purchase_data)
+      
+        items         = data.get("items")
+        purpose       = data.get("purpose_of_request")
+        date_required = data.get("date_required")
+        department_id = data.get("department_id")
+
+        if not purchase_id:
+            return {"type": "error", "message": "Missing purchase_id"}
+
+        if not all([items, purpose]):
+            return {"type": "error", "message": "Incomplete purchase request data"}
+
+        purchase = PurchaseRequests.query.get(purchase_id)
+        if not purchase:
+            return {"type": "error", "message": "Purchase request not found"}
+
+        # Compute total_amount from the 5th column (or at index 4) of each item
+        try:
+            items_list = json.loads(items) if isinstance(items, str) else items
+        except (json.JSONDecodeError, TypeError):
+            items_list = []
+
+        total_amount = 0.0
+        for row in items_list:
+            try:
+                total_amount += float(row[4])
+            except (IndexError, ValueError, TypeError):
+                pass
+
+        purchase.items              = items
+        purchase.purpose_of_request = purpose
+        purchase.total_amount       = total_amount
+        purchase.date_required      = date_required
+        purchase.department_id      = department_id
+
+        db.session.commit()
+        return {"type": "success", "message": "Purchase request updated successfully"}
+    
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+
+
+
+#Removing a purchase request
+@api_handles.route('/remove_purchase_request_file', methods=['POST'])
+@login_required
+def remove_purchase_request_file():
+    try:
+        purchase_id = request.form.get("purchase_id")
+        if not purchase_id:
+            return {"type": "error", "message": "Missing purchase_id"}
+
+        purchase = PurchaseRequests.query.get(purchase_id)
+        if not purchase:
+            return {"type": "error", "message": "Purchase request not found"}
+
+        if purchase.status == "approved":
+            return {"type": "error", "message": "Cannot remove an approved purchase request"}
+
+        db.session.delete(purchase)
+        db.session.commit()
+        return {"type": "success", "message": "Purchase request removed successfully"}
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+
 
 
 

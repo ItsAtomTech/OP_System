@@ -215,6 +215,17 @@ def purchase_files_table_():
     return render_template("purchase_files_table.html", user=current_user, page=page)   
 
 
+
+    
+    
+@views.route('/update_purchase_req_editor', methods=['GET', 'POST'])
+def update_purchase_req_editor_():
+    page = 'update_purchase_req_editor'
+
+    return render_template("forms/purchase_request.html", user=current_user, page=page)
+    
+    
+
 # =======================
 # Admin Section End
 # =======================

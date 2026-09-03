@@ -16,10 +16,10 @@ function submitForm(){
 	};
 	
 	//for updating
-	if(pageType == "edit_request"){
+	if(pageType == "update_purchase_req_editor"){
 		let custom_params = {
-		"name": "request_id",
-		"value": getparam('request_id'),
+		"name": "purchase_id",
+		"value": getparam('id'),
 		}
 		
 		params.push(custom_params);
@@ -43,13 +43,13 @@ function submitForm(){
 function feedBackSaving(){
 	let res_data = (JSON.parse(event.target.responseText));
 	createDialogue("info", res_data.message);
-	if(res_data.type == "success" && pageType != "edit_purchase_request"){
+	if(res_data.type == "success" && pageType != "update_purchase_req_editor"){
 		window.setTimeout(close, 1000);
 	}
 	function close(){
 		postMessageToParent("close");
 	}
-	localStorage.setItem("shouldReloadRequests","true");
+	localStorage.setItem("shouldReloadPurchaseReq","true");
 	hasChanges = false;
 }
 
@@ -64,21 +64,21 @@ function feedBackSaving(){
 function loadForEdit(){
 	let params = [
 		{
-		"name": "request_id",
+		"name": "purchase_id",
 		"data": getparam('id'),
 		}
 	];
-	qBuilder.sendQuery(loadIntoForms,"get_purchase_request", params);
+	qBuilder.sendQuery(loadIntoForms,"get_purchase_request_by_id", params);
 	
 	//_("_0").value = "Update On Probation Student";
 	
 }
 
+
 let userID = undefined;
 function loadIntoForms(){
 	let setdata = JSON.parse(event.target.responseText);
-	
-	console.log(setdata);
+
 	
 	if(setdata.type != "success"){
 		return;
@@ -87,11 +87,21 @@ function loadIntoForms(){
 	userID = current_user_id;
 	
 	loadEvents();	
-	let datajs = setdata.student;
+	let datajs = setdata.purchase;
 	
-	    for (let key in datajs) {
-        if (datajs.hasOwnProperty(key)) {
-            let itemValue = datajs[key];
+	let converted = {
+		
+		"date_required": datajs.date_required,
+		"department_id": datajs.department_id,
+		"items": datajs.items,
+		"purpose_of_request": datajs.purpose_of_request,
+		
+	}
+	
+	
+	    for (let key in converted) {
+        if (converted.hasOwnProperty(key)) {
+            let itemValue = converted[key];
 			
 			try{
 				let form = formDatas.forms[formIdCollections.indexOf(key)];
@@ -109,7 +119,7 @@ function loadIntoForms(){
 }
 
 
-if(pageType == "edit_student"){
+if(pageType == "update_purchase_req_editor"){
 	loadForEdit();
 }
 
@@ -131,11 +141,24 @@ function cancelEditor(){
 
 // Handlers and Parsers
 
-function dummyFunction(elm){
+//Calculate value for each cell
+function calculateTotal(elm){
 	
 	let el = elm.parentNode.parentNode;
 	
-	console.log(el.querySelectorAll("[column_name='Total Ammount']"));
+	let totalAmmount = (el.querySelectorAll("[column_name='Total Ammount']"));
+	let cost = (el.querySelectorAll("[column_name='Unit Cost']"));
+	let quantity = (el.querySelectorAll("[column_name='Quantity']"));
 	
+	
+	if(cost[0].value.length && quantity[0].value.length){		
+		let calc_total = cost[0].value * quantity[0].value;
+			
+			totalAmmount[0].value = calc_total;
+			console.log(totalAmmount[0].value);
+			
+			tableGroupsUpdate(table_items_,items);
+	}	
+	//console.log(totalAmmount, cost, quantity);
 	
 }

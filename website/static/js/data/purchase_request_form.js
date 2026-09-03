@@ -39,6 +39,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"list":"departments",
             "id": "department_id",
             "index": 4
         },
@@ -68,16 +69,19 @@ let formStructure = {
                     {
                         "type": "number",
                         "attributes": {},
-						"onchange": "dummyFunction(this)",
-                    },
-                    {
-                        "type": "text",
-                        "attributes": {}
+						"onchange": "calculateTotal(this)",
+						"min":1,
                     },
                     {
                         "type": "text",
                         "attributes": {},
-                        "required": true
+						
+                    },
+                    {
+                        "type": "number",
+                        "attributes": {},
+                        "required": true,
+						"onchange": "calculateTotal(this)",
                     },
                     {
                         "type": "text",

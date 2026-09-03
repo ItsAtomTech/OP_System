@@ -29,7 +29,7 @@ let tableFormat = [
 		label: "Purpose",
 		data_path: "purpose_of_request",
 		sort: false,
-		// parser:parseBranch,
+		parser:purposeParse,
 		
 	},
 	{	
@@ -149,12 +149,12 @@ function tableLoader(data){
 	
 		
 	function generateTableDataRows(data, index = undefined){
-		let record_id = (data.id);
+		let record_id = (data.purchase_id);
 			let headTr = make("tr");
 				headTr.classList.add("padded_colms","clickable_row");
 				headTr.setAttribute("onclick","clickedOnRow("+record_id+")");
 				headTr.setAttribute("data_id",record_id);
-				headTr.setAttribute("code_id",data.record_id);
+				headTr.setAttribute("code_id",data.purchase_id);
 				
 			//check columns
 		let table_check = make("td");
@@ -173,7 +173,6 @@ function tableLoader(data){
 		
 		
 			for(each of tableFormat){
-				
 				//ignore hidden columns
 				if(hiddenColumns.indexOf(each.label) >= 0){
 					continue;
@@ -210,7 +209,7 @@ function tableLoader(data){
 							
 				let edit_action = make("div");
 					edit_action.classList.add("fa","fa-edit","flexed","df_button_flat","df_small","medium","modify","buttonize");
-					edit_action.setAttribute("onclick",'loadItemToEdit("'+forms[index].id+'")');
+					edit_action.setAttribute("onclick",'loadItemToEdit("'+forms[index].purchase_id+'")');
 				
 					
 					action_div.appendChild(edit_action);
@@ -220,7 +219,7 @@ function tableLoader(data){
 				
 				let remove_action = make("div");
 					remove_action.classList.add("fa","fa-refresh","flexed","df_button_flat","df_small","medium","remove", "buttonize");
-					remove_action.setAttribute("onclick","restoreItemHelper('"+forms[index].user_id+"')");
+					remove_action.setAttribute("onclick","restoreItemHelper('"+forms[index].purchase_id+"')");
 					remove_action.setAttribute("title","Restore to Items Table");
 					
 					action_div.appendChild(remove_action);
@@ -229,7 +228,7 @@ function tableLoader(data){
 				
 				let remove_action = make("div");
 					remove_action.classList.add("fa","fa-trash","flexed","df_button_flat","df_small","medium","remove", "buttonize");
-					remove_action.setAttribute("onclick","moveToTrashHelper('"+forms[index].id+"')");
+					remove_action.setAttribute("onclick","moveToTrashHelper('"+forms[index].purchase_id+"')");
 					action_div.appendChild(remove_action);
 					
 			}
@@ -384,7 +383,7 @@ function loadItemToEdit(id){
 	console.log(id);
 	
 	if(inIframe()){
-		postMessageToParent('openModal:{"link":"update_fuelfile_editor?id='+id+'","custom_class":"no_close_button,blurred"}');
+		postMessageToParent('openModal:{"link":"update_purchase_req_editor?id='+id+'","custom_class":"no_close_button,blurred"}');
 	}else{
 		open_modal('update_fuelfile_editor?id='+id,'no_close_button,blurred');
 	}
@@ -462,7 +461,7 @@ function dateFormater(d){
 
 //Other functions
 loadRecords = loadAllItems;
-monitorChanges("shouldReloadFuel", loadAllItems);
+monitorChanges("shouldReloadPurchaseReq", loadAllItems);
 
 
 
@@ -496,13 +495,13 @@ function feedBackRemoving(){
 	createDialogue(res_data.type, res_data.message);
 	
 	if(res_data.type == "success"){
-		localStorage.setItem("shouldReloadFuel","true");
+		localStorage.setItem("shouldReloadPurchaseReq","true");
 	}	
 }
 
 function silentlyMovetoRemove(ids){
 	let itemvalue = [{"name":"request_id", "value": ids}];
-	qBuilder.sendQuery(doNothing,"remove_fuel_request_file",itemvalue);
+	qBuilder.sendQuery(doNothing,"remove_purchase_request_file",itemvalue);
 	
 	
 }
@@ -533,8 +532,8 @@ function moveToTrash(confirmed = undefined,silent=false){
 	if(confirmed == 'fail'){
 		return;
 	}
-	let itemvalue = [{"name":"request_id", "value": idSelected}];
-	qBuilder.sendQuery(feedBackRemoving,"/remove_fuel_request_file",itemvalue);
+	let itemvalue = [{"name":"purchase_id", "value": idSelected}];
+	qBuilder.sendQuery(feedBackRemoving,"/remove_purchase_request_file",itemvalue);
 }
 
 
@@ -600,7 +599,7 @@ function parseItems(data){
 
 		let nameEl = make("span");
 		nameEl.className = "item_name bold";
-		nameEl.textContent = name || "—";
+		nameEl.textContent = charLimit(name,12) || "—";
 
 		let qtyEl = make("i");
 		qtyEl.className = "item_qty";
@@ -608,7 +607,7 @@ function parseItems(data){
 
 		let descEl = make("span");
 		descEl.className = "item_desc";
-		descEl.textContent = desc || "—";
+		descEl.textContent = charLimit(desc,15) || "—";
 
 		let priceEl = make("span");
 		priceEl.className = "item_price";
@@ -619,7 +618,7 @@ function parseItems(data){
 		amountEl.textContent = `Amount: ${amount || 0}`;
 		
 		let iconElm = make("span");
-			iconElm.classList.add("fa","fa-cube");
+			iconElm.classList.add("fa","fa-cube","icon_on_side");
 			
 		
 		itemSpan.append(iconElm, nameEl, qtyEl, descEl, priceEl, amountEl);
@@ -629,8 +628,15 @@ function parseItems(data){
 	return container.outerHTML;
 }
 
+
+
+function purposeParse(data){
+	return charLimit(data, 45);
+}
+
+
 function doNothing(){
-	localStorage.setItem("shouldReloadFuel","true");
+	localStorage.setItem("shouldReloadPurchaseReq","true");
 }
 
 
@@ -679,7 +685,7 @@ function toggleSelectOption(visible=false){
 //Check Functions End
 
 let targetID;
-// Misc Functions ====
+
 function clickedOnRow(elm){
 	let ev = event;
 	let parent_attrib = (ev.target.parentNode);
@@ -690,88 +696,87 @@ function clickedOnRow(elm){
 	targetID = parent_attrib.getAttribute('data_id');
 	
 	console.log(targetID);
+	
+	let params = [
+		{"name": "purchase_id", "value": targetID},
+	];
 
+	qBuilder.sendQuery(generatePurchaseDataView, 'get_purchase_request_by_id', params);
+	
+	function generateItemsTable(items){
+		let tbody = _('purchase_items_table_body');
+		tbody.innerHTML = '';
+
+		items.forEach(item => {
+			let [name, qty, desc, unitCost, totalAmount] = item;
+
+			let row = make("tr");
+			row.className = "padded_colms small";
+
+			let nameTd = make("td");
+			nameTd.className = "tiny";
+			nameTd.textContent = name || "--";
+
+			let qtyTd = make("td");
+			qtyTd.className = "tiny";
+			qtyTd.textContent = qty || "--";
+
+			let descTd = make("td");
+			descTd.className = "tiny";
+			descTd.textContent = desc || "--";
+
+			let unitCostTd = make("td");
+			unitCostTd.className = "tiny";
+			unitCostTd.textContent = unitCost || "--";
+
+			let totalTd = make("td");
+			totalTd.className = "tiny sticky_column_right primary_background";
+			totalTd.textContent = totalAmount || "--";
+
+			row.append(nameTd, qtyTd, descTd, unitCostTd, totalTd);
+			tbody.appendChild(row);
+		});
+	}
 	
 	
-	let params =  [
-			{"name": "request_id" , "value": targetID},
-		];
-		
-	qBuilder.sendQuery(generateDataView,'get_fuel_request_data_by_id',params);	
-		
-		
+	function generatePurchaseDataView(data) {
+		let res_data = JSON.parse(data.responseText);
+		let purchase = res_data.purchase;
 
-		function generateDataView(data) {
-			let res_data = (JSON.parse(data.responseText));
-			let fuel_req = res_data.fuel_req;
-			let vehicle  = res_data.vehicle;
-			let raw_json = res_data.json_data;
-
-			try {
-				raw_json = JSON.parse(raw_json);
-			} catch(e) {
-				raw_json = {};
-			}
-		
-		console.log(raw_json);
-
-			// Vehicle Info
-			tag('plate_no',           _('view_stat_1'))[0].innerText = vehicle.plate_no;
-			tag('vehicle_desc',       _('view_stat_1'))[0].innerText = vehicle.description;
-			tag('avg_kml',            _('view_stat_1'))[0].innerText = vehicle.average_km;
-			tag('capacity_l',          _('view_stat_1'))[0].innerText = vehicle.capacity_l;
-
-			// Driver / Request Info
-			tag('recent_driver',      _('view_stat_1'))[0].innerText = raw_json.recent_driver;
-			tag('driver_requested_by',_('view_stat_1'))[0].innerText = fuel_req.driver_name;
-			tag('branch',             _('view_stat_1'))[0].innerText = fuel_req.branch_id;
-			tag('date_requested',     _('view_stat_1'))[0].innerText = utility.formatDate(fuel_req.date);
-			tag('frs_number',         _('view_stat_1'))[0].innerText = fuel_req.fuel_requisition_no;
-			tag('supplier_name',      _('view_stat_1'))[0].innerText = fuel_req.supplier_vendor_name;
-			
-			tag('destination',      _('view_stat_1'))[0].innerText = parseDestination(fuel_req.destination);
-
-			// Fuel Request Details
-			_('view_no_of_ltrs').value    = raw_json.no_of_ltrs;
-			_('view_prev_cost_ltr').value = raw_json.prev_costltr;
-			_('view_total_cost').value    = (parseFloat(raw_json.no_of_ltrs) * parseFloat(raw_json.prev_costltr)).toFixed(2);
-
-			// Odometer
-			_('view_prev_odo').value = raw_json.last_fuel_recordltrs ? JSON.parse(raw_json.last_fuel_recordltrs)[0][0] : '--';
-			_('view_curr_odo').value = raw_json.last_fuel_recordltrs ? JSON.parse(raw_json.last_fuel_recordltrs)[0][1] : '--';
-
-			// Calculated Fields — pulled directly from raw_json
-			_('view_dist_travelled').value    = raw_json.dist_travelled_kms    || '--';
-			_('view_est_fuel_consumed').value = raw_json.est_fuel_consumed      || '--';
-			_('view_actual_fuel_beg').value   = raw_json.actual_fuel_beg_l      || '--';
-			_('view_actual_fuel_end').value   = raw_json.actual_fuel_endl       || '--';
-			_('view_theo_end').value          = raw_json.theo_end_l             || '--';
-			_('view_surplus_over').value      = raw_json.so_theoactl_end_l 
-												? raw_json.so_theoactl_end_l 
-												: "--";
-				
-				console.log(raw_json.so_theoactl_end_l);
-				
-			// Activity & Crew
-			_('view_activity_type').value = fuel_req.activity_type;
-			_('view_crew_1').value        = fuel_req.crewoccupants1;
-			_('view_crew_2').value        = fuel_req.crewoccupants2;
-			
-			
-			console.log(fuel_req.status);
-			
-			
-			_("status_option_").value = (fuel_req.status == "approved" ? "approved" : "pending" );
-			
-			
-			
-			addFancyPlaceholder();
+		let items_list = [];
+		try {
+			items_list = JSON.parse(purchase.items);
+		} catch(e) {
+			items_list = [];
 		}
-	
-	
-	showModalContent("view_stat_1");
-}
 
+		// Requestor Info
+		tag('requestor',      _('view_purchase_1'))[0].innerText = purchase.requestor_name || purchase.user_id || '--';
+		tag('department',     _('view_purchase_1'))[0].innerText = purchase.department_name || purchase.department_id || '--';
+		tag('date_requested', _('view_purchase_1'))[0].innerText = utility.formatDate(purchase.date);
+		tag('date_required',  _('view_purchase_1'))[0].innerText = purchase.date_required || '--';
+
+		// Purpose
+		tag('purpose', _('view_purchase_1'))[0].innerText = purchase.purpose_of_request;
+
+
+		// Items
+		generateItemsTable(items_list);
+
+
+		// Total Amount
+		_('view_total_amount').value = (purchase.total_amount !== undefined && purchase.total_amount !== null)
+			? purchase.total_amount
+			: '--';
+
+		// Status
+		_("status_option_").value = (purchase.status == "approved" ? "approved" : "pending");
+
+		addFancyPlaceholder();
+	}
+
+	showModalContent("view_purchase_1");
+}
 
 async function assignedReqStatus(elm){
 	if (targetID == undefined){
@@ -845,7 +850,7 @@ async function printDoc(){
 	showToast("Preparing Document filters ... ");
 	await sleep(1200);
 	
-	window.open('/fuel_requisition_slip_print', 'printFuelRequest');
+	window.open('/purchase_request_print', 'printPurchaseRequest');
 }
 
 
