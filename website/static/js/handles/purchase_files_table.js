@@ -845,7 +845,7 @@ async function printDoc(){
 		"id": targetID,
 	}
 	
-	localStorage.setItem("printFuelRequest", JSON.stringify(filters_to_pass));
+	localStorage.setItem("printPurchaseRequest", JSON.stringify(filters_to_pass));
 	
 	showToast("Preparing Document filters ... ");
 	await sleep(1200);

@@ -269,6 +269,16 @@ def fuel_requisition_slip_():
 
 
 
+@views.route('/purchase_request_print', methods=['GET', 'POST'])
+def purchase_request_slip_():
+    page = 'purchase_request_slip'
+
+    return render_template("print_templates/purchase_request_slip.html", user=current_user, page=page)
+        
+
+
+
+
 # =======================
 # Print Templates Section End
 # =======================

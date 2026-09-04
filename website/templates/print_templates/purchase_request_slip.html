@@ -1,0 +1,160 @@
+{% extends "base_headless.html" %}
+{% block title %} Purchase Request Form {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/print_templates/print_purchase_request.css') }}" />
+{% endblock %}
+
+{% block contents %}
+<div class="pr-wrapper" id="wrapper_doc">
+  <div class="pr-page">
+
+    <!-- ===== HEADER ===== -->
+    <div class="pr-header">
+      <div class="pr-header-left">
+        <!-- placeholder: company logo (.png) is set dynamically via JS -->
+        <img
+          src=""
+          alt="Company Logo"
+          class="pr-logo"
+          id="company_logo"
+          tag="logo_src"
+        />
+      </div>
+
+      <div class="pr-header-right">
+        <h1 class="pr-title">PURCHASE REQUEST FORM</h1>
+        <div class="pr-company-name" id="company_name"> --- </div>
+        <div class="pr-company-address" id="company_address"> --- </div>
+      </div>
+    </div>
+
+    <!-- ===== META ROW ===== -->
+    <div class="pr-section pr-meta-row">
+      <table class="pr-meta-table bordered">
+        <tbody>
+          <tr>
+            <td class="pr-meta-label">Date Requested:</td>
+            <td class="pr-meta-value" id="date_requested">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="pr-meta-label">Date Required:</td>
+            <td class="pr-meta-value" id="date_required">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="pr-meta-table bordered">
+        <tbody>
+          <tr>
+            <td class="pr-meta-label">Purchase Request No.</td>
+            <td class="pr-meta-value bold" id="pr_number">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="pr-meta-label">Requesting Department:</td>
+            <td class="pr-meta-value" id="requesting_department">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== ITEMS TABLE ===== -->
+    <div class="pr-section pr-items">
+      <table class="pr-items-table bordered">
+        <thead>
+          <tr class="item_headers">
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Item Description</th>
+            <th>Unit Cost</th>
+            <th>Total Amount</th>
+          </tr>
+        </thead>
+        <tbody id="items_tbody">
+          <!-- rows inserted dynamically via parseItems() / make() -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="pr-no-border"></td>
+            <td class="pr-grand-total-label">Grand Total:</td>
+            <td class="pr-grand-total-value" id="grand_total">Php 0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- ===== PURPOSE OF REQUEST ===== -->
+    <div class="pr-section pr-purpose">
+      <div class="pr-subheader">Purpose of Request:</div>
+      <div class="pr-purpose-box" id="purpose_of_request">&nbsp;</div>
+    </div>
+
+    <!-- ===== REQUESTED BY / PURCHASING STAFF ===== -->
+    <div class="pr-section pr-requested-row">
+      <table class="pr-info-table bordered">
+        <thead>
+          <tr>
+            <th>Requested By</th>
+            <th>To be accomplished by purchasing staff</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sig-cell" id="requested_by" rowspan="2">&nbsp;</td>
+            <td class="pr-sub-row">Date Ordered: <span id="date_ordered">&nbsp;</span></td>
+          </tr>
+          <tr>
+            <td class="pr-sub-row">P.O. Number: <span id="po_number">&nbsp;</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== APPROVED BY ===== -->
+    <div class="pr-section pr-approval">
+      <div class="pr-subheader">Approved By:</div>
+      <table class="pr-approval-table bordered">
+        <tbody>
+          <tr>
+            <td class="sig-cell" id="approved_dept_head">&nbsp;</td>
+            <td class="sig-cell" id="approved_ops_director">&nbsp;</td>
+            <td class="sig-cell" id="approved_gm">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="sig-label-cell">Department Head</td>
+            <td class="sig-label-cell">Operations Director</td>
+            <td class="sig-label-cell">General Manager</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <!-- end pr-page -->
+</div>
+<!-- end pr-wrapper -->
+
+<!-- Row Template (for JS dynamic fill) -->
+<template id="pr_row_template">
+  <tr>
+    <td tag="item_name"></td>
+    <td tag="quantity"></td>
+    <td tag="item_desc"></td>
+    <td tag="unit_price"></td>
+    <td tag="amount"></td>
+  </tr>
+</template>
+
+<script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+	css_elm.href = static_link+themes[0]+".css";
+	
+	let STATIC_IMAGE_LINK = "{{ url_for('static', filename='images') }}";
+	
+</script>
+
+<script src="{{ url_for('static', filename='js/purchase_request_printing_handles.js') }}"></script>
+{% endblock %}
