@@ -9,7 +9,7 @@ let DEFAULT_LOGO = "logos/cfi_big.png";
 async function getPrintableData(){
 	qBuilder.server_address = "_";
 	_("wrapper_doc").classList.add("blur_docs");
-	await sleep(800);
+	// await sleep(800);
 	let data = localStorage.getItem("printPurchaseRequest");
 	
 	if(!data){
@@ -27,7 +27,7 @@ async function getPrintableData(){
 	await sleep(200);
 	_("wrapper_doc").classList.remove("blur_docs");
 	await sleep(800);
-	print();
+	// print();
 }
 
 
@@ -73,7 +73,10 @@ function generateDataOnDoc(dataraw){
 	_('purpose_of_request').innerText = purchase.purpose_of_request || '--';
 
 	// Requested By
-	_('requested_by').innerText = purchase.requestor_name || '--';
+	_('requested_by').innerText = purchase.requested_by || purchase.requestor_name;
+	
+	//Approved By fields
+	generateApprovefBy(purchase.approved_by);
 	
 	
 	generateHeaderTitles();
@@ -88,7 +91,7 @@ function renderItems(items){
 	let template = _('pr_row_template');
 	tbody.innerHTML = '';
 
-	const MIN_ROWS = 10;
+	const MIN_ROWS = 12;
 
 	items.forEach(item => {
 		let row = document.importNode(template.content, true);
@@ -116,6 +119,31 @@ function renderItems(items){
 		tbody.appendChild(row);
 	}
 }
+
+
+function generateApprovefBy(data){
+	
+	data = JSON.parse(data);
+	
+	let counter = 1; 
+	for(each of data){
+		
+		_("approved_"+ counter) ? _("approved_"+ counter).innerText = each[1]: false;
+		_("position_"+ counter) ? _("position_"+ counter).innerText = each[0]: false;
+		
+		
+		counter++;
+	}
+	
+	console.log(data);
+}
+
+
+
+
+
+
+
 
 // ========================================================
 //Populate the header fields and other none Item Stuffs ===

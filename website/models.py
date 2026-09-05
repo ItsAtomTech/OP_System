@@ -42,6 +42,8 @@ class PurchaseRequests(db.Model):
     type = db.Column(db.String(50)) 
     items = db.Column(db.String(10000))
     purpose_of_request = db.Column(db.String(2000))
+    approved_by = db.Column(db.String(1024))
+    requested_by = db.Column(db.String(1024), default=None) #overide when specified
     total_amount = db.Column(db.Float)
     misc = db.Column(db.String(1024))
     status = db.Column(db.String(50))

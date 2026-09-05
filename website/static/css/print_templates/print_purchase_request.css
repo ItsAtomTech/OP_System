@@ -286,16 +286,18 @@
    ============================================================ */
 .pr-approval-table .sig-cell {
   height: 48px;
-  vertical-align: bottom;
+  vertical-align: bottom !important;
   text-align: center;
-  font-style: italic;
-  text-decoration: underline;
-  font-size: 12px;
+  /* font-style: italic; */
+  text-decoration: none;
+  font-weight:bold;
+  font-size: 14px;
 }
 
 .pr-approval-table .sig-label-cell {
-  font-size: 12px;
+  font-size: 10px;
   text-align: center;
+   vertical-align: bottom;
   padding: 3px 8px;
   font-style: normal;
   font-weight: bold;

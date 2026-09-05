@@ -361,6 +361,13 @@ def update_my_email():
 #  User Forms API start
 # ================================
 
+def parse_date_string(date_str):
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d")
+    except (ValueError, TypeError):
+        return None
 
 
 # Purchase Request Section =====================================
@@ -379,7 +386,10 @@ def save_purchase_request():
         request_type  = "purchase_request"
         items         = data.get("items")
         purpose       = data.get("purpose_of_request")
-        date_required = data.get("date_required")
+        approved_by   = data.get("approved_by")
+        requested_by   = data.get("requested_by")
+        date_required  = data.get("date_required")
+        date_requested = data.get("date_requested", None)
         department_id = data.get("department_id")
         
         if not all([request_type, items, purpose]):
@@ -403,12 +413,20 @@ def save_purchase_request():
             type               = request_type,
             items              = items,
             purpose_of_request = purpose,
+            approved_by        = approved_by,
             total_amount       = total_amount,
             date_required      = date_required,
             department_id      = department_id,
         )
+
+        if date_requested:
+            parsed_date = parse_date_string(date_requested)
+            if parsed_date:
+                new_purchase.date = parsed_date
+
         db.session.add(new_purchase)
-        db.session.commit()
+        db.session.commit()             
+        
         return {"type": "success", "message": "Purchase request saved successfully"}
     
     except Exception as e:
@@ -448,11 +466,13 @@ def get_purchase_request_by_id():
             "purchase_id":          purchase.purchase_id,
             "user_id":              purchase.user_id,
             "requestor_name":       requestor_name,
+            "requested_by":         purchase.requested_by,
             "type":                 purchase.type,
             "items":                purchase.items,
             "purpose_of_request":   purchase.purpose_of_request,
             "misc":                 purchase.misc,
             "department_id":        purchase.department_id,
+            "approved_by":          purchase.approved_by,
             "department_name":      department_name,
             "total_amount":         purchase.total_amount,
             "status":               purchase.status,
@@ -480,7 +500,10 @@ def update_purchase_request():
         items         = data.get("items")
         purpose       = data.get("purpose_of_request")
         date_required = data.get("date_required")
+        requested_by  = data.get("requested_by", None)
+        approved_by   = data.get("approved_by")
         department_id = data.get("department_id")
+        date_requested = data.get("date_requested", None)
 
         if not purchase_id:
             return {"type": "error", "message": "Missing purchase_id"}
@@ -508,8 +531,17 @@ def update_purchase_request():
         purchase.items              = items
         purchase.purpose_of_request = purpose
         purchase.total_amount       = total_amount
+        purchase.approved_by        = approved_by
         purchase.date_required      = date_required
+        purchase.requested_by       = requested_by
         purchase.department_id      = department_id
+        
+        if date_requested:
+            parsed_date = parse_date_string(date_requested)
+            if parsed_date:
+                purchase.date = parsed_date
+        
+
 
         db.session.commit()
         return {"type": "success", "message": "Purchase request updated successfully"}

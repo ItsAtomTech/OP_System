@@ -1,6 +1,6 @@
 {% extends "base_headless.html" %}
 
-{% block title%}Config Editor {% endblock %}
+{% block title%}Form Data Editor {% endblock %}
 
 {% block extra_css %}
 
@@ -25,20 +25,13 @@
 <div class="editor_main_con"> 
 	<div class="formclass_con" id="main_form_container">
 
-
-
-	</div>
-	
-	
-		<div class="bottom_toolbar ">
-		
-			<button class="df_button secondary_background primary_color_invert small" onclick="submitForm()" ><span class="fa fa-save"></span> Submit</button>
-			
-			<button class="df_button_flat primary_background_darker primary_color small" onclick="cancelEditor(this)"> Close </button>
-
-
-
 		</div>
+			<div class="bottom_toolbar ">
+				<button class="df_button secondary_background primary_color_invert small" onclick="submitForm()" ><span class="fa fa-save"></span> Submit</button>
+				
+				<button class="df_button_flat primary_background_darker primary_color small" onclick="cancelEditor(this)"> Close </button>
+
+			</div>
 
 
 		</div>
@@ -52,6 +45,23 @@
 
 <datalist id="reasons" value="" required class="fancy_form_df form_display">
 
+</datalist>
+
+
+
+<datalist id="common_names">
+	
+	
+	
+</datalist>
+
+<datalist id="positions">
+	<option>   </option>
+	<option> General Manager </option>
+	<option> Operations Director </option>
+	<option> Department Head </option>
+	<option> Cluster Manager </option>
+	<option> Store Manager </option>
 </datalist>
 
 

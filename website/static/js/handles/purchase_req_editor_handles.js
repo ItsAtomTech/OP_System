@@ -93,8 +93,11 @@ function loadIntoForms(){
 		
 		"date_required": datajs.date_required,
 		"department_id": datajs.department_id,
+		"approved_by": datajs.approved_by,
 		"items": datajs.items,
+		"requested_by": datajs.requested_by,
 		"purpose_of_request": datajs.purpose_of_request,
+		"date_requested": datajs.date,
 		
 	}
 	

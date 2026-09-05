@@ -751,7 +751,7 @@ function clickedOnRow(elm){
 		}
 
 		// Requestor Info
-		tag('requestor',      _('view_purchase_1'))[0].innerText = purchase.requestor_name || purchase.user_id || '--';
+		tag('requestor',      _('view_purchase_1'))[0].innerText = purchase.requested_by || purchase.requestor_name || purchase.user_id || '--';
 		tag('department',     _('view_purchase_1'))[0].innerText = purchase.department_name || purchase.department_id || '--';
 		tag('date_requested', _('view_purchase_1'))[0].innerText = utility.formatDate(purchase.date);
 		tag('date_required',  _('view_purchase_1'))[0].innerText = purchase.date_required || '--';
