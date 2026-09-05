@@ -9,7 +9,7 @@ let DEFAULT_LOGO = "logos/cfi_big.png";
 async function getPrintableData(){
 	qBuilder.server_address = "_";
 	_("wrapper_doc").classList.add("blur_docs");
-	// await sleep(800);
+	await sleep(800);
 	let data = localStorage.getItem("printPurchaseRequest");
 	
 	if(!data){
@@ -27,7 +27,7 @@ async function getPrintableData(){
 	await sleep(200);
 	_("wrapper_doc").classList.remove("blur_docs");
 	await sleep(800);
-	// print();
+	print();
 }
 
 
@@ -122,6 +122,10 @@ function renderItems(items){
 
 
 function generateApprovefBy(data){
+	
+	if(!data){
+		return;
+	}
 	
 	data = JSON.parse(data);
 	

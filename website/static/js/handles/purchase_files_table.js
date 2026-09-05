@@ -853,6 +853,10 @@ async function printDoc(){
 	window.open('/purchase_request_print', 'printPurchaseRequest');
 }
 
+function assignedPurchaseReqStatus(elm){
+	showToast("Coming Soon...");
+}
+
 
 REFRESH_HANDLER = function(){
 	

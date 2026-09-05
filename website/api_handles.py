@@ -427,7 +427,7 @@ def save_purchase_request():
         db.session.add(new_purchase)
         db.session.commit()             
         
-        return {"type": "success", "message": "Purchase request saved successfully"}
+        return {"type": "success", "message": "Purchase request saved successfully", "id": new_purchase.purchase_id}
     
     except Exception as e:
         db.session.rollback()

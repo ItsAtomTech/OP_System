@@ -1,7 +1,7 @@
 
 
 //For Saving User
-function submitForm(){
+function submitForm(confirmed){
 	let values = formMaker.retriveFormInput(true);
 	let params = [
 		{
@@ -14,6 +14,18 @@ function submitForm(){
 	if(!validateRequired(formIdCollections)){
 		return;
 	};
+	
+	
+	if(confirmed == undefined){
+		askUser("You are about to save this form entry, are you sure that all fields are correct? ",submitForm,arguments);
+		return;
+	}
+	destroy_dia();
+	
+	if(confirmed != "pass"){
+		return;
+	}
+	
 	
 	//for updating
 	if(pageType == "update_purchase_req_editor"){
@@ -38,7 +50,7 @@ function submitForm(){
 
 
 
-
+let nextFormID = undefined;
 
 function feedBackSaving(){
 	let res_data = (JSON.parse(event.target.responseText));
@@ -47,7 +59,8 @@ function feedBackSaving(){
 		window.setTimeout(close, 1000);
 	}
 	function close(){
-		postMessageToParent("close");
+		nextFormID = res_data.id;
+		askForPrint();
 	}
 	localStorage.setItem("shouldReloadPurchaseReq","true");
 	hasChanges = false;
@@ -56,6 +69,25 @@ function feedBackSaving(){
 
 
 
+
+async function askForPrint(confirmed = undefined){
+	
+	if(confirmed == undefined){
+		askUser("Do you want to Print the Document now?",askForPrint,arguments);
+		return;
+	}
+	destroy_dia();
+	
+	if(confirmed == "pass"){
+		printDoc();
+		await sleep(1000);
+		postMessageToParent("close");
+	}else{
+		postMessageToParent("close");
+	}
+	console.log(confirmed);
+
+}
 
 
 
@@ -140,6 +172,21 @@ function cancelEditor(){
 	}
 }
 
+
+
+//Printing Logics
+async function printDoc(){
+
+	//Extract the Filters to pass onto the overall printing	
+	let filters_to_pass = {
+		"id": nextFormID,
+	}
+	localStorage.setItem("printPurchaseRequest", JSON.stringify(filters_to_pass));
+	showToast("Preparing Document filters ... ");
+	await sleep(500);
+	
+	window.open('/purchase_request_print', 'printFuelRequest');
+}
 
 
 // Handlers and Parsers
