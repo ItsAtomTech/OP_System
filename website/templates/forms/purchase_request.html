@@ -51,9 +51,13 @@
 
 <datalist id="common_names">
 	
-	
+	{% for name, count in common_names %}
+	<option value="{{ name }}"></option>
+	{% endfor %}
 	
 </datalist>
+
+
 
 <datalist id="positions">
 	<option>   </option>

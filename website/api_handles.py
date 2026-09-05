@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import random, string, requests
 import pytz
 from werkzeug.utils import secure_filename
+from collections import Counter
 
 manila_tz = pytz.timezone("Asia/Manila")
 from dotenv import load_dotenv
@@ -2403,6 +2404,38 @@ def is_admin(*allowed_types):
     types = allowed_types if allowed_types else (1,)
     return current_user.type in types
 
+
+@api_handles.route('/get_common_approver_names', methods=['POST','GET'])
+def get_common_approver_names(min_occurrences=1, limit=50):
+
+    recent_purchases = PurchaseRequests.query.filter(
+        PurchaseRequests.approved_by.isnot(None)
+    ).order_by(
+        PurchaseRequests.purchase_id.desc()
+    ).limit(limit).all()
+
+    name_counter = Counter()
+
+    for purchase in recent_purchases:
+        try:
+            approvers = json.loads(purchase.approved_by)
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+        for entry in approvers:
+            try:
+                position, name = entry
+                if name:
+                    name_counter[name] += 1
+            except (ValueError, TypeError):
+                continue
+
+    common_names = [
+        (name, count) for name, count in name_counter.most_common()
+        if count >= min_occurrences
+    ]
+
+    return common_names
 
 
 @api_handles.route('/get_logo_assets', methods=['GET','POST'])

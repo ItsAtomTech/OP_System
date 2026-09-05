@@ -11,6 +11,8 @@ from datetime import datetime,timedelta
 from .global_vars import Post_Visibility, Sorting, Post_Status
 from .models import Users
 
+from .api_handles import api_handles, get_common_approver_names
+
 plt = ""  # empty this var when on live website
 post_per_page = 100
 sorting = Sorting.sorting
@@ -122,8 +124,10 @@ def request_forms_page():
 @views.route('/purchase_request', methods=['GET', 'POST'])
 def purchase_request():
     page = 'purchase_editor'
+    common_names = get_common_approver_names()
+    
 
-    return render_template("forms/purchase_request.html", user=current_user, page=page)
+    return render_template("forms/purchase_request.html", user=current_user, page=page, common_names=common_names)
     
     
     
@@ -152,7 +156,8 @@ def update_fuelfile_editor_():
 @views.route('/request_files', methods=['GET', 'POST'])
 def file_records_page():
     page = 'request_files'
-
+    
+    
     return render_template("file_records_page.html", user=current_user, page=page)
         
 
@@ -221,8 +226,10 @@ def purchase_files_table_():
 @views.route('/update_purchase_req_editor', methods=['GET', 'POST'])
 def update_purchase_req_editor_():
     page = 'update_purchase_req_editor'
-
-    return render_template("forms/purchase_request.html", user=current_user, page=page)
+    
+    common_names = get_common_approver_names()
+    
+    return render_template("forms/purchase_request.html", user=current_user, page=page,common_names=common_names)
     
     
 
