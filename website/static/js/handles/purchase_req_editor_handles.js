@@ -238,6 +238,9 @@ function calculateTotal(elm){
 function proccessDataForCustomLogo(data){
 	let res_data = (JSON.parse(data.responseText));
 	
+	res_data.files.sort(); 
+	
+	
 	if(res_data.files.length >= 1){
 		_("use_custom_logo").innerHTML = "";
 		let empty = make("option");
@@ -281,5 +284,4 @@ function change_image_preview(elm){
 	
 	_("custom_image_preview").src = STATIC_IMAGE_LINK + "/logos/" + value;
 	
-	console.log(elm);
 }
