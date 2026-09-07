@@ -767,8 +767,8 @@ function formatDate(isoString) {
 
 };
 
-function formatToPHP(amount) {
-  return 'P' + Number(amount).toLocaleString('en-PH', {
+function formatToPHP(amount,sign="P") {
+  return sign  + Number(amount).toLocaleString('en-PH', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });

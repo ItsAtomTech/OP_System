@@ -59,10 +59,12 @@
 }
 
 .pr-logo {
-  width: 250px;
+  width: 280px;
   height: auto;
-  min-height: 50px;
+  min-height: 60px;
   object-fit: contain;
+  aspect-ratio:auto;
+  max-height:180px;
   /* background: #f7f7f7; */
   /* border: 1px dashed #bbb; */
 }

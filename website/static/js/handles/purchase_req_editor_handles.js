@@ -93,13 +93,15 @@ async function askForPrint(confirmed = undefined){
 
 
 
-function loadForEdit(){
+async function loadForEdit(){
 	let params = [
 		{
 		"name": "purchase_id",
 		"data": getparam('id'),
 		}
 	];
+	
+	await qBuilder.sendPromise(proccessDataForCustomLogo,"get_logo_assets");
 	qBuilder.sendQuery(loadIntoForms,"get_purchase_request_by_id", params);
 	
 	//_("_0").value = "Update On Probation Student";
@@ -121,6 +123,18 @@ function loadIntoForms(){
 	loadEvents();	
 	let datajs = setdata.purchase;
 	
+	
+	let custom_logo = datajs.misc;
+	
+	try{
+		custom_logo = JSON.parse(custom_logo);
+		custom_logo = custom_logo.custom_logo;
+	}catch(e){
+		custom_logo = undefined;
+	}
+	
+	
+	
 	let converted = {
 		
 		"date_required": datajs.date_required,
@@ -130,7 +144,8 @@ function loadIntoForms(){
 		"requested_by": datajs.requested_by,
 		"purpose_of_request": datajs.purpose_of_request,
 		"date_requested": datajs.date,
-		
+		"company_id": datajs.company_id,
+		"use_custom_logo": custom_logo,
 	}
 	
 	
@@ -156,6 +171,8 @@ function loadIntoForms(){
 
 if(pageType == "update_purchase_req_editor"){
 	loadForEdit();
+}else{
+	qBuilder.sendQuery(proccessDataForCustomLogo,"get_logo_assets");
 }
 
 
@@ -211,4 +228,58 @@ function calculateTotal(elm){
 	}	
 	//console.log(totalAmmount, cost, quantity);
 	
+}
+
+	
+	
+
+//Misc Function
+	
+function proccessDataForCustomLogo(data){
+	let res_data = (JSON.parse(data.responseText));
+	
+	if(res_data.files.length >= 1){
+		_("use_custom_logo").innerHTML = "";
+		let empty = make("option");
+		
+		
+		_("use_custom_logo").appendChild(empty);
+		
+		for (each of res_data.files){
+			let option = make("option");	
+				option.innerText = each;
+				_("use_custom_logo").appendChild(option);
+		}
+		
+	}
+}
+	
+
+function proccessCustom_image_previewPatch(){
+	let prev_container = _("custom_images_preview").parentElement.parentElement;
+		prev_container.innerHTML = "";
+	
+	let imagePreview = make("img");
+		imagePreview.classList.add("custom_image_preview");
+		imagePreview.id = "custom_image_preview";
+	
+	
+	
+		prev_container.appendChild(imagePreview);
+
+	console.log(prev_container);
+
+}	
+proccessCustom_image_previewPatch();
+
+
+
+//helper for getting the preview image
+function change_image_preview(elm){
+	let value = elm.value;
+	
+	
+	_("custom_image_preview").src = STATIC_IMAGE_LINK + "/logos/" + value;
+	
+	console.log(elm);
 }

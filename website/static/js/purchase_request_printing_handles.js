@@ -9,7 +9,7 @@ let DEFAULT_LOGO = "logos/cfi_big.png";
 async function getPrintableData(){
 	qBuilder.server_address = "_";
 	_("wrapper_doc").classList.add("blur_docs");
-	await sleep(800);
+	// await sleep(800);
 	let data = localStorage.getItem("printPurchaseRequest");
 	
 	if(!data){
@@ -27,17 +27,17 @@ async function getPrintableData(){
 	await sleep(200);
 	_("wrapper_doc").classList.remove("blur_docs");
 	await sleep(800);
-	print();
+	// print();
 }
 
 
 function getInformationData(data){
 	let idPost = undefined;
-	console.log(data.id);
 	idPost = data.id;
 
 	let params = [
 		{"name": "purchase_id", "value": idPost},
+		{"name": "include_company", "value": 1}
 	];
 
 	qBuilder.sendQuery(generateDataOnDoc, '/get_purchase_request_by_id', params);
@@ -79,7 +79,7 @@ function generateDataOnDoc(dataraw){
 	generateApprovefBy(purchase.approved_by);
 	
 	
-	generateHeaderTitles();
+	generateHeaderTitles(purchase);
 	
 }
 
@@ -99,8 +99,8 @@ function renderItems(items){
 		tag('item_name', row)[0].innerText  = item[0] || '--';
 		tag('quantity', row)[0].innerText   = item[1] || '--';
 		tag('item_desc', row)[0].innerText  = item[2] || '--';
-		tag('unit_price', row)[0].innerText = item[3] ? parseFloat(item[3]).toFixed(2) : '--';
-		tag('amount', row)[0].innerText     = item[4] ? parseFloat(item[4]).toFixed(2) : '--';
+		tag('unit_price', row)[0].innerText = item[3] ? formatPeso((parseFloat(item[3]).toFixed(2))) : '--';
+		tag('amount', row)[0].innerText     = item[4] ? formatPeso(parseFloat(item[4]).toFixed(2)) : '--';
 
 		tbody.appendChild(row);
 	});
@@ -139,7 +139,6 @@ function generateApprovefBy(data){
 		counter++;
 	}
 	
-	console.log(data);
 }
 
 
@@ -154,8 +153,12 @@ function generateApprovefBy(data){
 
 let companyData = {};
 
-function generateHeaderTitles(){
+function generateHeaderTitles(data){
 	
+	
+	if(data.company_data){
+		companyData = data.company_data;
+	};
 	
 	
 	if(!companyData.address){
@@ -172,17 +175,34 @@ function generateHeaderTitles(){
 	}
 	
 	
-	if(!companyData.logo){
+	if(!companyData.logo_link){
 		_("company_logo").src = STATIC_IMAGE_LINK + "/" + DEFAULT_LOGO;
 	}else{
-		_("company_logo").src = STATIC_IMAGE_LINK + "/" + companyData.logo;
+		_("company_logo").src = STATIC_IMAGE_LINK + "/logos/" + companyData.logo_link;
 	}
 	
+	
+	let miscData = {}
+	if(data.misc){
+		try{
+			miscData = JSON.parse(data.misc);
+		}catch(e){
+			console.warn(e);
+			// ---
+		}
+	}
+		
+	if(miscData.custom_logo && miscData.custom_logo.length >= 4){
+		_("company_logo").src = STATIC_IMAGE_LINK + "/logos/"+ miscData.custom_logo
+	}
+	console.log(miscData);
 	
 }
 
 
-
+function formatPeso(data){
+	return formatToPHP(data, "₱");
+}
 
 
 getPrintableData();

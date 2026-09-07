@@ -77,3 +77,14 @@ td>input[column_name="Quantity"]{
 td>input[column_name="Item Description"]{
 	min-width:300px;
 }
+
+.custom_image_preview{
+	max-width:100%;
+	padding:10px;
+	-webkit-transition:0.3s;
+	transition:0.3s;
+	max-height:120px;
+	aspect-ratio:auto;
+	pointer-events:none;
+	
+}

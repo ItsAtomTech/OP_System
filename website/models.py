@@ -48,6 +48,7 @@ class PurchaseRequests(db.Model):
     misc = db.Column(db.String(1024))
     status = db.Column(db.String(50))
     date_required = db.Column(db.String(1024))
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))   
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
     

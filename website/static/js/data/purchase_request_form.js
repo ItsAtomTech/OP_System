@@ -59,6 +59,22 @@ let formStructure = {
             "index": 7
         },
 		{
+            "type": "select",
+            "events": {},
+            "value": "",
+            "label": "Company",
+            "fancy": true,
+            "required": false,
+            "description": "If not Specified, defaults to Current User's company assigned",
+            "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+			"list": "company_list",
+            "id": "company_id",
+            "index": 6
+        },
+		{
             "type": "text",
             "events": {},
             "value": "",
@@ -68,7 +84,7 @@ let formStructure = {
             "description": "If not Specified, defaults to Current User name.",
             "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
             "row_span": null,
-            "col_span": null,
+            "col_span": 2,
             "span_column": false,
             "id": "requested_by",
             "index": 6
@@ -199,6 +215,45 @@ let formStructure = {
             "id": "approved_by",
             "index": 5
         },
+		{
+            "type": "select",
+            "events": {},
+            "value": "",
+            "label": "Use Custom Logo",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
+            "row_span": 0,
+            "col_span": 1,
+            "span_column": false,
+            "id": "use_custom_logo",
+			"onchange": "change_image_preview(this)",
+            "index": 0
+        },        
+		{
+            "type": "file",
+            "events": {},
+            "value": "",
+            "config": {
+                "multiple": false,
+                "accept": "",
+                "min": "0",
+                "max": "0",
+                "signatureType": false
+            },
+            "label": "",
+            "fancy": true,
+			"disabled":true,
+            "required": false,
+            "description": "",
+            "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "custom_images_preview",
+            "index": 0
+        }
     ],
     "groups": [
         {

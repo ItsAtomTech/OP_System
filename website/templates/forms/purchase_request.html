@@ -80,6 +80,13 @@
 </datalist>
 
 
+<datalist id="company_list">
+		<option value=""> </option>
+	{% for comp in get_company() %}
+		<option value="{{ comp.id }}">{{ comp.name }}</option>
+	{% endfor %}
+</datalist>
+
 
 <script>
 let hasChanges = false;
@@ -110,6 +117,8 @@ function updatesOn(elm){
 //init and Render the Forms we have
 let editType = "{{ page }}";
 let pageType = "{{ page }}";
+let STATIC_IMAGE_LINK = "{{ url_for('static', filename='images') }}";
+
 qBuilder.server_address = "_";
 
 

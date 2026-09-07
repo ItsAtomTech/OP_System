@@ -392,6 +392,16 @@ def save_purchase_request():
         date_required  = data.get("date_required")
         date_requested = data.get("date_requested", None)
         department_id = data.get("department_id")
+        company_id = data.get("company_id")
+        
+        
+        misc_data = {
+            "custom_logo": data.get("use_custom_logo", None)
+        }
+        
+        
+        if len(company_id) <= 0:
+            company_id = current_user.company_id or None
         
         if not all([request_type, items, purpose]):
             return {"type": "error", "message": "Incomplete purchase request data"}
@@ -418,6 +428,8 @@ def save_purchase_request():
             total_amount       = total_amount,
             date_required      = date_required,
             department_id      = department_id,
+            company_id         = company_id,
+            misc               = json.dumps(misc_data),
         )
 
         if date_requested:
@@ -443,9 +455,15 @@ def save_purchase_request():
 def get_purchase_request_by_id():
     try:
         purchase_id = request.form.get("purchase_id") or request.args.get("purchase_id")
+        
+        includeCompany = request.form.get("include_company") or request.args.get("include_company")
+        
         if not purchase_id:
             return {"type": "error", "message": "Missing purchase_id"}
-
+            
+        if not includeCompany or includeCompany == "0":
+            includeCompany = False
+        
         result = db.session.query(
             PurchaseRequests,
             Users.username.label("requestor_name"),
@@ -476,10 +494,27 @@ def get_purchase_request_by_id():
             "approved_by":          purchase.approved_by,
             "department_name":      department_name,
             "total_amount":         purchase.total_amount,
+            "company_id":           purchase.company_id,
             "status":               purchase.status,
+            "misc":                 purchase.misc,
             "date_required":        purchase.date_required,
             "date":                 purchase.date.strftime("%Y-%m-%d %H:%M:%S") if purchase.date else None,
         }
+        
+
+        if includeCompany:
+            company_data = Company.query.get(purchase.company_id)
+            
+            if company_data:
+                com_data = {
+                    "name":company_data.name,
+                    "logo_link": company_data.logo_link,
+                    "address": company_data.address
+                }
+                
+                purchase_data["company_data"] = com_data
+        
+        
         return {"type": "success", "purchase": purchase_data}
     except Exception as e:
         return {"type": "error", "message": str(e)}
@@ -505,6 +540,15 @@ def update_purchase_request():
         approved_by   = data.get("approved_by")
         department_id = data.get("department_id")
         date_requested = data.get("date_requested", None)
+        company_id = data.get("company_id")
+        
+        misc_data = {
+            "custom_logo": data.get("use_custom_logo", None)
+        }
+        
+        
+        if len(company_id) <= 0:
+            company_id = current_user.company_id or None
 
         if not purchase_id:
             return {"type": "error", "message": "Missing purchase_id"}
@@ -536,6 +580,9 @@ def update_purchase_request():
         purchase.date_required      = date_required
         purchase.requested_by       = requested_by
         purchase.department_id      = department_id
+        purchase.company_id         = company_id
+        purchase.misc = json.dumps(misc_data)
+        
         
         if date_requested:
             parsed_date = parse_date_string(date_requested)
