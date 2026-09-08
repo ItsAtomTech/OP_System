@@ -2365,12 +2365,10 @@ def get_fuel_monitoring_report_file():
             actual_kml = (total_km / end_fuel) if end_fuel else 0.0
             fuel_purchase_amount = fuel_added * fuel_rate
 
-            raw_excess = raw_json.get("so_theoactl_end_l", record.so_theoactl_end_l)
-            has_excess_data = raw_excess not in (None, "")
-            excess_savings_l = parse_accounting_notation(raw_excess)
+            excess_savings_l = actual_fuel_used_l - expected_fuel_used_l
             excess_savings_php = excess_savings_l * fuel_rate
 
-            consumption_status = get_consumption_status(excess_savings_l, has_excess_data)
+            consumption_status = get_consumption_status(excess_savings_l, has_data=True)
 
             report_data.append({
                 "date": record.date.strftime("%Y-%m-%d") if record.date else None,
