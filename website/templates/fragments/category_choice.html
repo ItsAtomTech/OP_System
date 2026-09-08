@@ -1,0 +1,96 @@
+<div class="modal_main_backdrop padded" id="department_modal" inert>
+  <div class="modal_container_box">
+    <!-- Modal Header -->
+    <div class="top_header">
+      <div class="title_form_top">File Records Selector</div>
+      <div
+        class="close_modal_tright"
+        tabindex="1"
+        onclick="closeModalContent('department_modal')"
+      >
+        &times;
+      </div>
+    </div>
+
+    <!-- Modal Contents Container -->
+
+    <div class="option_main_container">
+      <div class="centered small padded" tag="">
+        <span class="fa fa-info-circle"> </span> Checked Options will be the
+        active filter entry.
+      </div>
+      <br />
+
+      <div class="flexed padded" id="">
+        <div class="df_button_flat centered_flex flexed">
+          <span class="fa fa-search"> </span>
+        </div>
+
+        <div class="cols_con_ padded_input full_width">
+          <label
+            class="df_label_con required_style_label placeholder_label"
+            for="search_program"
+            >Type Name...</label
+          >
+          <input
+            id="search_program"
+            value=""
+            required=""
+            class="fancy_form_df form_display"
+            oninput="searchProgramOptions(this.value)"
+          />
+        </div>
+      </div>
+
+      <div class="df_form_con" onclick="">
+        <div id="group_text_3_" class="check_container_two_cols">
+          <div class="check_options check_box_button">
+            <input
+              type="checkbox"
+              value="all"
+              class="check_options_input custom_check_hidden"
+              id="check_all_"
+              oninput=""
+			  onclick="selectAllProgram(this)"
+            />
+            <label for="check_all_" class="custom_check_button small"
+              >All</label
+            >
+          </div>
+
+
+          <div class="check_options check_box_button">
+            <input
+              type="checkbox"
+              value=""
+              class="check_options_input custom_check_hidden "
+              id="check_0_"
+			  onclick="deselectAll(this)"
+            />
+            <label
+              for="check_0_"
+              class="custom_check_button small"
+              ></label>
+          </div>
+
+ 
+        </div>
+
+
+      </div>
+    </div>
+
+    <div class="option_main_container_buttons">
+      <button
+        class="df_button secondary_background primary_color_invert small"
+        onclick="saveSelection();closeModalContent('department_modal');"
+      >
+        <span class="fa fa-save"> </span> Okay
+      </button>     
+
+
+    </div>
+  </div>
+</div>
+
+

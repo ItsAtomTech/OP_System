@@ -2035,6 +2035,170 @@ def remove_fuel_request_file():
     except Exception as e:
         db.session.rollback()
         return {"type": "error", "message": str(e)}
+
+
+
+# Report generation goes Below ========================================
+
+def parse_accounting_notation(value):
+    if value is None:
+        return 0.0
+    value = str(value).strip()
+    if not value:
+        return 0.0
+    if value.startswith("(") and value.endswith(")"):
+        try:
+            return float(value[1:-1])
+        except ValueError:
+            return 0.0
+    try:
+        return -float(value)
+    except ValueError:
+        return 0.0
+
+
+def to_float(val):
+    try:
+        return float(val) if val not in (None, "", "--") else 0.0
+    except (ValueError, TypeError):
+        return 0.0
+
+def get_consumption_status(excess_val, has_data=True):
+    if not has_data:
+        return ""
+    if excess_val > 0.5:
+        return "HIGH CONSUMPTION"
+    elif excess_val < -0.5:
+        return "FUEL SAVING"
+    else:
+        return "NORMAL"
+
+
+@api_handles.route('/fuel_monitoring_report', methods=['POST', 'GET'])
+@login_required
+def fuel_monitoring_report():
+    try:
+        date_range = request.form.get("date_range") or request.args.get("date_range")
+
+        if date_range:
+            parts = [p.strip() for p in date_range.split(",")]
+            date1_str = parts[0]
+            date2_str = parts[1] if len(parts) > 1 else parts[0]
+            date_from = datetime.strptime(date1_str, "%Y-%m-%d")
+            date_to = datetime.strptime(date2_str, "%Y-%m-%d")
+        else:
+            today = manila_time()
+            date_from = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            date_to = today
+
+        # make end date inclusive of the whole day
+        date_to = date_to.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        records_query = db.session.query(
+            FuelRequisitionRecords,
+            DriverCrew.name.label("driver_name"),
+            Vehicles.plate_no.label("vehicle_plate_no"),
+            Vehicles.average_km.label("vehicle_average_km")
+        ).outerjoin(
+            DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
+        ).outerjoin(
+            Vehicles, FuelRequisitionRecords.vehicle_id == Vehicles.id
+        ).filter(
+            FuelRequisitionRecords.date >= date_from,
+            FuelRequisitionRecords.date <= date_to
+        ).order_by(
+            FuelRequisitionRecords.date.asc()
+        ).all()
+
+        report_data = []
+
+        for record, driver_name, vehicle_plate_no, vehicle_average_km in records_query:
+
+            raw_json = {}
+            if record.json_data:
+                try:
+                    raw_json = json.loads(record.json_data)
+                except (ValueError, TypeError):
+                    raw_json = {}
+
+            # Odometer - pulled from last_fuel_recordltrs: [[prev_odo, curr_odo]]
+            beg_odometer = "--"
+            end_odometer = "--"
+            last_fuel_record = raw_json.get("last_fuel_recordltrs")
+            if last_fuel_record:
+                try:
+                    parsed_odo = json.loads(last_fuel_record)
+                    beg_odometer = parsed_odo[0][0]
+                    end_odometer = parsed_odo[0][1]
+                except (ValueError, TypeError, IndexError):
+                    pass
+
+            beg_fuel = to_float(raw_json.get("actual_fuel_beg_l", record.actual_fuel_beg_l))
+            end_fuel = to_float(raw_json.get("actual_fuel_endl", record.actual_fuel_endl))
+            fuel_added = to_float(raw_json.get("no_of_ltrs", record.no_of_ltrs))
+            fuel_rate = to_float(raw_json.get("prev_costltr", record.prev_costltr))
+            standard_kml = to_float(raw_json.get("average_kml", vehicle_average_km))
+            total_km = to_float(raw_json.get("dist_travelled_kms"))
+            expected_fuel_used_l = to_float(raw_json.get("est_fuel_consumed"))
+
+            # Actual fuel used ("Fuel Consumed") has no stored field - computed
+            actual_fuel_used_l = beg_fuel + fuel_added - end_fuel
+            actual_kml = (total_km / end_fuel) if end_fuel else 0.0
+            fuel_purchase_amount = fuel_added * fuel_rate
+
+            # Excess/(Savings) L already stored as so_theoactl_end_l in accounting notation
+            excess_savings_l = parse_accounting_notation(
+                raw_json.get("so_theoactl_end_l", record.so_theoactl_end_l)
+            )
+            
+            # has_data mirrors the Excel T2="" check - true empty/missing excess value
+            raw_excess = raw_json.get("so_theoactl_end_l", record.so_theoactl_end_l)
+            has_excess_data = raw_excess not in (None, "")
+
+            consumption_status = get_consumption_status(excess_savings_l, has_excess_data)
+            
+            
+            excess_savings_php = excess_savings_l * fuel_rate
+
+            report_data.append({
+                "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None,
+                "plate_no": vehicle_plate_no,
+                "file_no":record.fuel_requisition_no,
+                "driver": driver_name,
+                "sli_slr": None,
+                "activity": record.activity_type,
+                "destination": record.destination,
+                "fuel_type": None,
+                "beg_fuel_l": beg_fuel,
+                "fuel_added_l": fuel_added,
+                "end_fuel_l": end_fuel,
+                "actual_fuel_used_l": round(actual_fuel_used_l, 2),
+                "fuel_rate": fuel_rate,
+                "fuel_purchase_amount": round(fuel_purchase_amount, 2),
+                "beg_odometer": beg_odometer,
+                "end_odometer": end_odometer,
+                "total_km": total_km,
+                "standard_kml": standard_kml,
+                "expected_fuel_used_l": expected_fuel_used_l,
+                "actual_kml": round(actual_kml, 2),
+                "excess_savings_l": excess_savings_l,
+                "excess_savings_php": round(excess_savings_php, 2),
+                "status": record.status,
+                "consumption_status": consumption_status,
+            })
+
+        return {
+            "type": "success",
+            "date_from": date_from.strftime("%Y-%m-%d"),
+            "date_to": date_to.strftime("%Y-%m-%d"),
+            "count": len(report_data),
+            "data": report_data
+        }
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+
  
 # ================================
 # Fuel Requisition Section End

@@ -30,6 +30,8 @@ extra_css %}
   href="{{ url_for('static', filename='css/daimofuu_fancylabel.css') }}"
 />
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_form_styles.css') }}">
+
 {% endblock %} {% block contents %}
 <!-- Top Tool Bar -->
 
@@ -132,7 +134,6 @@ qBuilder.server_address = "_";
 
 {% endblock %}
 
- {% block modals %} 
-
-
- {%endblock%}
+{% block modals %} 
+	{% include('fragments/category_choice.html') %} 
+{%endblock%}
