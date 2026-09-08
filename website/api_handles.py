@@ -1,8 +1,8 @@
-import os, json, re
+import os, json, re, io
 from operator import or_, and_
 from typing import Union
 
-from flask import Blueprint, render_template, request, flash, jsonify, Flask, url_for, session, current_app, send_from_directory, Response
+from flask import Blueprint, render_template, request, flash, jsonify, Flask, url_for, session, current_app, send_from_directory, Response, send_file
 from flask_login import login_required, current_user
 from sqlalchemy import asc, desc, distinct, table, func, case, cast, Integer
 from sqlalchemy.orm import aliased
@@ -19,6 +19,11 @@ from dotenv import load_dotenv
 from . import db
 from datetime import datetime, timedelta
 from .models import Users, Department, PurchaseRequests, Notification, Vehicles, DriverCrew, FuelRequisitionRecords, Company
+
+#for openExel
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
 
 
 plt = ""  # empty this var when on live website
@@ -2074,6 +2079,23 @@ def get_consumption_status(excess_val, has_data=True):
         return "NORMAL"
 
 
+def parse_destination(destination_str):
+    if not destination_str:
+        return ""
+    try:
+        parsed = json.loads(destination_str)
+        flat = []
+        for item in parsed:
+            if isinstance(item, list):
+                flat.extend(item)
+            else:
+                flat.append(item)
+        return ", ".join(str(x) for x in flat)
+    except (ValueError, TypeError):
+        return destination_str
+
+
+
 @api_handles.route('/fuel_monitoring_report', methods=['POST', 'GET'])
 @login_required
 def fuel_monitoring_report():
@@ -2161,13 +2183,13 @@ def fuel_monitoring_report():
             excess_savings_php = excess_savings_l * fuel_rate
 
             report_data.append({
-                "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None,
+                "date": record.date.strftime("%Y-%m-%d") if record.date else None,
                 "plate_no": vehicle_plate_no,
                 "file_no":record.fuel_requisition_no,
                 "driver": driver_name,
                 "sli_slr": None,
                 "activity": record.activity_type,
-                "destination": record.destination,
+                "destination": parse_destination(record.destination),
                 "fuel_type": None,
                 "beg_fuel_l": beg_fuel,
                 "fuel_added_l": fuel_added,
@@ -2199,6 +2221,237 @@ def fuel_monitoring_report():
         db.session.rollback()
         return {"type": "error", "message": str(e)}
 
+
+def _build_monthly_summary(report_data):
+    groups = {}
+    order = []
+
+    for row in report_data:
+        key = (row["plate_no"], row["driver"])
+        if key not in groups:
+            groups[key] = {
+                "plate_no": row["plate_no"],
+                "driver": row["driver"],
+                "total_km": 0.0,
+                "actual_fuel_used_l": 0.0,
+                "standard_kml": row["standard_kml"],
+            }
+            order.append(key)
+        groups[key]["total_km"] += to_float(row["total_km"])
+        groups[key]["actual_fuel_used_l"] += to_float(row["actual_fuel_used_l"])
+
+    summary_data = []
+    for key in order:
+        g = groups[key]
+        standard_kml = g["standard_kml"]
+        total_km = g["total_km"]
+        actual_fuel_used_l = g["actual_fuel_used_l"]
+
+        expected_fuel_used_l = (total_km / standard_kml) if standard_kml else 0.0
+        excess_savings_l = actual_fuel_used_l - expected_fuel_used_l
+        avg_actual_kml = (total_km / actual_fuel_used_l) if actual_fuel_used_l else 0.0
+
+        if excess_savings_l > 0.5:
+            assessment = "HIGHER FUEL USE"
+        elif excess_savings_l < -0.5:
+            assessment = "FUEL SAVING"
+        else:
+            assessment = "NORMAL"
+
+        summary_data.append({
+            "plate_no": g["plate_no"],
+            "driver": g["driver"],
+            "total_km": round(total_km, 2),
+            "actual_fuel_used_l": round(actual_fuel_used_l, 2),
+            "expected_fuel_used_l": round(expected_fuel_used_l, 2),
+            "excess_savings_l": round(excess_savings_l, 2),
+            "avg_actual_kml": round(avg_actual_kml, 2),
+            "assessment": assessment
+        })
+
+    return summary_data
+
+# For Excel Styles ====================
+
+HEADER_FILL = PatternFill(start_color="1F4E79", end_color="1F4E79", fill_type="solid")
+HEADER_FONT = Font(color="FFFFFF", bold=True)
+
+
+def _write_sheet(ws, headers, rows, col_keys):
+    ws.append(headers)
+    for col_idx in range(1, len(headers) + 1):
+        cell = ws.cell(row=1, column=col_idx)
+        cell.font = HEADER_FONT
+        cell.fill = HEADER_FILL
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    for row in rows:
+        ws.append([row.get(k, "") for k in col_keys])
+
+    for col_idx, key in enumerate(col_keys, start=1):
+        max_len = len(headers[col_idx - 1])
+        for row in rows:
+            max_len = max(max_len, len(str(row.get(key, ""))))
+        ws.column_dimensions[get_column_letter(col_idx)].width = min(max_len + 4, 40)
+
+    ws.freeze_panes = "A2"
+    ws.auto_filter.ref = ws.dimensions
+
+
+@api_handles.route('/get_fuel_monitoring_report_file', methods=['POST', 'GET'])
+@login_required
+def get_fuel_monitoring_report_file():
+    try:
+        date_range = request.form.get("date_range") or request.args.get("date_range")
+
+        if date_range:
+            parts = [p.strip() for p in date_range.split(",")]
+            date1_str = parts[0]
+            date2_str = parts[1] if len(parts) > 1 else parts[0]
+            date_from = datetime.strptime(date1_str, "%Y-%m-%d")
+            date_to = datetime.strptime(date2_str, "%Y-%m-%d")
+        else:
+            today = manila_time()
+            date_from = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            date_to = today
+        date_to = date_to.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        records_query = db.session.query(
+            FuelRequisitionRecords,
+            DriverCrew.name.label("driver_name"),
+            Vehicles.plate_no.label("vehicle_plate_no"),
+            Vehicles.average_km.label("vehicle_average_km")
+        ).outerjoin(
+            DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
+        ).outerjoin(
+            Vehicles, FuelRequisitionRecords.vehicle_id == Vehicles.id
+        ).filter(
+            FuelRequisitionRecords.date >= date_from,
+            FuelRequisitionRecords.date <= date_to
+        ).order_by(
+            FuelRequisitionRecords.date.asc()
+        ).all()
+
+        report_data = []
+
+        for record, driver_name, vehicle_plate_no, vehicle_average_km in records_query:
+            raw_json = {}
+            if record.json_data:
+                try:
+                    raw_json = json.loads(record.json_data)
+                except (ValueError, TypeError):
+                    raw_json = {}
+
+            beg_odometer = "--"
+            end_odometer = "--"
+            last_fuel_record = raw_json.get("last_fuel_recordltrs")
+            if last_fuel_record:
+                try:
+                    parsed_odo = json.loads(last_fuel_record)
+                    beg_odometer = parsed_odo[0][0]
+                    end_odometer = parsed_odo[0][1]
+                except (ValueError, TypeError, IndexError):
+                    pass
+
+            beg_fuel = to_float(raw_json.get("actual_fuel_beg_l", record.actual_fuel_beg_l))
+            end_fuel = to_float(raw_json.get("actual_fuel_endl", record.actual_fuel_endl))
+            fuel_added = to_float(raw_json.get("no_of_ltrs", record.no_of_ltrs))
+            fuel_rate = to_float(raw_json.get("prev_costltr", record.prev_costltr))
+            standard_kml = to_float(raw_json.get("average_kml", vehicle_average_km))
+            total_km = to_float(raw_json.get("dist_travelled_kms"))
+            expected_fuel_used_l = to_float(raw_json.get("est_fuel_consumed"))
+
+            actual_fuel_used_l = beg_fuel + fuel_added - end_fuel
+            actual_kml = (total_km / end_fuel) if end_fuel else 0.0
+            fuel_purchase_amount = fuel_added * fuel_rate
+
+            raw_excess = raw_json.get("so_theoactl_end_l", record.so_theoactl_end_l)
+            has_excess_data = raw_excess not in (None, "")
+            excess_savings_l = parse_accounting_notation(raw_excess)
+            excess_savings_php = excess_savings_l * fuel_rate
+
+            consumption_status = get_consumption_status(excess_savings_l, has_excess_data)
+
+            report_data.append({
+                "date": record.date.strftime("%Y-%m-%d") if record.date else None,
+                "plate_no": vehicle_plate_no,
+                "driver": driver_name,
+                "sli_slr": None,
+                "activity": record.activity_type,
+                "destination": parse_destination(record.destination),
+                "fuel_type": None,
+                "beg_fuel_l": beg_fuel,
+                "fuel_added_l": fuel_added,
+                "end_fuel_l": end_fuel,
+                "actual_fuel_used_l": round(actual_fuel_used_l, 2),
+                "fuel_rate": fuel_rate,
+                "fuel_purchase_amount": round(fuel_purchase_amount, 2),
+                "beg_odometer": beg_odometer,
+                "end_odometer": end_odometer,
+                "total_km": total_km,
+                "standard_kml": standard_kml,
+                "expected_fuel_used_l": expected_fuel_used_l,
+                "actual_kml": round(actual_kml, 2),
+                "excess_savings_l": excess_savings_l,
+                "excess_savings_php": round(excess_savings_php, 2),
+                "status": record.status,
+                "consumption_status": consumption_status,
+                "file_no": record.fuel_requisition_no
+            })
+
+        summary_data = _build_monthly_summary(report_data)
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Fuel Monitoring Report"
+        daily_headers = [
+            "Date", "Plate No.", "Driver", "SLI/SLR", "Activity", "Destination",
+            "Fuel Type", "Beg. Fuel (L)", "Fuel Added (L)", "End. Fuel (L)",
+            "Actual Fuel Used (L)", "Fuel Rate", "Fuel Purchase Amount",
+            "Beg. Odometer", "End. Odometer", "Total KM", "Standard Km/L",
+            "Expected Fuel Used (L)", "Actual Km/L", "Excess/(Savings) L",
+            "Excess/(Savings) ₱", "Status"
+        ]
+        daily_keys = [
+            "date", "plate_no", "driver", "sli_slr", "activity", "destination",
+            "fuel_type", "beg_fuel_l", "fuel_added_l", "end_fuel_l",
+            "actual_fuel_used_l", "fuel_rate", "fuel_purchase_amount",
+            "beg_odometer", "end_odometer", "total_km", "standard_kml",
+            "expected_fuel_used_l", "actual_kml", "excess_savings_l",
+            "excess_savings_php", "consumption_status"
+        ]
+        _write_sheet(ws1, daily_headers, report_data, daily_keys)
+
+        ws2 = wb.create_sheet("Monthly Summary")
+        summary_headers = [
+            "Plate No.", "Driver", "Total KM", "Actual Fuel Used (L)",
+            "Expected Fuel Used (L)", "Excess/(Savings) L", "Avg. Actual Km/L",
+            "Assessment"
+        ]
+        summary_keys = [
+            "plate_no", "driver", "total_km", "actual_fuel_used_l",
+            "expected_fuel_used_l", "excess_savings_l", "avg_actual_kml",
+            "assessment"
+        ]
+        _write_sheet(ws2, summary_headers, summary_data, summary_keys)
+
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        filename = f"Fuel_Monitoring_Report_{date_from.strftime('%Y-%m-%d')}_to_{date_to.strftime('%Y-%m-%d')}.xlsx"
+
+        return send_file(
+            output,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            as_attachment=True,
+            download_name=filename
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
  
 # ================================
 # Fuel Requisition Section End
