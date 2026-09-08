@@ -1,0 +1,47 @@
+<div class="modal_main_backdrop padded" id="report_modal" inert > 
+	<div class="modal_container_box">
+		<!-- Modal Header -->
+		<div class="top_header">
+			<div class="title_form_top"> Fuel Report Generation </div>
+			<div class="close_modal_tright" tabindex='1' onclick="closeModalContent('report_modal')"> &times; </div>
+		</div>
+		
+		<!-- Modal Contents Container -->
+
+		<div class="option_main_container">
+			<div class="centered small padded" tag=""> <span class="fa fa-info-circle"> </span> Provide the date range to generate a report from. If not specified, it will instead be of current Month of the year </div>
+			<br />
+			
+				
+			
+			
+					
+		<div class="cols_con_ full_width padded_input"><label class="df_label_con required_style_label placeholder_label" for="date_range">Date Range</label>
+		
+			<input id="date_range" type="text" value="" required class="fancy_form_df form_display">
+
+			</input>
+		</div>
+			
+			
+		<div class="flexed padded_gap">
+			
+
+			
+			
+			
+		</div>
+							
+			
+		</div>
+		
+		<div class="option_main_container_buttons">
+	
+			<button class="df_button secondary_background primary_color_invert normal" onclick="generateOpenFileReport()"> <span class="fa fa-print"> </span> Generate </button>
+			
+		</div>
+	
+
+
+	</div>
+</div>

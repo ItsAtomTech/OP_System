@@ -20,6 +20,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/daimofuu_fancylabel.css') }}">
 
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/daterangepicker.css') }}">
+
+
 <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/dashstyles.css') }}"> -->
 
 
@@ -40,6 +43,8 @@
 	</div>
 
 
+
+
 	<div class="user-management-container padded">
 	
 
@@ -55,16 +60,12 @@
 			
 			
 			
+			 <div class="input_class_rounded">
+				<label class="small primary_color_invert"> <span class="fa fa-wrench"> </span> Tools </label>
 			
-			 <!-- <div class="input_class_rounded"> -->
-				<!-- <label class="small"> Account Type: </label> -->
-				<!-- <select class="small primary_color" oninput="delayedQuerry()" id="account_type"> -->
-					<!-- <option value="" > All </option> -->
-					<!-- <option value="student" > Student </option> -->
-					<!-- <option value="teacher" > Teacher </option> -->
-					<!-- <option value="admin" > Admin </option> -->
-				<!-- </select> -->
-			<!-- </div> -->
+				<button class="df_button primary_color_invert small secondary_background" onclick="showModalContent('report_modal');"> Generate Report <span class="fa fa-calendar"> </span> </button>
+				
+			</div>
 			
 			
 			 
@@ -85,6 +86,8 @@
 	<span class="normal"> <span class="normal"> Request Files / Fuel Requisition Files / </span>
 	
 	<button class="df_button_flat primary_background_darker primary_color" onclick="delayedQuerry()" tooltip="Refresh Data"> <span class="fa fa-refresh button"> </span> </button>
+
+	
 	
 </div>
 
@@ -164,6 +167,7 @@
 
 
 {% include "fragments/view_fuel_file_modal.html" %}
+{% include "fragments/fuel_report_modal.html" %}
 
 
 <script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
@@ -206,6 +210,40 @@ function findById(arr, id) {
 <script src="{{ url_for('static', filename='js/lib/daimofuu_fancylabel.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/daimofuu_titlebar.js') }}"> </script>
+
+
+<script src="{{ url_for('static', filename='js/daterangepicker.js') }}"> </script>
+
+
+<script>
+
+let dateRangeSelected = undefined;
+
+
+  const picker = new DateRangePicker(document.getElementById('date_range'), {
+    format: 'YYYY-MM-DD',
+    minDate: null,       
+    maxDate: null,
+    showPresets: true,
+    onApply: (start, end, formatted) => {
+      // start/end are Date objects; formatted.startFormatted / endFormatted are strings
+	  
+	  addFancyPlaceholder(["date_range"]);
+	  
+      console.log(formatted.startFormatted, formatted.endFormatted);
+	  
+	  dateRangeSelected = formatted.startFormatted+","+ formatted.endFormatted;
+	  
+	  
+    }
+  });
+  
+  
+  
+  
+  
+</script>
+
 
 {% endblock %}
 

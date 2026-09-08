@@ -1,0 +1,253 @@
+/* Vanilla JS Date Range Picker — styles
+   Prefix: .drp- (kept namespaced so it won't collide with existing app styles) */
+
+.drp-input {
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.drp-popup {
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  background: var(--primary_background);
+  border: 1px solid var(--primary_background_darker);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(23, 32, 55, 0.14);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 13px;
+  color: var(--primary_color);
+  -webkit-user-select: none;
+  user-select: none;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+}
+
+.drp-popup.drp-open {
+  display: block;
+}
+
+.drp-body {
+  display: flex;
+  align-items: flex-start;
+}
+
+.drp-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 8px;
+  border-right: 1px solid #edf0f5;
+  min-width: 128px;
+}
+
+.drp-preset-btn {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--primary_color);
+  cursor: pointer;
+}
+
+.drp-preset-btn:hover {
+  background: #eef2fb;
+  color: var(--secondary_color);
+}
+
+.drp-calendars {
+  display: flex;
+}
+
+.drp-panel {
+  padding: 12px 14px;
+  width: 236px;
+}
+
+.drp-panel-left {
+  border-right: 1px solid #edf0f5;
+}
+
+.drp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.drp-month-label {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--primary_color);
+}
+
+.drp-nav {
+  border: none;
+  background: transparent;
+  font-size: 17px;
+  line-height: 1;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #4a5170;
+}
+
+.drp-nav:hover {
+  background: #eef2fb;
+}
+
+.drp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.drp-weekdays span {
+  text-align: center;
+  font-size: 11px;
+  color: #8890a6;
+  padding: 4px 0;
+}
+
+.drp-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 2px;
+}
+
+.drp-day {
+  position: relative;
+  border: none;
+  background: transparent;
+  height: 30px;
+  font-size: 12.5px;
+  color: var(--primary_color_faded);
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.drp-day-empty {
+  cursor: default;
+}
+
+.drp-day:hover:not(.drp-day-disabled):not(.drp-day-start):not(.drp-day-end) {
+  background: #eef2fb;
+}
+
+.drp-day-disabled {
+  color: #c7cbd8;
+  cursor: not-allowed;
+}
+
+.drp-day-today {
+  font-weight: 700;
+}
+
+.drp-day-today::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--secondary_background);
+}
+
+.drp-day-in-range,
+.drp-day-hover-range {
+  background: var(--primary_background_faded);
+}
+
+.drp-day-start,
+.drp-day-end {
+  background: var(--secondary_color_darker);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.drp-day-hover-end {
+  background: var(--primary_background);
+  border-radius: 6px;
+}
+
+.drp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid #edf0f5;
+}
+
+.drp-selection-text {
+  font-size: 12.5px;
+  color: #565e78;
+}
+
+.drp-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.drp-btn {
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.drp-btn-cancel {
+  background: #fff;
+  border-color: #dfe3ea;
+  color: #4a5170;
+}
+
+.drp-btn-cancel:hover {
+  background: #f4f6fa;
+}
+
+.drp-btn-apply {
+  background: var(--secondary_background);
+  color: #fff;
+}
+
+.drp-btn-apply:hover {
+  background: var(--primary_background_darker);
+}
+
+@media (max-width: 560px) {
+  .drp-body {
+    flex-direction: column;
+  }
+  .drp-presets {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid #edf0f5;
+    min-width: 0;
+  }
+  .drp-calendars {
+    flex-direction: column;
+  }
+  .drp-panel-left {
+    border-right: none;
+    border-bottom: 1px solid #edf0f5;
+  }
+  .drp-panel {
+    width: 100%;
+  }
+  .drp-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .drp-actions {
+    justify-content: flex-end;
+  }
+}

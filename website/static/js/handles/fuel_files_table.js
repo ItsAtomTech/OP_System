@@ -811,3 +811,23 @@ REFRESH_HANDLER = function(){
 	showToast("You are already here!");
 	
 }
+
+
+//Generating Report Logics
+
+
+async function generateOpenFileReport(){
+	
+	showToast("Generating Filters....");
+	
+	await sleep(800);
+	
+	
+	let params = new URLSearchParams({
+        date_range: dateRangeSelected
+    });
+
+    let url = `/get_fuel_monitoring_report_file?${params.toString()}`;
+
+    window.open(url, '_blank');
+}
