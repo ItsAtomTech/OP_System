@@ -91,7 +91,7 @@ function renderItems(items){
 	let template = _('pr_row_template');
 	tbody.innerHTML = '';
 	
-	let ROW_HEIGHT_CAPE = 400;
+	let ROW_HEIGHT_CAPE = 300;
 	
 	const MIN_ROWS = 12;
 

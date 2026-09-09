@@ -39,7 +39,7 @@ def home():
 def about():
     page = 'about'
 
-    return render_template("about.html", user=current_user, page=page)
+    return render_template("under.html", user=current_user, page=page)
 
 
 

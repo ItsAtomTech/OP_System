@@ -160,7 +160,7 @@
 
 .drp-day-in-range,
 .drp-day-hover-range {
-  background: var(--primary_background_faded);
+  background: var(--primary_background_darker);
 }
 
 .drp-day-start,
@@ -169,6 +169,22 @@
   color: #fff;
   font-weight: 600;
   border-radius: 6px;
+  transition:0.4s;
+}
+
+.drp-day-start{
+	border-radius: 6px 0 0 6px;
+	
+}
+
+
+.drp-day-start{
+	border-radius:6px 0 0 6px;
+	
+}
+.drp-day-end{
+	border-radius: 0 6px 6px 0;
+	
 }
 
 .drp-day-hover-end {

@@ -823,6 +823,11 @@ async function generateOpenFileReport(){
 	await sleep(800);
 	
 	
+	if(!dateRangeSelected){
+		dateRangeSelected = "";
+	}
+	
+	
 	let params = new URLSearchParams({
         date_range: dateRangeSelected
     });
