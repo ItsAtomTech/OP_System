@@ -73,6 +73,7 @@ class FuelRequisitionRecords(db.Model):
     last_fuel_recordltrs = db.Column(db.String(256))
     destination = db.Column(db.String(1024))
     so_theoactl_end_l = db.Column(db.String(1024))
+    invoice_no = db.Column(db.String(256))
     
     json_data = db.Column(db.String(10000))
     misc = db.Column(db.String(1024))

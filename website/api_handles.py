@@ -1616,6 +1616,7 @@ def save_fuel_req():
         crewoccupants2        = data.get("crewoccupants2")
         destination           = data.get("destination")
         so_theoactl_end_l     = data.get("so_theoactl_end_l", None)
+        invoice_no     = data.get("invoice_no", None)
         
         if so_theoactl_end_l is not None:
             s = str(so_theoactl_end_l).strip()
@@ -1644,6 +1645,7 @@ def save_fuel_req():
             destination=destination,
             last_fuel_recordltrs=last_fuel_recordltrs,
             so_theoactl_end_l=so_theoactl_end_l,
+            invoice_no=invoice_no,
             status=None,
             json_data=fuel_data,
             misc=None,
@@ -1692,6 +1694,7 @@ def fuel_requisition_update_():
         activity_type         = data.get("activity_type")
         crewoccupants1        = data.get("crewoccupants1")
         crewoccupants2        = data.get("crewoccupants2")
+        invoice_no        = data.get("invoice_no")
         destination           = data.get("destination")
         so_theoactl_end_l     = data.get("so_theoactl_end_l", None)
 
@@ -1718,6 +1721,7 @@ def fuel_requisition_update_():
         record.activity_type       = activity_type
         record.crewoccupants1      = crewoccupants1
         record.crewoccupants2      = crewoccupants2
+        record.invoice_no          = invoice_no
         record.destination         = destination
         record.so_theoactl_end_l   = so_theoactl_end_l
         record.json_data           = fuel_data
@@ -1815,6 +1819,7 @@ def get_latest_fuel_req_by_vehicle():
                 "activity_type": record.activity_type,
                 "crewoccupants1": record.crewoccupants1,
                 "crewoccupants2": record.crewoccupants2,
+                "invoice_no": record.invoice_no,
                 "last_fuel_recordltrs": record.last_fuel_recordltrs,
                 "status": record.status,
                 "misc": record.misc,
