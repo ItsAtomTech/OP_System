@@ -344,7 +344,28 @@
     break-inside: avoid;
     page-break-inside: avoid;
   }
+	
+	
+	.pr-items-table {
+		
+		break-inside: auto;
+		page-break-inside: auto;
+		border-collapse: collapse; 
+	}
 
+	.pr-items-table thead {
+		display: table-header-group; 
+	}
+
+	.pr-items-table tfoot {
+		display: table-footer-group; /* will keep footer pinned to bottom of last page */
+	}
+
+	.pr-items-table tr {
+		break-inside: avoid;   /* this prevents single row from splitting mid-row */
+		page-break-inside: avoid;
+	}		
+	
   #main_body {
     background: white !important;
   }

@@ -26,7 +26,7 @@ async function getPrintableData(){
 
 	await sleep(200);
 	_("wrapper_doc").classList.remove("blur_docs");
-	await sleep(800);
+	await sleep(1000);
 	print();
 }
 
@@ -66,8 +66,8 @@ function generateDataOnDoc(dataraw){
 
 	// Grand Total — already computed server-side ...
 	_('grand_total').innerText = purchase.total_amount
-		? `Php ${parseFloat(purchase.total_amount).toFixed(2)}`
-		: 'Php 0.00';
+		? ` ${formatToPHP(parseFloat(purchase.total_amount).toFixed(2), "₱")}`
+		: '₱ 0.00';
 
 	// Purpose
 	_('purpose_of_request').innerText = purchase.purpose_of_request || '--';
@@ -90,7 +90,9 @@ function renderItems(items){
 	let tbody    = _('items_tbody');
 	let template = _('pr_row_template');
 	tbody.innerHTML = '';
-
+	
+	let ROW_HEIGHT_CAPE = 400;
+	
 	const MIN_ROWS = 12;
 
 	items.forEach(item => {
@@ -105,7 +107,7 @@ function renderItems(items){
 		tbody.appendChild(row);
 	});
 
-	// Pad with blank rows so the table always shows at least MIN_ROWS
+	// Pad with blank rows so the table always shows at least MIN_ROWS caped at max height
 	let blanksNeeded = MIN_ROWS - items.length;
 	for(let i = 0; i < blanksNeeded; i++){
 		let row = document.importNode(template.content, true);
@@ -117,6 +119,11 @@ function renderItems(items){
 		tag('amount', row)[0].innerText     = '\u00A0';
 
 		tbody.appendChild(row);
+		
+		if(parseInt(tbody.getBoundingClientRect().height) >= ROW_HEIGHT_CAPE){
+			break;
+		};
+		
 	}
 }
 
@@ -140,8 +147,6 @@ function generateApprovefBy(data){
 	}
 	
 }
-
-
 
 
 
@@ -204,5 +209,5 @@ function formatPeso(data){
 	return formatToPHP(data, "₱");
 }
 
-
 getPrintableData();
+
