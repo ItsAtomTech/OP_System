@@ -16,12 +16,6 @@ let formStructure = {
         },
         {
             "type": "date",
-            "events": {
-                "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
-                "type": "hideon",
-                "targetIndex": "2",
-                "value": "2"
-            },
             "value": "",
             "label": "Last Fuel Date",
             "fancy": true,
@@ -87,6 +81,27 @@ let formStructure = {
                 "targetIndex": "2",
                 "value": "2"
             },
+            "value": "",
+            "label": "Prev. Invoice Number",
+            "fancy": true,
+            "required": false,
+            "description": "",
+			"disabled":true,
+            "group": "g_f5fe8977-fba1-420d-a9bc-36017b845383",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+            "id": "last_invoice_number",
+            "index": 4
+        },
+        {
+            "type": "text",
+            "events": {
+                "eventname": "ev_06717c68-2b62-46ed-a21b-8e0e479909fe",
+                "type": "hideon",
+                "targetIndex": "2",
+                "value": "2"
+            },
             "value": "FRN-YYYY-XXXX",
             "label": "Fuel Requisition No.",
             "fancy": true,
@@ -95,7 +110,7 @@ let formStructure = {
 			"disabled":true,
             "group": "g_f5fe8977-fba1-420d-a9bc-36017b845383",
             "row_span": null,
-            "col_span": null,
+            "col_span": 2,
             "span_column": false,
             "id": "fuel_requisition_no",
             "index": 4
@@ -120,6 +135,7 @@ let formStructure = {
             "id": "_5",
             "index": 5
         },
+
         {
             "type": "select",
             "events": {
@@ -566,6 +582,21 @@ let formStructure = {
             "id": "activity_type",
             "index": 22
         },
+        {
+            "type": "text",
+            "value": "",
+            "label": "Invoice Number",
+            "fancy": true,
+            "required": false,
+            "description": "",
+			"list": "",
+            "group": "g_5145d6e5-19d8-47df-b15d-531c9258d721",
+            "row_span": null,
+            "col_span": 2,
+            "span_column": false,
+            "id": "invoice_no",
+            "index": 22
+        },
 		{
             "type": "table",
             "value": "",
@@ -653,7 +684,7 @@ let formStructure = {
         {
             "name": "Dates",
             "type": "default",
-            "column_count": "4",
+            "column_count": "3",
             "row_view": false,
             "id": "g_f5fe8977-fba1-420d-a9bc-36017b845383"
         },
