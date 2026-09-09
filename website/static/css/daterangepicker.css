@@ -14,7 +14,7 @@
   border: 1px solid var(--primary_background_darker);
   border-radius: 8px;
   box-shadow: 0 12px 28px rgba(23, 32, 55, 0.14);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: inherit;
   font-size: 13px;
   color: var(--primary_color);
   -webkit-user-select: none;
@@ -50,6 +50,7 @@
   font-size: 13px;
   color: var(--primary_color);
   cursor: pointer;
+  font-family:inherit;
 }
 
 .drp-preset-btn:hover {
@@ -92,11 +93,15 @@
   height: 26px;
   border-radius: 6px;
   cursor: pointer;
-  color: #4a5170;
+  color: var(--primary_color_faded);
 }
 
 .drp-nav:hover {
-  background: #eef2fb;
+  background: var(--primary_background_darker);
+}
+
+.drp-nav:active {
+  transform:scale(0.9);
 }
 
 .drp-weekdays {
@@ -174,6 +179,9 @@
 
 .drp-day-start{
 	border-radius: 6px 0 0 6px;
+	transform:scale(1.1);
+	z-index:6;
+	box-shadow:2px 2px 2px 3px rgba(45,45,45,0.04);
 	
 }
 

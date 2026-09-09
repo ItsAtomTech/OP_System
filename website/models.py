@@ -114,6 +114,7 @@ class Vehicles(db.Model):
     average_km = db.Column(db.String(255))
     capacity_l = db.Column(db.String(255))
     description = db.Column(db.String(1000))
+    fuel_type = db.Column(db.String(255))
     misc = db.Column(db.String(1024))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
 

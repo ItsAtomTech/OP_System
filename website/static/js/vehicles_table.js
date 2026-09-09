@@ -32,6 +32,13 @@ let tableFormat = [
 		
 	},
 	{	
+		label: "Fuel Type",
+		data_path: "fuel_type",
+		sort: true,
+		// parser:parseBranch,
+		
+	},
+	{	
 		label: "Average Km/L",
 		data_path: "average_km",
 		sort: true,
@@ -384,6 +391,7 @@ function loadItemToEdit(id){
 			_("description").value = res_data.description;
 			_("average_km").value = res_data.average_km;
 			_("capacity_l").value = parseFloat(res_data.capacity_l);
+			_("fuel_type").value = (res_data.fuel_type);
 							
 			
 			addFancyPlaceholder();
@@ -415,6 +423,12 @@ function saveItem(){
 	{
 		"name": "average_km",
 		"value": _("average_km").value,
+		
+		
+	},
+	{
+		"name": "fuel_type",
+		"value": _("fuel_type").value,
 		
 		
 	}];
@@ -463,6 +477,7 @@ function addNewEntry(){
 	_("description").value = "";
 	_("average_km").value = "0.0";
 	_("capacity_l").value = 0;
+	_("fuel_type").value = "";
 	
 	showModalContent('vehicle_modal');
 	
@@ -677,6 +692,8 @@ function clickedOnRow(id){
 	}catch(e){
 		parent_attrib = {};
 	}
+	
+	if(!parent_attrib.classList.contains("clickable_row")) return ;
 	
 	
 	let dataId = id;

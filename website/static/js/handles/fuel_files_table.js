@@ -652,7 +652,6 @@ function clickedOnRow(elm){
 	qBuilder.sendQuery(generateDataView,'get_fuel_request_data_by_id',params);	
 		
 		
-
 		function generateDataView(data) {
 			let res_data = (JSON.parse(data.responseText));
 			let fuel_req = res_data.fuel_req;
@@ -672,6 +671,8 @@ function clickedOnRow(elm){
 			tag('vehicle_desc',       _('view_stat_1'))[0].innerText = vehicle.description;
 			tag('avg_kml',            _('view_stat_1'))[0].innerText = vehicle.average_km;
 			tag('capacity_l',          _('view_stat_1'))[0].innerText = vehicle.capacity_l;
+			
+			tag('fuel_type',          _('view_stat_1'))[0].innerText = vehicle.fuel_type;
 
 			// Driver / Request Info
 			tag('recent_driver',      _('view_stat_1'))[0].innerText = raw_json.recent_driver;

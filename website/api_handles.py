@@ -976,6 +976,7 @@ def save_vehicle():
         description = request.form.get("description")
         capacity_l = request.form.get("capacity_l")
         misc = request.form.get("misc") or "{}"
+        fuel_type = request.form.get("fuel_type") or "{}"
 
         if not plate_no:
             return {"type": "error", "message": "Missing required fields"}
@@ -985,6 +986,7 @@ def save_vehicle():
             average_km=average_km,
             capacity_l=capacity_l,
             description=description,
+            fuel_type=fuel_type,
             misc=misc
         )
 
@@ -1034,6 +1036,7 @@ def list_vehicles():
         "description": Vehicles.description,
         "capacity_l": Vehicles.capacity_l,
         "misc": Vehicles.misc,
+        "fuel_type": Vehicles.fuel_type,
         "date": Vehicles.date
     }
 
@@ -1062,6 +1065,7 @@ def list_vehicles():
             "average_km": vehicle.average_km,
             "description": vehicle.description,
             "capacity_l": vehicle.capacity_l,
+            "fuel_type": vehicle.fuel_type,
             "misc": vehicle.misc,
             "date": vehicle.date.strftime("%Y-%m-%d %H:%M:%S") if vehicle.date else None
         })
@@ -1098,6 +1102,7 @@ def get_vehicle_by_id():
             "description": vehicle.description,
             "capacity_l": vehicle.capacity_l,
             "misc": vehicle.misc,
+            "fuel_type": vehicle.fuel_type,
             "date": vehicle.date.strftime("%Y-%m-%d %H:%M:%S") if vehicle.date else None
         }
 
@@ -1129,6 +1134,7 @@ def update_vehicle():
         description = request.form.get("description")
         capacity_l = request.form.get("capacity_l")
         misc = request.form.get("misc")
+        fuel_type = request.form.get("fuel_type")
 
         if plate_no:
             vehicle.plate_no = plate_no
@@ -1144,6 +1150,9 @@ def update_vehicle():
 
         if misc is not None:
             vehicle.misc = misc
+
+        if fuel_type is not None:
+            vehicle.fuel_type = fuel_type
 
         db.session.commit()
 
@@ -1834,6 +1843,7 @@ def get_fuel_request_data_by_id():
             Vehicles.average_km.label("vehicle_average_km"),
             Vehicles.description.label("vehicle_description"),
             Vehicles.capacity_l.label("vehicle_capacity_l"),
+            Vehicles.fuel_type.label("vehicle_fuel_type"),
             Vehicles.misc.label("vehicle_misc")
         ).outerjoin(
             DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
@@ -1846,7 +1856,7 @@ def get_fuel_request_data_by_id():
         if not record_query:
             return {"type": "error", "message": "Fuel requisition record not found"}
 
-        record, driver_name, driver_position, vehicle_plate_no, vehicle_average_km, vehicle_description, vehicle_capacity_l, vehicle_misc = record_query
+        record, driver_name, driver_position, vehicle_plate_no, vehicle_average_km, vehicle_description, vehicle_capacity_l, vehicle_fuel_type, vehicle_misc = record_query
 
         return {
             "type": "success",
@@ -1856,6 +1866,7 @@ def get_fuel_request_data_by_id():
                 "average_km": vehicle_average_km,
                 "description": vehicle_description,
                 "capacity_l": vehicle_capacity_l,
+                "fuel_type": vehicle_fuel_type,
                 "misc": vehicle_misc,
             },
             "fuel_req": {
