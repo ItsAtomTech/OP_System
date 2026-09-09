@@ -397,7 +397,7 @@ def save_purchase_request():
         date_required  = data.get("date_required")
         date_requested = data.get("date_requested", None)
         department_id = data.get("department_id")
-        company_id = data.get("company_id")
+        company_id     = data.get("company_id")
         
         
         misc_data = {
@@ -431,6 +431,7 @@ def save_purchase_request():
             purpose_of_request = purpose,
             approved_by        = approved_by,
             total_amount       = total_amount,
+            requested_by       = requested_by,
             date_required      = date_required,
             department_id      = department_id,
             company_id         = company_id,
