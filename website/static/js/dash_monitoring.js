@@ -267,6 +267,9 @@ function setupLongPress(element, duration = 400) {
 // Attach it to the card element
 let card = document.querySelectorAll(".dash_stat_card.primary_background");
 for(each of card){
+	
+	break;
+	
     setupLongPress(each);
 }
 card = undefined;
