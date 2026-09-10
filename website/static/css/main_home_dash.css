@@ -330,6 +330,8 @@ margin: 0 auto;
 background-color: var(--primary_background);
 padding: 18px 20px;
 border-radius: 12px;
+overflow-x:auto;
+
 }
 
 .chart_filter_item {

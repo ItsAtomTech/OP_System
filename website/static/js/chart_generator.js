@@ -47,6 +47,12 @@ qBuilder.server_address = "_";
 let year_ranges = "2000,2026";
 
 
+function addZeros(int, numOfZeros = 4) {
+	  //transforms number into a string, then fills the spatial void with '0'.
+		return String(int).padStart(numOfZeros, '0');
+}
+
+
 //Filters and Modal Pickers Function:
 
 let program_filter = [];
@@ -201,22 +207,27 @@ loadSavedSelections();
 //Section for year filtering:
 // ==================================
 let current_year_value = new Date().getFullYear();
-_("year_filter_end").value = current_year_value;
+let current_month_value = new Date().getMonth();
+
 
 
 function initilizeUserStartYear(elm){
 	
 	let userSavedYear = localStorage.getItem("USER_DASH_START_YEAR");
 	if(userSavedYear != null && userSavedYear.length >= 1){
-		elm.value = parseInt(userSavedYear);
+		elm.value = (userSavedYear);
 	}
+	
+	// init the end date as well
+	
+	_("year_filter_end").value = [current_year_value,addZeros((current_month_value+1),2)].join("-");
 }
 
 
 function saveDashYearStartUser(elm){
-	let elmValue = parseInt(elm.value);
+	let elmValue = (elm.value);
 	
-	if(typeof(elmValue) == 'number'){
+	if(typeof(elmValue) == 'number' || typeof(elmValue) == 'string'){
 		localStorage.setItem("USER_DASH_START_YEAR",elmValue)
 	}
 }
@@ -227,7 +238,6 @@ initilizeUserStartYear(_("year_filter_start"));
 function filterOnYears(){
 	let start = _("year_filter_start").value;
 	let end = _("year_filter_end").value;
-		
 	
 	if (!start) {
         let min = _("year_filter_start").getAttribute("min");
@@ -235,12 +245,17 @@ function filterOnYears(){
     }
 
     if (!end) {
-        end = current_year_value;
+		let currentValueDate = [current_year_value,addZeros((current_month_value+1),2)];
+		
+        end = currentValueDate.join("-");
     }
 	
 	//If no user defined input, put before current year 
 	if(_("year_filter_start").value.length <= 0){
-		_("year_filter_start").value = current_year_value - 1;
+		
+		let currentValueDate = [current_year_value,addZeros((current_month_value+1)-1,2)];
+		
+		_("year_filter_start").value = currentValueDate.join("-");
 	}
 	
 	

@@ -219,7 +219,7 @@ let fetchDashboardStats = async function () {
   window.setInterval(fetchDashboardStats, 3000);
   
   
-  _("year_filter_end") ? _("year_filter_end").value = getCurrentYear() : false;
+  
   
   
   // Other interactive functions:

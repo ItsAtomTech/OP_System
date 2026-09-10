@@ -9,7 +9,7 @@ from sqlalchemy.orm import aliased
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import random, string, requests
-import pytz
+import pytz, calendar
 from werkzeug.utils import secure_filename
 from collections import Counter
 
@@ -775,9 +775,8 @@ def purchase_request_list():
 def get_fuel_requisition_stats():
     try:
         data = json.loads(request.form.get('form_data', '{}'))
-        year_range = request.form.get("year_ranges") or "2000, 2027"
-        year_range = [int(y.strip()) for y in year_range.split(",")]
-        
+        year_range = request.form.get("year_ranges") or "2000-01, 2027-01"
+        year_range = [y.strip() for y in year_range.split(",")]
         
         query = db.session.query(
             FuelRequisitionRecords.destination,
@@ -793,11 +792,16 @@ def get_fuel_requisition_stats():
          .join(DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id, isouter=True)
 
         if year_range and len(year_range) == 2:
-            start_year = datetime(year_range[0], 1, 1)
-            end_year = datetime(year_range[1], 12, 31, 23, 59, 59)
+            start_year, start_month = map(int, year_range[0].split("-"))
+            end_year, end_month = map(int, year_range[1].split("-"))
+
+            start_date = datetime(start_year, start_month, 1)
+            last_day = calendar.monthrange(end_year, end_month)[1]  
+            end_date = datetime(end_year, end_month, last_day, 23, 59, 59)
+
             query = query.filter(
-                FuelRequisitionRecords.date >= start_year,
-                FuelRequisitionRecords.date <= end_year
+                FuelRequisitionRecords.date >= start_date,
+                FuelRequisitionRecords.date <= end_date
             )
 
         records = query.all()
@@ -947,6 +951,7 @@ def get_fuel_requisition_stats():
 
     except Exception as e:
         db.session.rollback()
+        print(str(e))
         return jsonify({'type': 'error', 'message': str(e)})
         
         
