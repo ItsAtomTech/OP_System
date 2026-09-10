@@ -219,6 +219,7 @@ function loadRecentData(elm){
 		FUEL_CAPACITY = setdata.vehicle.capacity_l;
 		
 		
+		
 		_("fuel_capacity_disp") ? _("fuel_capacity_disp").value = FUEL_CAPACITY : false;
 		
 		
@@ -241,6 +242,9 @@ function loadRecentData(elm){
 			}
 
 			processOPrevOdo(setdata.latest_fuel_req.last_fuel_recordltrs);
+			
+			//set last invoice
+			_("last_invoice_number").value = setdata.latest_fuel_req.last_invoice_number;
 			
 
 		}else{

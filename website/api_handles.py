@@ -1511,6 +1511,7 @@ def list_fuel_req_files():
                 FuelRequisitionRecords.activity_type.ilike(search_term),
                 FuelRequisitionRecords.fuel_requisition_no.ilike(search_term),
                 FuelRequisitionRecords.misc.ilike(search_term),
+                FuelRequisitionRecords.invoice_no.ilike(search_term),
                 Vehicles.plate_no.ilike(search_term),
                 DriverCrew.name.ilike(search_term),
             )
@@ -1524,6 +1525,7 @@ def list_fuel_req_files():
         "id": FuelRequisitionRecords.id,
         "type": FuelRequisitionRecords.type,
         "fuel_requisition_no": FuelRequisitionRecords.fuel_requisition_no,
+        "invoice_no": FuelRequisitionRecords.invoice_no,
         "branch_id": FuelRequisitionRecords.branch_id,
         "activity_type": FuelRequisitionRecords.activity_type,
         "no_of_ltrs": FuelRequisitionRecords.no_of_ltrs,
@@ -1559,6 +1561,7 @@ def list_fuel_req_files():
             "vehicle_id": record.vehicle_id,
             "vehicle_plate_no": vehicle_plate_no,
             "fuel_requisition_no": record.fuel_requisition_no,
+            "invoice_no": record.invoice_no,
             "vehicle_description": vehicle_description,
             "requested_by": record.requested_by,
             "driver_name": driver_name,
@@ -1764,6 +1767,7 @@ def get_latest_fuel_req_by_vehicle():
             "average_km": vehicle.average_km,
             "description": vehicle.description,
             "capacity_l": vehicle.capacity_l,
+            "fuel_type": vehicle.fuel_type,
             "misc": vehicle.misc,
         }
 
@@ -1821,6 +1825,7 @@ def get_latest_fuel_req_by_vehicle():
                 "crewoccupants2": record.crewoccupants2,
                 "invoice_no": record.invoice_no,
                 "last_fuel_recordltrs": record.last_fuel_recordltrs,
+                "last_invoice_number": record.invoice_no,
                 "status": record.status,
                 "misc": record.misc,
                 "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
@@ -1879,6 +1884,7 @@ def get_fuel_request_data_by_id():
                 "id": record.id,
                 "vehicle_id": record.vehicle_id,
                 "fuel_requisition_no": record.fuel_requisition_no,
+                "invoice_no": record.invoice_no,
                 "requested_by": record.requested_by,
                 "driver_name": driver_name,
                 "branch_id": record.branch_id,
@@ -2112,6 +2118,18 @@ def parse_destination(destination_str):
         return destination_str
 
 
+def parse_sli_slr(c1, c2=None):
+    if not c1 and c2:
+        return ""
+    try:
+        combined = c1
+        if c2:
+            combined = combined + ", "+ c2
+        return combined
+    except (ValueError, TypeError):
+        return None
+
+
 
 @api_handles.route('/fuel_monitoring_report', methods=['POST', 'GET'])
 @login_required
@@ -2337,7 +2355,8 @@ def get_fuel_monitoring_report_file():
             FuelRequisitionRecords,
             DriverCrew.name.label("driver_name"),
             Vehicles.plate_no.label("vehicle_plate_no"),
-            Vehicles.average_km.label("vehicle_average_km")
+            Vehicles.average_km.label("vehicle_average_km"),
+            Vehicles.fuel_type.label("vehicle_fuel_type")
         ).outerjoin(
             DriverCrew, FuelRequisitionRecords.requested_by == DriverCrew.id
         ).outerjoin(
@@ -2351,7 +2370,7 @@ def get_fuel_monitoring_report_file():
 
         report_data = []
 
-        for record, driver_name, vehicle_plate_no, vehicle_average_km in records_query:
+        for record, driver_name, vehicle_plate_no, vehicle_average_km, vehicle_fuel_type in records_query:
             raw_json = {}
             if record.json_data:
                 try:
@@ -2375,6 +2394,11 @@ def get_fuel_monitoring_report_file():
             fuel_added = to_float(raw_json.get("no_of_ltrs", record.no_of_ltrs))
             fuel_rate = to_float(raw_json.get("prev_costltr", record.prev_costltr))
             standard_kml = to_float(raw_json.get("average_kml", vehicle_average_km))
+            
+            
+            invoice_no_data = record.invoice_no
+            
+            
             total_km = to_float(raw_json.get("dist_travelled_kms"))
             expected_fuel_used_l = to_float(raw_json.get("est_fuel_consumed"))
 
@@ -2391,15 +2415,16 @@ def get_fuel_monitoring_report_file():
                 "date": record.date.strftime("%Y-%m-%d") if record.date else None,
                 "plate_no": vehicle_plate_no,
                 "driver": driver_name,
-                "sli_slr": None,
+                "sli_slr": parse_sli_slr(record.crewoccupants1, record.crewoccupants2),
                 "activity": record.activity_type,
                 "destination": parse_destination(record.destination),
-                "fuel_type": None,
+                "fuel_type": vehicle_fuel_type,
                 "beg_fuel_l": beg_fuel,
                 "fuel_added_l": fuel_added,
                 "end_fuel_l": end_fuel,
                 "actual_fuel_used_l": round(actual_fuel_used_l, 2),
                 "fuel_rate": fuel_rate,
+                "invoice_no": invoice_no_data,
                 "fuel_purchase_amount": round(fuel_purchase_amount, 2),
                 "beg_odometer": beg_odometer,
                 "end_odometer": end_odometer,
@@ -2423,7 +2448,7 @@ def get_fuel_monitoring_report_file():
         daily_headers = [
             "Date", "Plate No.", "Driver", "SLI/SLR", "Activity", "Destination",
             "Fuel Type", "Beg. Fuel (L)", "Fuel Added (L)", "End. Fuel (L)",
-            "Actual Fuel Used (L)", "Fuel Rate", "Fuel Purchase Amount",
+            "Actual Fuel Used (L)", "Fuel Rate", "Fuel Purchase Amount", "Invoice No.", 
             "Beg. Odometer", "End. Odometer", "Total KM", "Standard Km/L",
             "Expected Fuel Used (L)", "Actual Km/L", "Excess/(Savings) L",
             "Excess/(Savings) ₱", "Status"
@@ -2431,7 +2456,7 @@ def get_fuel_monitoring_report_file():
         daily_keys = [
             "date", "plate_no", "driver", "sli_slr", "activity", "destination",
             "fuel_type", "beg_fuel_l", "fuel_added_l", "end_fuel_l",
-            "actual_fuel_used_l", "fuel_rate", "fuel_purchase_amount",
+            "actual_fuel_used_l", "fuel_rate", "fuel_purchase_amount", "invoice_no", 
             "beg_odometer", "end_odometer", "total_km", "standard_kml",
             "expected_fuel_used_l", "actual_kml", "excess_savings_l",
             "excess_savings_php", "consumption_status"
@@ -2965,7 +2990,7 @@ def remove_logo_asset():
         logo_dir = os.path.join(current_app.root_path, 'static', 'images', 'logos')
         target = os.path.join(logo_dir, safe_name)
 
-        # Safety check - ensures that resolved path is still inside logo_dir
+        # Ensures that resolved path is still inside the logo_dir
         if not os.path.abspath(target).startswith(os.path.abspath(logo_dir)):
             return jsonify({'type': 'error', 'message': 'Invalid file path'})
 

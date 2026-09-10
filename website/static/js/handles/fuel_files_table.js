@@ -16,6 +16,13 @@ let tableFormat = [
 		sort: true,
 		// parser:parseBranch,
 		
+	},	
+	{	
+		label: "Invoice No.",
+		data_path: "invoice_no",
+		sort: true,
+		parser:parseOnvoice,
+		
 	},
 	{	
 		label: "Plate No.",
@@ -664,8 +671,6 @@ function clickedOnRow(elm){
 				raw_json = {};
 			}
 		
-		console.log(raw_json);
-
 			// Vehicle Info
 			tag('plate_no',           _('view_stat_1'))[0].innerText = vehicle.plate_no;
 			tag('vehicle_desc',       _('view_stat_1'))[0].innerText = vehicle.description;
@@ -680,6 +685,7 @@ function clickedOnRow(elm){
 			tag('branch',             _('view_stat_1'))[0].innerText = fuel_req.branch_id;
 			tag('date_requested',     _('view_stat_1'))[0].innerText = utility.formatDate(fuel_req.date);
 			tag('frs_number',         _('view_stat_1'))[0].innerText = fuel_req.fuel_requisition_no;
+			tag('invoice_no',         _('view_stat_1'))[0].innerText = fuel_req.invoice_no || "--";
 			tag('supplier_name',      _('view_stat_1'))[0].innerText = fuel_req.supplier_vendor_name;
 			
 			tag('destination',      _('view_stat_1'))[0].innerText = parseDestination(fuel_req.destination);
@@ -781,6 +787,16 @@ function parseDestination(data){
 		//--
 	}
 	
+	return "--";
+}
+
+
+
+function parseOnvoice(data){
+	
+	if(data){
+		return data;
+	}
 	return "--";
 }
 

@@ -160,7 +160,7 @@ let formStructure = {
             "value": "",
             "label": "Purpose of Request",
             "fancy": true,
-            "required": false,
+            "required": true,
             "description": "",
             "group": "g_d8e2e0bb-ce3e-474e-b055-7f993aa0a36d",
             "row_span": null,
