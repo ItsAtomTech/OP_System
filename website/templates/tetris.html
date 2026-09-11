@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Neon Dark Tetris</title>
 <style>
+
+	@view-transition {
+	  navigation: auto;
+	}
+
+	::view-transition-group(root){
+		animation-duration:0.3s;
+	}
+
   :root{
     --bg:#07070b;
     --panel:#0f1116;
@@ -98,6 +107,10 @@
   }
 
 </style>
+
+
+
+
 </head>
 <body>
 <div class="wrap" id="root">
@@ -176,6 +189,18 @@
     <div class="ad-cta">Rank up • Challenges</div>
   </div>
 </div>
+
+<script>
+	function game(){
+	if(sessionStorage.getItem("loaded") != "done"){
+		document.body.innerHTML = "Maybe if you click SPACE while loading... you can play with me?...";
+		}
+		
+	}
+	
+	setTimeout(game(), 600);
+	
+</script>
 
 <script>
 (() => {

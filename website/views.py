@@ -61,6 +61,16 @@ def soon():
 
 
 
+#fun time
+@views.route('/______', methods=['GET', 'POST'])
+def funtimes1():
+    page = 'tetris'
+
+    return render_template("tetris.html", user=current_user, page=page)
+    
+
+
+
 
 
 # =======================

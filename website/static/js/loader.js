@@ -9,7 +9,7 @@ var is_done = sessionStorage.getItem("loaded");
 var isLowSpecs = sessionStorage.getItem("specs");
 var lowSpecs = false;
 
-
+let activateEaster = false;
 
 var doSomeHeavyStuff = function(){
   for (var i = 1; i <= 1e8; i++){
@@ -80,6 +80,13 @@ function load_out(){
 function finished_load(){
 	
 	try{
+		
+		if(activateEaster){
+			rockOut();
+			return;
+		}
+		
+		
 		load_out();
 		setTimeout(fade_out_load, 700);
 		setTimeout(remove_load, 1000);
@@ -96,6 +103,8 @@ function finished_load(){
 		}
 		
 		
+		
+		
 	
 	}catch(e){
 		//
@@ -107,6 +116,18 @@ function fade_out_load(){
 	
 }
 
+async function rockOut(){
+	document.getElementById("loader_con").classList.add("iwannarock");
+	sessionStorage.setItem("loaded","done");
+	await sleep(2000);
+	go_to("______"); //secret link
+	
+}
+
+
+
+
+
 function remove_load(){
 	
 	try{
@@ -116,6 +137,8 @@ function remove_load(){
 	}
 }
 
+let spaceCount = 0;
+let spaceTimer = null;
 
 function create_loading(){
 	remove_load();
@@ -132,6 +155,32 @@ function create_loading(){
 	document.body.appendChild(loader_con);
 	
 	setTimeout(hover_on, 800);
+	
+	
+	//Something Fun ....
+	
+	document.addEventListener("keydown", (e) => {
+		if (e.code !== "Space") return;
+
+		spaceCount++;
+		clearTimeout(spaceTimer);
+
+		// reset the counter if presses are too far apart (1s window)
+		spaceTimer = setTimeout(() => { spaceCount = 0; }, 1000);
+		
+		
+		if(!_("loader_con")){
+			return false;
+		}
+		
+		if (spaceCount >= 6) {
+		activateEaster = true;
+		spaceCount = 0;
+		
+		
+		alert("You wanna PLAY???");
+		}
+	});
 	
 }
 
