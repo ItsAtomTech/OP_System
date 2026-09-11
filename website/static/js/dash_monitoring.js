@@ -416,9 +416,11 @@ async function showOnlineBanner(show=false){
 let prevNotifications = undefined;
 async function observeNewNotification(data){
     let res = JSON.parse(data.responseText);
-    if(errorRate){
+    if(res.type == "success" && failedFetch > 0){
         failedFetch--;
+		errorRate--;
     }
+	
     if(failedFetch >= 1){
         return;
     }
