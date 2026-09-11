@@ -416,15 +416,9 @@ async function showOnlineBanner(show=false){
 let prevNotifications = undefined;
 async function observeNewNotification(data){
     let res = JSON.parse(data.responseText);
-    if(errorRate){
+    if(res.type == "success" && failedFetch > 0){
         failedFetch--;
-    }
-    if(failedFetch >= 1){
-        return;
-    }
-
-    if(!res){
-        return;
+		errorRate--;
     }
 	
 	if(errorRate >= 3){
@@ -434,6 +428,16 @@ async function observeNewNotification(data){
 		errorRate = 0;
 	}
 	
+	
+    if(failedFetch >= 1){
+        return;
+    }
+
+    if(!res){
+        return;
+    }
+	
+
     
     if(res.unseen_notifications >= 1){
         _("notification_button").classList.add("new_notification"); 
