@@ -429,7 +429,7 @@ async function observeNewNotification(data){
 	
 	if(errorRate >= 3){
 		toggleOfflineBanner();
-		await(300);
+		await sleep(300);
 		showOnlineBanner(1);
 		errorRate = 0;
 	}
@@ -463,12 +463,7 @@ async function observeNewNotification(data){
     _("notification_button").classList.add("new_notification");
     localStorage.setItem("shouldReloadNotification", "true");
     
-	if(errorRate >= 3){
-		toggleOfflineBanner();
-		await(300);
-		showOnlineBanner(1);
-		errorRate = 0;
-	}
+
 	errorRate = 0;
 }
 
