@@ -111,7 +111,7 @@ let fetchDashboardStats = async function () {
 		{"name":"year_ranges", value: year_ranges},
 	];
 	
-	let stats = await qBuilder.sendPromise(getFuelRequisitionStats, "get_fuel_requisition_stats",custom_param);
+	let stats = await qBuilder.sendPromise(getFuelRequisitionStats, "get_fuel_requisition_stats",custom_param, errorHandler);
 	
 	
 	if(firstRun){
@@ -167,6 +167,11 @@ let fetchDashboardStats = async function () {
 };
   
   
+
+function errorHandler(data){
+	console.log(data);
+}
+
 
   // ========================================
   // ANIMATE NUMBER UPDATES
@@ -345,9 +350,6 @@ async function initPrintReport(elm){
 
 // expanded Chart Button  
 
-
-
-
 //Notification Observer Service
 let failedFetch = 0;
 function monitorNotifCounts(){
@@ -361,13 +363,58 @@ function getError(data){
     if(errorRate >= 10){
         return;
     }
+	
+	if(errorRate == 5){
+		showToast("You are offline!");
+		toggleOfflineBanner(1);
+	}
+	
     errorRate++;
+}
+
+
+function toggleOfflineBanner(show=false){
+	let bannertop = tag("message_tag",_("top_banner"))[0];
+	let parentElm = bannertop.parentNode;
+	
+	if(show){
+		parentElm.classList.add("show", "error");
+	}else{
+		parentElm.classList.remove("show", "error");		
+	}
+	
+	let message = "<span class='fa fa-plug'> </span> <span class='tiny'> You are curently Offline!</span>";
+	bannertop.innerHTML = message;
+	// console.log(bannertop, parentElm);
+}
+
+
+
+async function showOnlineBanner(show=false){
+	let bannertop = tag("message_tag",_("top_banner"))[0];
+	let parentElm = bannertop.parentNode;
+	
+	if(show){
+		parentElm.classList.add("show", "success");
+	}else{
+		parentElm.classList.remove("show", "success");		
+	}
+	
+	let message = "<span class='fa fa-globe'> </span> <span class='tiny'> You are Online.</span>";
+	bannertop.innerHTML = message;
+	
+	await sleep(4000);
+	
+	if(show){
+		parentElm.classList.remove("show", "success");
+	}
+	
 }
 
 
 
 let prevNotifications = undefined;
-function observeNewNotification(data){
+async function observeNewNotification(data){
     let res = JSON.parse(data.responseText);
     if(errorRate){
         failedFetch--;
@@ -379,7 +426,14 @@ function observeNewNotification(data){
     if(!res){
         return;
     }
-    
+	
+	if(errorRate >= 3){
+		toggleOfflineBanner();
+		await(300);
+		showOnlineBanner(1);
+		errorRate = 0;
+	}
+	
     
     if(res.unseen_notifications >= 1){
         _("notification_button").classList.add("new_notification"); 
@@ -406,12 +460,16 @@ function observeNewNotification(data){
        return;
     }
     
-
-    
-    
     _("notification_button").classList.add("new_notification");
     localStorage.setItem("shouldReloadNotification", "true");
-    errorRate = 0;
+    
+	if(errorRate >= 3){
+		toggleOfflineBanner();
+		await(300);
+		showOnlineBanner(1);
+		errorRate = 0;
+	}
+	errorRate = 0;
 }
 
 

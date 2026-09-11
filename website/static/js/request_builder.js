@@ -1,4 +1,4 @@
-//request builder v1.3
+//request builder v1.4
 const qBuilder = {
 	
 	//params instances
@@ -83,20 +83,31 @@ const qBuilder = {
 			//await populateCategories(responseData); //Callback	
 
 		}else if(this.readyState == 4 && this.status == 0){
-			 createDialogue('error', "Server Connection error");
 
 			try{
-				errorHandler(this);
+				if(errorHandler != undefined){
+					errorHandler(this);
+				}else{
+					createDialogue('error', "Server Connection error");
+				}
+				
 			}catch(e){
-				//-
+				createDialogue('error', "Server Connection error");
+				console.warn(e, this);
 			}
 			 
 		}else if(this.readyState == 4 && this.status == 404){
-			createDialogue('error', "Something went wrong!");
 			try{
-				errorHandler(this);
+				
+				if(errorHandler != undefined){
+					errorHandler(this);
+				}else{
+					createDialogue('error', "Something went wrong!");
+				}
 			}catch(e){
 				//-
+				createDialogue('error', "Something went wrong!");
+				console.error(e, this);
 			}
 
 			
@@ -259,8 +270,8 @@ const qBuilder = {
 // misc codes
 
 let firstLoad = true;
-function monitorChanges(key="shouldReload",loader=undefined){
-	let timer_c = setInterval(check, 2000);
+function monitorChanges(key="shouldReload",loader=undefined, custom_counter=2000){
+	let timer_c = setInterval(check, custom_counter);
 	function check(){
 		if(firstLoad){
 			firstLoad = false;
