@@ -336,6 +336,10 @@
 }
 
 
+.frs-subheader.bordered{
+	  border: 1px solid #111;
+}
+
 
 
 /* Extra Styles */

@@ -688,7 +688,10 @@ function clickedOnRow(elm){
 			tag('invoice_no',         _('view_stat_1'))[0].innerText = fuel_req.invoice_no || "--";
 			tag('supplier_name',      _('view_stat_1'))[0].innerText = fuel_req.supplier_vendor_name;
 			
-			tag('destination',      _('view_stat_1'))[0].innerText = parseDestination(fuel_req.destination);
+			tag('destination',      _('view_stat_1'))[0].innerText = parseDestination(fuel_req.destination);		
+
+			
+			tag('origin',      _('view_stat_1'))[0].innerText = raw_json.origin ? (raw_json.origin) : '--';
 
 			// Fuel Request Details
 			_('view_no_of_ltrs').value    = raw_json.no_of_ltrs;

@@ -598,6 +598,22 @@ let formStructure = {
             "index": 22
         },
 		{
+            "type": "text",
+            "events": {},
+            "value": "",
+            "label": "Origin",
+			"list": "destination_list",
+            "fancy": true,
+            "required": false,
+            "description": "",
+            "group": "g_5145d6e5-19d8-47df-b15d-531c9258d721",
+            "row_span": 0,
+            "col_span": 0,
+            "span_column": false,
+            "id": "origin",
+            "index": 30
+        },
+		{
             "type": "table",
             "value": "",
             "config": {
@@ -625,7 +641,7 @@ let formStructure = {
                 "responsivespan": true
             },
             "rowed": true,
-            "fullspan": true,
+            "fullspan": false,
             "responsivespan": true,
             "label": "Destination",
             "fancy": true,

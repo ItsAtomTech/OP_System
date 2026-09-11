@@ -1,11 +1,6 @@
 selectedItemId = null;
 let statNames = {
-	"on_probation":	"On Probation",
-	"on_tracking": "On Tracking",
-	"total_failed":	"Total Failed",
-	"total_passed":	"Total Passed",
-	"to_shift":"Advised to Shift",
-	"to_transfer": "Advised to Transfer"
+
 }
 
 
@@ -119,6 +114,7 @@ async function generateDataOnDoc(dataraw) {
     _('crew_2').innerText        = fuel_req.crewoccupants2   || '--';
 	
     _('destination').innerText = parseDestination(fuel_req.destination)    || '--';
+    _('origin').innerText = raw_json.origin || '--';
 	
 }
 

@@ -2399,7 +2399,7 @@ def get_fuel_monitoring_report_file():
             fuel_added = to_float(raw_json.get("no_of_ltrs", record.no_of_ltrs))
             fuel_rate = to_float(raw_json.get("prev_costltr", record.prev_costltr))
             standard_kml = to_float(raw_json.get("average_kml", vehicle_average_km))
-            
+            origin_data = raw_json.get("origin", "--")
             
             invoice_no_data = record.invoice_no
             
@@ -2422,6 +2422,7 @@ def get_fuel_monitoring_report_file():
                 "driver": driver_name,
                 "sli_slr": parse_sli_slr(record.crewoccupants1, record.crewoccupants2),
                 "activity": record.activity_type,
+                "origin": origin_data,
                 "destination": parse_destination(record.destination),
                 "fuel_type": vehicle_fuel_type,
                 "beg_fuel_l": beg_fuel,
@@ -2451,7 +2452,7 @@ def get_fuel_monitoring_report_file():
         ws1 = wb.active
         ws1.title = "Fuel Monitoring Report"
         daily_headers = [
-            "Date", "Plate No.", "Driver", "SLI/SLR", "Activity", "Destination",
+            "Date", "Plate No.", "Driver", "SLI/SLR", "Activity", "Origin", "Destination",
             "Fuel Type", "Beg. Fuel (L)", "Fuel Added (L)", "End. Fuel (L)",
             "Actual Fuel Used (L)", "Fuel Rate", "Fuel Purchase Amount", "Invoice No.", 
             "Beg. Odometer", "End. Odometer", "Total KM", "Standard Km/L",
@@ -2459,7 +2460,7 @@ def get_fuel_monitoring_report_file():
             "Excess/(Savings) ₱", "Status"
         ]
         daily_keys = [
-            "date", "plate_no", "driver", "sli_slr", "activity", "destination",
+            "date", "plate_no", "driver", "sli_slr", "activity", "origin", "destination",
             "fuel_type", "beg_fuel_l", "fuel_added_l", "end_fuel_l",
             "actual_fuel_used_l", "fuel_rate", "fuel_purchase_amount", "invoice_no", 
             "beg_odometer", "end_odometer", "total_km", "standard_kml",
