@@ -19,6 +19,7 @@ class Users(db.Model, UserMixin):
     misc = db.Column(db.String(1024))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'))   
+    last_active = db.Column(db.DateTime(timezone=True), default=manila_time)   
     
     company_name = db.relationship('Company', backref='users', lazy=True)
     

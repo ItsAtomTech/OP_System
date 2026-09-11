@@ -45,6 +45,13 @@ let tableFormat = [
 		// parser:parseBranch,
 		
 	},
+	{	
+		label: "Online Status",
+		data_path: "last_active",
+		sort: true,
+		parser:parseOnlineStatus,
+		
+	},
 
 	
 
@@ -702,4 +709,39 @@ function itemNotifyUpdate(data){
 }
 
 
+
+function parseOnlineStatus(data){
+	if (!data || data.length <= 5) {
+		return `<span class="status-offline" title="Never been online yet">Offline</span>`;
+	}
+
+	const MANILA_OFFSET_MS = 8 * 60 * 60 * 1000;
+
+	// The string is mislabeled "GMT" but the clock values are actually Manila time (UTC+8),
+	// so new Date() parses it as true UTC — correct by subtracting the offset.
+	const lastActive = new Date(new Date(data).getTime() - MANILA_OFFSET_MS);
+	const now = new Date();
+	const diffMinutes = (now - lastActive) / (1000 * 60);
+
+	if (diffMinutes < 6) {
+		return `<span class="status-active" title="Active now">Active</span>`;
+	}
+
+	let timeText;
+	const diffHours = diffMinutes / 60;
+	const diffDays = diffHours / 24;
+
+	if (diffMinutes < 60) {
+		const mins = Math.floor(diffMinutes);
+		timeText = `${mins} minute${mins !== 1 ? 's' : ''} ago`;
+	} else if (diffHours < 24) {
+		const hrs = Math.floor(diffHours);
+		timeText = `${hrs} hour${hrs !== 1 ? 's' : ''} ago`;
+	} else {
+		const days = Math.floor(diffDays);
+		timeText = `${days} day${days !== 1 ? 's' : ''} ago`;
+	}
+
+	return `<span class="status-offline" title="Last active ${timeText}">Offline</span>`;
+}
 

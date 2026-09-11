@@ -119,6 +119,7 @@ def list_users():
     for u in users:
         user_list.append({
             'user_id': u.user_id,
+            'last_active':getattr(u, 'last_active', ""),
             'username': getattr(u, 'username', None),
             'email': u.email,
             'type': u.type,
@@ -2749,10 +2750,28 @@ def mark_notification_seen():
     return jsonify({'type': 'success', 'message': 'Notification marked as seen.'})
 
 
+
+
 @api_handles.route('/notification_count', methods=['GET', 'POST'])
 def get_notification_count():
     if not current_user.is_authenticated:
         return jsonify({'type': 'error', 'message': 'User not authenticated'})
+
+    now = manila_time()
+    last_tagged = session.get('last_active_tag')
+
+    should_update = (
+        last_tagged is None or
+        now - datetime.fromisoformat(last_tagged) >= timedelta(minutes=5)
+    )
+
+    if should_update:
+        try:
+            current_user.last_active = now
+            db.session.commit()
+            session['last_active_tag'] = now.isoformat()
+        except Exception:
+            db.session.rollback()
 
     total_count = (
         Notification.query
