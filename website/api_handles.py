@@ -1725,7 +1725,7 @@ def save_fuel_req():
 @api_handles.route('/fuel_requisition_update', methods=['POST'])
 @login_required
 def fuel_requisition_update_():
-    if not is_admin():
+    if not is_admin(1,3):
         return {"type": "error", "message": "No permission to perform this action"}
     try:
         fuel_data = request.form.get("form_data")
@@ -1739,6 +1739,9 @@ def fuel_requisition_update_():
         
         if (record.status == "approved"):
             return {"type": "error", "message": "You can no longer edit this Data"}
+        
+        if (record.user_id != current_user.user_id and not is_admin(1)):
+            return {"type": "error", "message": "You can only edit your own records"}
         
         date_requested        = data.get("date_requested")
         fuel_requisition_no   = data.get("fuel_requisition_no")
