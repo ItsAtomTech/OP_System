@@ -135,7 +135,7 @@ function loadIntoForms(){
 	
 	
 		
-	if(setdata.purchase.status != "pending" || setdata.purchase.status == ""){
+	if(setdata.purchase.status == "approved" || setdata.purchase.status == "processed"){
 		loadForms(1,0,1,1);
 		
 		showToast("The form is now readonly!");
