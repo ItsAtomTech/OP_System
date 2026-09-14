@@ -45,12 +45,15 @@ def dum():
    
 @api_handles.route('/get_server_time', methods=['GET', 'POST'])
 def get_server_time_():
-    
     mtime = manila_time()
+
+    formatted_time = mtime.strftime("%Y-%m-%d %H:%M:%S %Z")
     
-    
-    return {"type": "success", "message": mtime } 
-    page = 'home'
+    return jsonify({
+        "type": "success", 
+        "message": formatted_time
+    })
+
 
     
 def manila_time():

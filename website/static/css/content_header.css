@@ -118,6 +118,17 @@
 }
 
 
+.vertical_align{
+	flex-direction:column;
+	gap:5px;
+	
+}
+
+.centered{
+	text-align:center;
+}
+
+
 @media (max-width:600px){
 	.content_header_main{
 		flex-direction:column-reverse;

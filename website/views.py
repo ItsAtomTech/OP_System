@@ -1,4 +1,4 @@
-import os, json
+import os, json, pytz
 
 from flask import Blueprint, render_template, request, flash, jsonify, Flask, url_for, session, send_from_directory, make_response
 from flask_login import login_required, current_user
@@ -21,6 +21,12 @@ views = Blueprint('views', __name__)
 
 app = Flask(__name__)
 
+
+    
+def manila_time():
+    return datetime.now(pytz.timezone("Asia/Manila"))
+    
+    
 
 @views.route('/', methods=['GET', 'POST'])
 def home():
@@ -65,6 +71,16 @@ def soon():
 @views.route('/______', methods=['GET', 'POST'])
 def funtimes1():
     page = 'tetris'
+    now = manila_time()
+    
+
+    current_minute = now.hour * 60 + now.minute
+
+    work_morning = 9 * 60 <= current_minute < 12 * 60      # 9:00 AM - 11:59 AM
+    work_afternoon = 13 * 60 <= current_minute <= 18 * 60   # 1:00 PM - 6:00 PM
+
+    if work_morning or work_afternoon:
+        return render_template("breakg_message.html", user=current_user, page=page)
 
     return render_template("tetris.html", user=current_user, page=page)
     
