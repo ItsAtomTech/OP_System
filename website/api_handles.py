@@ -633,8 +633,8 @@ def remove_purchase_request_file():
         if not purchase:
             return {"type": "error", "message": "Purchase request not found"}
 
-        if purchase.status == "approved":
-            return {"type": "error", "message": "Cannot remove an approved purchase request"}
+        if purchase.status == "approved" or purchase.status == "processed":
+            return {"type": "error", "message": "Cannot remove an approved or processed purchase request"}
 
         db.session.delete(purchase)
         db.session.commit()
