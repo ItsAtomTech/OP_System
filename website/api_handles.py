@@ -42,6 +42,16 @@ def dum():
     return {"type": "success", "message": "Message test" } 
     page = 'home'
 
+   
+@api_handles.route('/get_server_time', methods=['GET', 'POST'])
+def get_server_time_():
+    
+    mtime = manila_time()
+    
+    
+    return {"type": "success", "message": mtime } 
+    page = 'home'
+
     
 def manila_time():
     return datetime.now(pytz.timezone("Asia/Manila"))
