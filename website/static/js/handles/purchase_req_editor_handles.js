@@ -134,6 +134,16 @@ function loadIntoForms(){
 	}
 	
 	
+		
+	if(setdata.purchase.status != "pending"){
+		loadForms(1,0,1,1);
+		
+		showToast("The form is now readonly!");
+		
+	}
+	
+	
+	
 	
 	let converted = {
 		

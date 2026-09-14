@@ -759,8 +759,46 @@ def purchase_request_list():
         }
     }
     
+
+
+@api_handles.route('/updatePurchaseReqStatus', methods=['POST'])
+@login_required
+def updatePurchaseReqStatus():
     
-# Purchase Request End ==============================================
+    accepted_status = ["approved", "pending", "processed"]
+    
+    try:
+        if not is_admin():
+            return jsonify({'type': 'error', 'message': 'Unauthorized'})
+
+        request_id = request.form.get("purchase_id")
+        status = request.form.get("status")
+
+        if not all([request_id, status]):
+            return jsonify({'type': 'error', 'message': 'Missing a required field'})
+        
+        if not status in accepted_status:
+            return jsonify({'type': 'error', 'message': 'Invalid Value for Status: '+ status})
+        
+        record = PurchaseRequests.query.get(request_id)
+        if not record:
+            return jsonify({'type': 'error', 'message': 'Record not found'})
+
+        record.status = status
+        db.session.commit()
+
+        return jsonify({'type': 'success', 'message': 'Status updated successfully'})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+
+    
+# ================================
+# Purchase Request End ===========
+# ================================
+
+
 
 # ================================
 # User Forms API End

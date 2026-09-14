@@ -770,7 +770,7 @@ function clickedOnRow(elm){
 			: '--';
 
 		// Status
-		_("status_option_").value = (purchase.status == "approved" ? "approved" : "pending");
+		_("status_option_").value = (purchase.status ? purchase.status : "pending");
 
 		addFancyPlaceholder();
 	}
@@ -778,31 +778,7 @@ function clickedOnRow(elm){
 	showModalContent("view_purchase_1");
 }
 
-async function assignedReqStatus(elm){
-	if (targetID == undefined){
-		return;
-	}
-	
-	let values = elm.value;
-	
-	let itemvalue = [
-		{"name":"request_id", "value": targetID},
-		{"name":"status", "value": values},
-	];
-	
-	createDialogue("wait");
-	await qBuilder.sendPromise(updateListen,"updateFuelReqStatus",itemvalue);
-	destroy_dia();
-	
-	function updateListen(data){
-			let res_data = (JSON.parse(data.responseText));
-			showToast(res_data.message);
-			
-			
-		
-	}
-	
-}
+
 
 
 
@@ -853,8 +829,34 @@ async function printDoc(){
 	window.open('/purchase_request_print', 'printPurchaseRequest');
 }
 
-function assignedPurchaseReqStatus(elm){
-	showToast("Coming Soon...");
+async function assignedPurchaseReqStatus(elm){
+	if (targetID == undefined){
+		return;
+	}
+	
+	if(utility.spammingJam()){
+		return await sleep(1500);
+	}
+	
+	let values = elm.value;
+	
+	let itemvalue = [
+		{"name":"purchase_id", "value": targetID},
+		{"name":"status", "value": values},
+	];
+	
+	createDialogue("wait");
+	await qBuilder.sendPromise(updateListen,"updatePurchaseReqStatus",itemvalue);
+	destroy_dia();
+	
+	function updateListen(data){
+			let res_data = (JSON.parse(data.responseText));
+			showToast(res_data.message);
+			
+			
+		
+	}
+	
 }
 
 
