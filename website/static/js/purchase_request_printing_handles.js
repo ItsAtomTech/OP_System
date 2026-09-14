@@ -26,12 +26,11 @@ async function getPrintableData(){
 
 	await sleep(200);
 	_("wrapper_doc").classList.remove("blur_docs");
-	await sleep(1000);
-	print();
+
 }
 
 
-function getInformationData(data){
+async function getInformationData(data){
 	let idPost = undefined;
 	idPost = data.id;
 
@@ -40,7 +39,10 @@ function getInformationData(data){
 		{"name": "include_company", "value": 1}
 	];
 
-	qBuilder.sendQuery(generateDataOnDoc, '/get_purchase_request_by_id', params);
+	await qBuilder.sendPromise(generateDataOnDoc, '/get_purchase_request_by_id', params);
+	
+	await sleep(1000);
+	print();
 }
 
 
