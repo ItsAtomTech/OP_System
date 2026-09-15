@@ -85,7 +85,7 @@ async function setStoredCount(count) {
 async function observeNewNotification() {
     try {
         // Querying your existing Flask route without modifying it
-        const response = await fetch('/get_server_notifications', {
+        const response = await fetch('/notification_count', {
             method: 'GET',
             headers: { 'Accept': 'application/json' }
         });
