@@ -538,6 +538,15 @@ async function generateFuelRequisitionCharts(data) {
             (value) => value
         ),
 
+        () => generateHorizontalBarChart(
+            data.destination_activity.top_routes,
+            "fuel_chart_top_routes",
+            "Top Origin-Destination Paring",
+            materialColors,
+            true,
+            (value) => value
+        ),
+
         // -- vehicle ---------------------------------------------------
 
         () => generateHorizontalBarChart(
