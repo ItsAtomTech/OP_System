@@ -832,6 +832,7 @@ def get_fuel_requisition_stats():
         
         query = db.session.query(
             FuelRequisitionRecords.destination,
+            FuelRequisitionRecords.json_data,
             FuelRequisitionRecords.no_of_ltrs,
             FuelRequisitionRecords.so_theoactl_end_l,
             FuelRequisitionRecords.status,
@@ -858,7 +859,7 @@ def get_fuel_requisition_stats():
 
         records = query.all()
 
-        # ── helpers ──────────────────────────────────────────────
+        # -- helpers ----------------------------------------------
         def to_float(val):
             try:
                 v = str(val).strip()
@@ -877,7 +878,7 @@ def get_fuel_requisition_stats():
             except:
                 return False
 
-        # ── KPI ──────────────────────────────────────────────────
+        # -- KPI --------------------------------------------------
         total_records = len(records)
         total_liters = sum(to_float(r.no_of_ltrs) for r in records)
 
@@ -893,7 +894,7 @@ def get_fuel_requisition_stats():
             t = r.type or 'Unknown'
             count_by_type[t] = count_by_type.get(t, 0) + 1
 
-        # ── Vehicle-based ─────────────────────────────────────────
+        # -- Vehicle-based ----------------------------------------─
         vehicle_liters = {}
         vehicle_count = {}
         for r in records:
@@ -905,7 +906,7 @@ def get_fuel_requisition_stats():
         top_vehicles_by_count = sorted(vehicle_count.items(), key=lambda x: x[1], reverse=True)[:10]
         avg_liters_per_vehicle = {k: round(vehicle_liters[k] / vehicle_count[k], 2) for k in vehicle_liters}
 
-        # ── Driver-based ──────────────────────────────────────────
+        # -- Driver-based ------------------------------------------
         driver_liters = {}
         driver_count = {}
         for r in records:
@@ -916,7 +917,7 @@ def get_fuel_requisition_stats():
         top_drivers_by_count = sorted(driver_count.items(), key=lambda x: x[1], reverse=True)[:10]
         top_drivers_by_liters = sorted(driver_liters.items(), key=lambda x: x[1], reverse=True)[:10]
 
-        # ── Time-based ────────────────────────────────────────────
+        # -- Time-based --------------------------------------------
         count_by_month = {}
         liters_by_month = {}
         count_by_day = {}
@@ -928,7 +929,7 @@ def get_fuel_requisition_stats():
                 liters_by_month[month_key] = liters_by_month.get(month_key, 0.0) + to_float(r.no_of_ltrs)
                 count_by_day[day_key] = count_by_day.get(day_key, 0) + 1
 
-        # ── Shortage / Over ───────────────────────────────────────
+        # -- Shortage / Over --------------------------------------─
         shortage_count = 0
         over_count = 0
         shortage_by_vehicle = {}
@@ -944,7 +945,7 @@ def get_fuel_requisition_stats():
                 else:
                     over_count += 1
 
-        # ── Destination / Activity ────────────────────────────────
+        # -- Destination / Activity --------------------------------
         top_destinations = {}
         for r in records:
             try:
@@ -962,8 +963,31 @@ def get_fuel_requisition_stats():
         for r in records:
             act = r.activity_type or 'Unknown'
             count_by_activity[act] = count_by_activity.get(act, 0) + 1
+            
+        # -- Destination / Activity --------------------------------   
+        top_routes = {}
+        for r in records:
+            try:
+                jd = json.loads(r.json_data or '{}')
+                origin = jd.get('origin') or 'Unknown'
+            except:
+                origin = 'Unknown'
 
-        # ── Response ──────────────────────────────────────────────
+            try:
+                dest_list = json.loads(r.destination or '[]')
+                for item in dest_list:
+                    dest = item[0] if isinstance(item, list) and item else str(item)
+                    route = f"{origin} - {dest}"
+                    top_routes[route] = top_routes.get(route, 0) + 1
+            except:
+                dest = r.destination or 'Unknown'
+                route = f"{origin} - {dest}"
+                top_routes[route] = top_routes.get(route, 0) + 1
+
+        top_routes = sorted(top_routes.items(), key=lambda x: x[1], reverse=True)[:10]
+        
+        
+        # -- Response ----------------------------------------------
         return jsonify({
             'type': 'success',
             'data': {
@@ -996,6 +1020,7 @@ def get_fuel_requisition_stats():
                 },
                 'destination_activity': {
                     'top_destinations': top_destinations,
+                    'top_routes': top_routes,
                     'count_by_activity': count_by_activity,
                 },
             }

@@ -46,6 +46,14 @@ function showNotificationPage(elm){
 	closeAllPages(page);
 	hideDashboardContents(true);
 	
+	
+	//Ask for Permission trigger
+	
+	Notification.requestPermission().then(permission => {
+		console.log("Notification permission:", permission);
+	});
+	
+	
 }
 
 
