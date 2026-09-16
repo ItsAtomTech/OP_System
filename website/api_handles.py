@@ -1676,7 +1676,7 @@ def list_fuel_req_files():
 @api_handles.route('/save_fuel_req', methods=['POST'])
 @login_required
 def save_fuel_req():
-    if not is_admin():
+    if not is_admin(1,3):
         return {"type": "error", "message": "No permission to perform this action"}
     try:
         fuel_data = request.form.get("form_data")
