@@ -798,6 +798,15 @@ def updatePurchaseReqStatus():
             return jsonify({'type': 'error', 'message': 'Record not found'})
 
         record.status = status
+
+        if status == "approved":
+            record.date_approved = manila_time().strftime('%Y-%m-%d %H:%M:%S')
+        elif status == "processed":
+            record.date_completed = manila_time().strftime('%Y-%m-%d %H:%M:%S')
+        elif status == "pending":
+            record.date_approved = None
+            record.date_completed = None
+
         db.session.commit()
 
         return jsonify({'type': 'success', 'message': 'Status updated successfully'})
@@ -805,7 +814,7 @@ def updatePurchaseReqStatus():
     except Exception as e:
         db.session.rollback()
         return jsonify({'type': 'error', 'message': str(e)})
-
+        
     
 # ================================
 # Purchase Request End ===========

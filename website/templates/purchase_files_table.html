@@ -51,18 +51,28 @@
 			 </div>   
 
 			
+						
+			 <div class="input_class_rounded">
+				<label class="small"> Department Type: </label>
+				<select class="small primary_color_invert" oninput="delayedQuerry()" id="department_id">
+					<option value="" > All </option>
+					
+			{% for department in get_departments() %}		
+					<option value="{{ department.id }}">{{ department.name }}</option>
+			{% endfor %}
+				</select>
+			</div>
 			
 			
-			
-			 <!-- <div class="input_class_rounded"> -->
-				<!-- <label class="small"> Account Type: </label> -->
-				<!-- <select class="small primary_color" oninput="delayedQuerry()" id="account_type"> -->
-					<!-- <option value="" > All </option> -->
-					<!-- <option value="student" > Student </option> -->
-					<!-- <option value="teacher" > Teacher </option> -->
-					<!-- <option value="admin" > Admin </option> -->
-				<!-- </select> -->
-			<!-- </div> -->
+			 <div class="input_class_rounded">
+				<label class="small"> Status: </label>
+				<select class="small primary_color" oninput="delayedQuerry()" id="status_filter">
+					<option value="" > All </option>
+					<option value="pending" > Pending </option>
+					<option value="approved" > Approved </option>
+					<option value="processed" > Processed </option>
+				</select>
+			</div>
 			
 			
 			 

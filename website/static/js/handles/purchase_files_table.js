@@ -33,6 +33,12 @@ let tableFormat = [
 		
 	},
 	{	
+		label: "Status",
+		data_path: "status",
+		sort: true,
+		
+	},
+	{	
 		label: "Requested By (Department)",
 		data_path: "department_name",
 		sort: true,
@@ -264,9 +270,8 @@ function tableLoader(data){
 
 
 function loadAllItems(dataOnly=false){
-	// qBuilder.filters.status = _("status_input").value;
-
-	
+	qBuilder.filters.status = _("status_filter").value;
+	qBuilder.filters.department_id = _("department_id").value;
 
 	qBuilder.search = _("search_input").value;
 	
