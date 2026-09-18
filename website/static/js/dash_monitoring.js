@@ -664,3 +664,4 @@ async function generateFuelRequisitionCharts(data) {
         setTimeout(task, i * 30);
     });
 }
+

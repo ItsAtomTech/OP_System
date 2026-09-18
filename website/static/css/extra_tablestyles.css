@@ -807,6 +807,19 @@ span.fa.icon_on_side{
 }
 
 
+/* Image Previews */
+
+.custom_image_preview{
+	max-width:100%;
+	padding:10px;
+	-webkit-transition:0.3s;
+	transition:0.3s;
+	max-height:120px;
+	aspect-ratio:auto;
+	pointer-events:none;
+	
+}
+
 
 
 @media (max-width:1000px){

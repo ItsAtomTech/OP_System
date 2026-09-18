@@ -389,6 +389,8 @@ function loadItemToEdit(id){
 			addFancyPlaceholder();
 			saveMode = "edit";
 			
+			change_image_preview(_("logo_asset"));
+			
 		}else{
 			createDialogue("error", res_data.message);
 		}
@@ -722,4 +724,11 @@ function itemNotifyUpdate(data){
 }
 
 
+// Preview image on Company Editor Modal:
 
+function change_image_preview(elm){
+	let value = elm.value;
+		
+	_("custom_image_preview").src = STATIC_IMAGE_LINK + "/logos/" + value;
+	
+}

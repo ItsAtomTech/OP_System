@@ -48,6 +48,8 @@ class PurchaseRequests(db.Model):
     total_amount = db.Column(db.Float)
     misc = db.Column(db.String(1024))
     status = db.Column(db.String(50))
+    date_approved = db.Column(db.String(255))
+    date_completed = db.Column(db.String(255))
     date_required = db.Column(db.String(1024))
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'))   
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
