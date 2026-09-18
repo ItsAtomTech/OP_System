@@ -1031,7 +1031,310 @@ def get_fuel_requisition_stats():
         print(str(e))
         return jsonify({'type': 'error', 'message': str(e)})
         
-        
+
+# Dashboard stats for Purchase Request Data ================================
+@api_handles.route('/get_purchase_request_stats', methods=['POST', 'GET'])
+@login_required
+def get_purchase_request_stats():
+    try:
+        data = json.loads(request.form.get('form_data', '{}'))
+        year_range = request.form.get("year_ranges") or "2000-01, 2027-01"
+        year_range = [y.strip() for y in year_range.split(",")]
+
+        query = db.session.query(
+            PurchaseRequests.purchase_id,
+            PurchaseRequests.type,
+            PurchaseRequests.items,
+            PurchaseRequests.approved_by,
+            PurchaseRequests.requested_by,
+            PurchaseRequests.total_amount,
+            PurchaseRequests.status,
+            PurchaseRequests.date_approved,
+            PurchaseRequests.date_completed,
+            PurchaseRequests.date_required,
+            PurchaseRequests.date,
+            Company.name.label('company_name'),
+            Department.name.label('department_name'),
+        ).join(Company, PurchaseRequests.company_id == Company.id, isouter=True) \
+         .join(Department, PurchaseRequests.department_id == Department.id, isouter=True)
+
+        if year_range and len(year_range) == 2:
+            start_year, start_month = map(int, year_range[0].split("-"))
+            end_year, end_month = map(int, year_range[1].split("-"))
+
+            start_date = datetime(start_year, start_month, 1)
+            last_day = calendar.monthrange(end_year, end_month)[1]
+            end_date = datetime(end_year, end_month, last_day, 23, 59, 59)
+
+            query = query.filter(
+                PurchaseRequests.date >= start_date,
+                PurchaseRequests.date <= end_date
+            )
+
+        records = query.all()
+
+        # -- helpers ----------------------------------------------
+        def to_amount(val):
+            try:
+                return float(val)
+            except:
+                return 0.0
+
+        def parse_date_str(val):
+            if not val:
+                return None
+            v = str(val).strip()
+            if not v or v.lower() in ('none', 'n/a', '--'):
+                return None
+            for fmt in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%m/%d/%Y %H:%M:%S', '%m/%d/%Y', '%B %d, %Y'):
+                try:
+                    return datetime.strptime(v, fmt)
+                except ValueError:
+                    continue
+            return None
+
+        def parse_items(raw):
+            try:
+                items = json.loads(raw or '[]')
+                return items if isinstance(items, list) else []
+            except:
+                return []
+
+        now = manila_time().replace(tzinfo=None)
+
+        # -- KPI / Status / Type ------------------------------------
+        total_records = len(records)
+        total_amount_sum = sum(to_amount(r.total_amount) for r in records)
+
+        count_by_status = {}
+        amount_by_status = {}
+        count_by_type = {}
+        for r in records:
+            s = r.status or 'Unknown'
+            t = r.type or 'Unknown'
+            amt = to_amount(r.total_amount)
+            count_by_status[s] = count_by_status.get(s, 0) + 1
+            amount_by_status[s] = amount_by_status.get(s, 0.0) + amt
+            count_by_type[t] = count_by_type.get(t, 0) + 1
+
+        # -- Spend ----------------------------------------------------
+        amount_by_month = {}
+        count_by_month = {}
+        amount_by_department = {}
+        amount_by_company = {}
+        dept_counts = {}
+        type_counts = {}
+        amount_by_type = {}
+        amount_by_month_department = {}
+
+        for r in records:
+            amt = to_amount(r.total_amount)
+            dept = r.department_name or 'Unknown'
+            comp = r.company_name or 'Unknown'
+            t = r.type or 'Unknown'
+
+            if r.date:
+                month_key = r.date.strftime('%Y-%m')
+                amount_by_month[month_key] = amount_by_month.get(month_key, 0.0) + amt
+                count_by_month[month_key] = count_by_month.get(month_key, 0) + 1
+                amount_by_month_department.setdefault(dept, {})
+                amount_by_month_department[dept][month_key] = amount_by_month_department[dept].get(month_key, 0.0) + amt
+
+            amount_by_department[dept] = amount_by_department.get(dept, 0.0) + amt
+            amount_by_company[comp] = amount_by_company.get(comp, 0.0) + amt
+            dept_counts[dept] = dept_counts.get(dept, 0) + 1
+            type_counts[t] = type_counts.get(t, 0) + 1
+            amount_by_type[t] = amount_by_type.get(t, 0.0) + amt
+
+        avg_amount_by_department = {k: round(amount_by_department[k] / dept_counts[k], 2) for k in amount_by_department}
+        avg_amount_by_type = {k: round(amount_by_type[k] / type_counts[k], 2) for k in amount_by_type}
+        for dept in amount_by_month_department:
+            amount_by_month_department[dept] = dict(sorted(amount_by_month_department[dept].items()))
+
+        # -- Turnaround / Efficiency -----------------------------------
+        approval_lags, completion_lags = [], []
+        approval_lag_by_department, completion_lag_by_department = {}, {}
+
+        for r in records:
+            dept = r.department_name or 'Unknown'
+            created = r.date.replace(tzinfo=None) if r.date else None
+            approved = parse_date_str(r.date_approved)
+            completed = parse_date_str(r.date_completed)
+
+            if created and approved:
+                lag = (approved - created).days
+                approval_lags.append(lag)
+                approval_lag_by_department.setdefault(dept, []).append(lag)
+
+            if approved and completed:
+                lag2 = (completed - approved).days
+                completion_lags.append(lag2)
+                completion_lag_by_department.setdefault(dept, []).append(lag2)
+
+        avg_approval_lag_days = round(sum(approval_lags) / len(approval_lags), 2) if approval_lags else None
+        avg_completion_lag_days = round(sum(completion_lags) / len(completion_lags), 2) if completion_lags else None
+        avg_approval_lag_by_department = {k: round(sum(v) / len(v), 2) for k, v in approval_lag_by_department.items()}
+        avg_completion_lag_by_department = {k: round(sum(v) / len(v), 2) for k, v in completion_lag_by_department.items()}
+
+        overdue_count, on_time_count = 0, 0
+        overdue_by_department, on_time_by_department = {}, {}
+
+        for r in records:
+            dept = r.department_name or 'Unknown'
+            required = parse_date_str(r.date_required)
+            completed = parse_date_str(r.date_completed)
+            if not required:
+                continue
+            reference = completed or now
+            if reference > required:
+                overdue_count += 1
+                overdue_by_department[dept] = overdue_by_department.get(dept, 0) + 1
+            else:
+                on_time_count += 1
+                on_time_by_department[dept] = on_time_by_department.get(dept, 0) + 1
+
+        aging_buckets = {'0-3': 0, '4-7': 0, '8+': 0}
+        for r in records:
+            if parse_date_str(r.date_completed) or not r.date:
+                continue
+            days_open = (now - r.date.replace(tzinfo=None)).days
+            key = '0-3' if days_open <= 3 else '4-7' if days_open <= 7 else '8+'
+            aging_buckets[key] += 1
+
+        # -- Items ------------------------------------------------------
+        item_count, item_spend = {}, {}
+        total_item_lines = 0
+        for r in records:
+            items = parse_items(r.items)
+            total_item_lines += len(items)
+            for it in items:
+                if not isinstance(it, list) or len(it) < 5:
+                    continue
+                name = it[0] or 'Unknown'
+                item_count[name] = item_count.get(name, 0) + 1
+                item_spend[name] = item_spend.get(name, 0.0) + to_amount(it[4])
+
+        top_items_by_count = sorted(item_count.items(), key=lambda x: x[1], reverse=True)[:10]
+        top_items_by_spend = sorted(item_spend.items(), key=lambda x: x[1], reverse=True)[:10]
+        avg_items_per_request = round(total_item_lines / total_records, 2) if total_records else 0
+
+        # -- People -------------------------------------------------------
+        requester_count, requester_amount = {}, {}
+        for r in records:
+            amt = to_amount(r.total_amount)
+            req = r.requested_by or 'Unknown'
+            requester_count[req] = requester_count.get(req, 0) + 1
+            requester_amount[req] = requester_amount.get(req, 0.0) + amt
+
+        approver_count, approver_amount, approver_role_count = {}, {}, {}
+        for r in records:
+            amt = to_amount(r.total_amount)
+            approvers = parse_approvers(r.approved_by)
+            if not approvers:
+                approver_count['Unassigned'] = approver_count.get('Unassigned', 0) + 1
+                approver_amount['Unassigned'] = approver_amount.get('Unassigned', 0.0) + amt
+                continue
+            for entry in approvers:
+                if isinstance(entry, list) and len(entry) >= 2:
+                    role, name = entry[0] or 'Unknown', entry[1] or 'Unknown'
+                else:
+                    role, name = 'Unknown', str(entry)
+                approver_count[name] = approver_count.get(name, 0) + 1
+                approver_amount[name] = approver_amount.get(name, 0.0) + amt
+                approver_role_count[role] = approver_role_count.get(role, 0) + 1
+
+        top_requesters_by_count = sorted(requester_count.items(), key=lambda x: x[1], reverse=True)[:10]
+        top_requesters_by_amount = sorted(requester_amount.items(), key=lambda x: x[1], reverse=True)[:10]
+        approver_workload_count = sorted(approver_count.items(), key=lambda x: x[1], reverse=True)[:10]
+        approver_workload_amount = sorted(approver_amount.items(), key=lambda x: x[1], reverse=True)[:10]
+
+
+        # -- Approval funnel ------------------------------------------------
+        status_by_department = {}
+        for r in records:
+            dept = r.department_name or 'Unknown'
+            s = r.status or 'Unknown'
+            status_by_department.setdefault(dept, {})
+            status_by_department[dept][s] = status_by_department[dept].get(s, 0) + 1
+
+        # -- Seasonality --------------------------------------------------
+        sorted_months = sorted(amount_by_month.items())
+        mom_change_pct = {}
+        for i in range(1, len(sorted_months)):
+            prev_month, prev_amt = sorted_months[i - 1]
+            cur_month, cur_amt = sorted_months[i]
+            mom_change_pct[cur_month] = round(((cur_amt - prev_amt) / prev_amt) * 100, 2) if prev_amt else None
+
+        count_by_weekday = {}
+        for r in records:
+            if r.date:
+                wd = r.date.strftime('%A')
+                count_by_weekday[wd] = count_by_weekday.get(wd, 0) + 1
+
+        # -- Response -------------------------------------------------------
+        return jsonify({
+            'type': 'success',
+            'data': {
+                'kpi': {
+                    'total_records': total_records,
+                    'total_amount': round(total_amount_sum, 2),
+                    'count_by_status': count_by_status,
+                    'amount_by_status': {k: round(v, 2) for k, v in amount_by_status.items()},
+                    'count_by_type': count_by_type,
+                },
+                'spend': {
+                    'amount_by_month': dict(sorted(amount_by_month.items())),
+                    'count_by_month': dict(sorted(count_by_month.items())),
+                    'amount_by_department': {k: round(v, 2) for k, v in amount_by_department.items()},
+                    'amount_by_company': {k: round(v, 2) for k, v in amount_by_company.items()},
+                    'avg_amount_by_department': avg_amount_by_department,
+                    'avg_amount_by_type': avg_amount_by_type,
+                    'amount_by_month_department': amount_by_month_department,
+                },
+                'turnaround': {
+                    'avg_approval_lag_days': avg_approval_lag_days,
+                    'avg_completion_lag_days': avg_completion_lag_days,
+                    'avg_approval_lag_by_department': avg_approval_lag_by_department,
+                    'avg_completion_lag_by_department': avg_completion_lag_by_department,
+                    'overdue_count': overdue_count,
+                    'on_time_count': on_time_count,
+                    'overdue_by_department': overdue_by_department,
+                    'on_time_by_department': on_time_by_department,
+                    'aging_pending_buckets': aging_buckets,
+                },
+                'items': {
+                    'top_by_count': top_items_by_count,
+                    'top_by_spend': top_items_by_spend,
+                    'avg_items_per_request': avg_items_per_request,
+                },
+                'people': {
+                    'top_requesters_by_count': top_requesters_by_count,
+                    'top_requesters_by_amount': top_requesters_by_amount,
+                    'approver_workload_count': approver_workload_count,
+                    'approver_workload_amount': approver_workload_amount,
+                },
+                'approval_funnel': {
+                    'status_by_department': status_by_department,
+                },
+                'seasonality': {
+                    'mom_change_pct': mom_change_pct,
+                    'count_by_weekday': count_by_weekday,
+                },
+            }
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        print(str(e))
+        return jsonify({'type': 'error', 'message': str(e)})
+
+
+def parse_approvers(raw):
+    try:
+        approvers = json.loads(raw or '[]')
+        return approvers if isinstance(approvers, list) else []
+    except:
+        return []        
 # ===========================-----
 # Dashboard API End
 # ================================
