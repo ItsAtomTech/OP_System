@@ -13,6 +13,8 @@ const formCollections =  [
 		"file_description": "Request files of PRF.",
 		"company_id": "2",
 		
+		"tab_icon": "fa-shopping-cart",
+		
 	},
 	{
 		"name":"Fuel Requisition Form",
@@ -26,7 +28,7 @@ const formCollections =  [
 		"file_name": "Fuel Requisition Files",
 		"file_link": "fuel_files_table",
 		"file_description": "Request files of FRF.",
-		
+		"tab_icon": "fa-car",
 	},
 
 

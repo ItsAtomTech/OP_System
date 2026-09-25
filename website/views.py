@@ -356,9 +356,7 @@ def themes():
     return theme
 
 
-# PWA Expiremental Setup =====
 
-# PWA Experimental Setup =====
 @views.route('/sw.js')
 def service_worker():
     response = make_response(app.send_static_file('sw.js'))
@@ -395,6 +393,8 @@ def get_upl(path):
 
 
 
+
+# PWA Experimental End Setup =====
 
 
 def is_admin():

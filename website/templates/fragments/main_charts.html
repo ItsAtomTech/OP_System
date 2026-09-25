@@ -1,6 +1,5 @@
 
 <!-- Floating reveal arrow (appears when user scrolls) - placed just outside the first chart -->
-
 <div class="flexed centered padded hidden">
 
 	<div id="revealArrow" title="Show more charts" aria-hidden="true">
@@ -19,9 +18,17 @@
 </div>
 
 
+<section class="tab_main_con">
+
+	<!-- Tab Items Button Goes inside here inside category_tabs -->	
+	<div class="tab_interface_main" id="category_tabs">
+		
+
+	</div>
+</section>
 
 
-<div id="more_charts" class="show grid_layout_expanded" tag="fuel_requisition_charts">
+<div id="more_charts" class=" grid_layout_expanded" tag="fuel_requisition_charts" name="fuel_requisition">
 	<div class="flexed padded_container less_padding_top gap action_button">
 		<button class="df_button_flat primary_background primary_color" onclick="fetchDashboardStats();showToast('Refreshing Data...');" aria-label="Chart Refresh Button" tooltip="Refresh the Expanded Chart Views">
 			<span class="fa fa-refresh"></span>
@@ -181,6 +188,40 @@
 
 
 </div>
+
+
+
+<div id="more_charts_1" class="grid_layout_expanded" tag="purchase_request_charts" name="purchase_request">
+		<div class="flexed padded_container less_padding_top gap action_button">
+		<button class="df_button_flat primary_background primary_color" onclick="fetchDashboardStats();showToast('Refreshing Data...');" aria-label="Chart Refresh Button" tooltip="Refresh the Expanded Chart Views">
+			<span class="fa fa-refresh"></span>
+		</button>	
+		<button class="df_button_flat primary_background primary_color" onclick="changeLayout()"  aria-label="Toggle Layout for Charts" tooltip="Toggle layout">
+			<span class="fa fa-columns"></span>
+		</button>
+	</div>
+	
+	
+
+	<div class="flexed padded_container less_padding_top gap medium primary_color action_button"> 
+		<div class="fuel-chart-title-wrap">
+		<span class="fuel-chart-title-icon fa fa-bar-chart"></span>
+		<div class="fuel-chart-title-text">
+			Purchase Request Dashboard
+			<div class="fuel-chart-title-sub">Purchase Request Analytics at a Glance</div>
+		</div>
+	</div>
+	</div>
+
+</div>
+
+
+<template id="tab_button">
+		<div class="tab_button small df_button_flat primary_color" tag="tab_button"> <span class="fa " tag="tab_icon"> </span> <span class="tab_text small" tag="tab_text"> Text Button </span>  </div>
+</template>
+
+
+
 <script>
 
 </script>

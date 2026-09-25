@@ -202,6 +202,90 @@ function randomizeLoadout(counts = 10) {
 loadSavedSelections();
 
 
+// =================================
+// Tab buttons Section
+// =================================
+let selectedTab = localStorage.getItem("TAB_SELECTED_DASH") || "";
+
+function populateTabItems(item) {
+	let items = item || formCollections;
+	
+	
+    let container = _("category_tabs");
+    let template = _("tab_button");
+
+    container.innerHTML = "";
+
+    items.forEach(item => {
+		if(!item.filed){
+			return;
+		}
+		
+        let clone = template.content.cloneNode(true);
+        let button = clone.querySelector(".tab_button");
+		
+		
+		tag("tab_icon", clone)[0].classList.add(item.tab_icon || "fa-file-text-o");
+        tag("tab_text", clone)[0].textContent = charLimit(item.file_name, 40);
+
+        button.title = "Dashboard Item";
+        button.setAttribute("name", item.link);
+        button.setAttribute("onclick", "tabSetActive(this)");
+        button.dataset.link = item.link;
+        button.dataset.formId = item.form_id;
+        button.dataset.companyId = item.company_id;
+
+        container.appendChild(clone);
+    });
+}
+
+//trying this instead of a direct call
+window.addEventListener("load", function () {
+    populateTabItems();
+	//-----------------
+	preLoadSelectTab();
+});
+
+
+function tabSetActive(elm) {
+    if (!elm) {
+        return;
+    }
+    let tabItems = tag("tab_button", _("category_tabs"));
+    for (let each of tabItems) {
+        each.classList.remove("active");
+    }
+    elm.classList.add("active");
+	
+	selectedTab = elm.getAttribute("name");
+	localStorage.setItem("TAB_SELECTED_DASH", selectedTab);
+	
+	let chartContainer = document.querySelectorAll(".grid_layout_expanded");
+	
+	for(each of chartContainer){
+		if(each.getAttribute("name") != selectedTab){
+			each.classList.remove("show");
+		}else{
+			each.classList.add("show");
+		}
+		
+	}
+}
+
+
+function preLoadSelectTab() {
+    if (!selectedTab) {
+        return;
+    }
+
+    let tabItems = tag("tab_button", _("category_tabs"));
+    for (let each of tabItems) {
+        if (each.getAttribute("name") == selectedTab) {
+            each.click();
+            return;
+        }
+    }
+}
 
 // ==================================
 //Section for year filtering:

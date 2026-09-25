@@ -84,9 +84,6 @@
 /* ---- Greeting Banner End ---- */
 
 
-
-
-
 .dash_greeting_avatar {
 	width: 65px;
 	height: 65px;
@@ -426,7 +423,7 @@ gap:10px;
 
 
 /* Hide extra charts by default; reveal with `.show` */
-#more_charts {
+#more_charts, #more_charts_1 {
 display: none;
 opacity: 0;
 max-height: 0;
@@ -434,11 +431,10 @@ overflow: hidden;
 transition: all 360ms ease;
 }
 
-#more_charts.show {
+#more_charts.show, #more_charts_1.show {
 display: block;
 opacity: 1;
 max-height: unset;
-
 }
 
 
@@ -608,6 +604,102 @@ position: relative;
 }
 
 
+
+
+/* ==== Tab Bar Styles Start ==== */
+.tab_main_con{
+	padding:20px;
+	/* border:solid red 1px; */
+	position:relative;
+	
+}
+
+.tab_interface_main{
+	/* border:solid lime 1px; */
+	padding:10px;
+	padding-top:10px;
+	padding-bottom:10px;
+	position:relative;
+	min-height:55px;
+	display:flex;
+	align-items:center;
+	justify-content:start;
+	background:var(--primary_background);
+	border-radius:20px;
+	white-space:no-wrap;
+	overflow-x:auto;
+	overflow-y:hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
+	gap:10px;
+}
+
+
+
+.tab_interface_main > .tab_button{
+	background:var(--primary_background_darker);
+	padding:5px;
+	cursor:pointer;
+	min-height:35px;
+	width:50px;
+	min-width:50px;
+	border-radius:15px;
+	display:flex;
+	align-items:center;
+	justify-content:flex-start;
+	padding-left:8px;
+	max-width:140px;
+	overflow:hidden;
+	max-height:35px;
+	-webkit-transition:0.2s;
+	transition:0.2s;
+	white-space:nowrap;
+	
+}
+
+
+
+.tab_interface_main > .tab_button > .tab_text{
+	opacity:0;
+	padding-left:12px;
+	padding-right:12px;	
+
+	transition:0.2s;
+}
+
+.tab_interface_main > .tab_button:hover > .tab_text{
+	opacity:1;
+	color:var(--primary_color_invert);
+}
+
+.tab_interface_main > .tab_button:hover{
+	max-width:200px;
+	width:200px;
+	background:var(--secondary_background);
+	color:var(--primary_color_invert) !important;
+	
+}
+.tab_interface_main > .tab_button.active > .tab_text{
+	opacity:1;
+	color:var(--primary_color_invert);
+
+}
+
+.tab_interface_main > .tab_button.active{
+	max-width:unset;
+	width:fit-content;
+	padding-right:10px;
+	color:var(--primary_color_invert) !important;
+	background:var(--secondary_background);
+}
+
+
+
+
+/* ==== Tab Bar Styles End ====== */
+
+
+
+
 /* Offline Banners and Stuff */
 .top_banner{
 	position:fixed;
@@ -666,6 +758,10 @@ position: relative;
 		gap: 14px;
 	}
 	.padded_container {
+		padding: 12px !important;
+		
+	}
+	.tab_main_con {
 		padding: 12px !important;
 		
 	}
