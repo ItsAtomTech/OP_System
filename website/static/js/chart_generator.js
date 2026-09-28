@@ -221,6 +221,10 @@ function populateTabItems(item) {
 			return;
 		}
 		
+		if((item.company_id != current_user_company) && current_role != 2 ){
+			return;
+		};
+		
         let clone = template.content.cloneNode(true);
         let button = clone.querySelector(".tab_button");
 		
@@ -260,7 +264,7 @@ function tabSetActive(elm) {
 	selectedTab = elm.getAttribute("name");
 	localStorage.setItem("TAB_SELECTED_DASH", selectedTab);
 	
-	let chartContainer = document.querySelectorAll(".grid_layout_expanded");
+	let chartContainer = document.querySelectorAll(".charts_parent");
 	
 	for(each of chartContainer){
 		if(each.getAttribute("name") != selectedTab){

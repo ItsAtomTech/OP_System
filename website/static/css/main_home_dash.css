@@ -560,6 +560,10 @@ position: relative;
 }
 
 
+.grid_layout_expanded:not(.show) {
+    display: none !important;
+}
+
 .grid_layout_expanded .action_button {
     grid-column: 1 / -1; 
 }

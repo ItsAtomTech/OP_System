@@ -95,6 +95,7 @@
 let TOTAL_APPROVED = 0;
 let PENDING_TOTAL = 0;
 let TOTAL_RECORDS = 0;
+let TOTAL_PROCESSED = 0;
 
 let firstRun = true;
 let collectedDatas = {};
@@ -111,7 +112,10 @@ let fetchDashboardStats = async function () {
 		{"name":"year_ranges", value: year_ranges},
 	];
 	
-	let stats = await qBuilder.sendPromise(getFuelRequisitionStats, "get_fuel_requisition_stats",custom_param, errorHandler);
+	let stats = await qBuilder.sendPromise(getFuelRequisitionStats, "get_fuel_requisition_stats",custom_param, errorHandler);	
+	
+	
+	let stats_2 = await qBuilder.sendPromise(getPurchaseRequestStats, "get_purchase_request_stats",custom_param, errorHandler);
 	
 	
 	if(firstRun){
@@ -122,10 +126,11 @@ let fetchDashboardStats = async function () {
 	
 	processTotals();
 	
-	
+	//Fuel Requesition Files
 	function getFuelRequisitionStats(data){
 			TOTAL_APPROVED = 0;
 			PENDING_TOTAL = 0;
+			TOTAL_PROCESSED = 0;
 		
 		let resData = (JSON.parse(data.responseText));
 		let forms = resData;
@@ -146,23 +151,54 @@ let fetchDashboardStats = async function () {
 	}
 	
 	
+	//Purchase Request Files
+	function getPurchaseRequestStats(data){
+
+		
+		let resData = (JSON.parse(data.responseText));
+		let forms = resData;
+			collectedDatas["purchase_request"] = forms;
+		
+		
+		
+		let kpi_data = forms.data.kpi;
+		
+		let unknown = kpi_data.count_by_status["Unknown"];
+		let approved = kpi_data.count_by_status["approved"];
+		let pending = kpi_data.count_by_status["pending"];
+		let processed = kpi_data.count_by_status["processed"];
+		
+
+			
+		
+		if(unknown != undefined || approved != undefined || pending != undefined || processed != undefined){
+			PENDING_TOTAL  += Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
+			PENDING_TOTAL  += Number.isNaN(Number(pending))  ? 0 : (pending  || 0);
+			TOTAL_PROCESSED  += Number.isNaN(Number(processed))  ? 0 : (processed  || 0);
+			
+			TOTAL_APPROVED += Number.isNaN(Number(approved)) ? 0 : (approved || 0);
+		}
+				
+		
+	}
+	
+	
 	
 	function processTotals(){
 			
-		TOTAL_RECORDS = TOTAL_APPROVED + PENDING_TOTAL;
+		TOTAL_RECORDS = TOTAL_APPROVED + PENDING_TOTAL + TOTAL_PROCESSED;
 		
 		updateStatNumber("stat_total",TOTAL_RECORDS);
 		updateStatNumber("stat_approved",TOTAL_APPROVED);
 		updateStatNumber("stat_pending",PENDING_TOTAL);
+		updateStatNumber("stat_processed",TOTAL_PROCESSED);
 		
 	}
 	
 	
 	proccessChartEvents();
 	
-	
 	//To-Do: Fetch Dashboard Data here
-	
 
 };
   
@@ -480,10 +516,8 @@ window.setInterval(monitorNotifCounts, 3000);
 //Other Essential functions for chart generations
 
 
-function changeLayout(){
-	_("more_charts").classList.toggle("grid_layout_expanded");
-	
-	
+function changeLayout(target = "more_charts"){
+	_(target).classList.toggle("grid_layout_expanded");
 }
 
 
@@ -495,6 +529,9 @@ function changeLayout(){
 function proccessChartEvents(){
 	
 	if (tag("fuel_requisition_charts")[0].checkVisibility())generateFuelRequisitionCharts(collectedDatas["fuel_requisition"].data);
+	
+	
+	if (tag("purchase_request_charts")[0].checkVisibility())generatePurchaseRequestCharts(collectedDatas["purchase_request"].data);
 		
 }
 
@@ -659,6 +696,245 @@ async function generateFuelRequisitionCharts(data) {
 
 
     ];
+
+    tasks.forEach((task, i) => {
+        setTimeout(task, i * 30);
+    });
+}
+
+	
+async function generatePurchaseRequestCharts(data) {
+	if(data == undefined){
+		return console.warn("generatePurchaseRequestCharts: didn't got a valid data");
+	};
+	
+	let allLoadingSkeletons = tag("loading_skeleton",_("more_charts_1"));
+
+	for (each of allLoadingSkeletons){
+		each.remove();
+	}
+		
+	
+    let objTo2D = (obj) => Object.entries(obj).map(([k, v]) => [k, v]);
+	
+	let chartSkeletons = tag("more_charts")
+
+		
+	let fmtNum = (v) => abbreviateNumber(v).abbreviated;
+
+	let months = Object.keys(data.spend.amount_by_month).sort();
+	let byMonth = (obj) => months.map(m => [m, obj[m] || 0]);
+
+	let deptTrend = Object.entries(data.spend.amount_by_month_department).map(([dept, obj]) => ({
+		label: dept,
+		data: byMonth(obj)
+	}));
+
+	let overdueDepts = [...new Set([
+		...Object.keys(data.turnaround.on_time_by_department),
+		...Object.keys(data.turnaround.overdue_by_department)
+	])];
+
+	let overdueSets = [
+		{ label: 'On Time', data: overdueDepts.map(d => [d, data.turnaround.on_time_by_department[d] || 0]) },
+		{ label: 'Overdue', data: overdueDepts.map(d => [d, data.turnaround.overdue_by_department[d] || 0]) }
+	];
+
+	let statusDepts = Object.keys(data.approval_funnel.status_by_department);
+	let statusNames = [...new Set(
+		Object.values(data.approval_funnel.status_by_department).flatMap(o => Object.keys(o))
+	)];
+
+	let statusSets = statusNames.map(s => ({
+		label: s,
+		data: statusDepts.map(d => [d, data.approval_funnel.status_by_department[d][s] || 0])
+	}));
+
+	let weekdayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+	let weekdayData = weekdayOrder.map(d => [d, data.seasonality.count_by_weekday[d] || 0]);
+
+	let momData = objTo2D(data.seasonality.mom_change_pct).map(([k, v]) => [k, v === null ? 0 : v]);
+	
+	// Lambda Funcitons for defered render
+	
+	
+	let tasks = [
+
+		// -- kpi -------------------------------------------------------
+
+		() => generatePieChart(
+			objTo2D(data.kpi.count_by_status),
+			"purchase_chart_status_count",
+			"Records by Status",
+			true
+		),
+
+		() => generatePieChart(
+			objTo2D(data.kpi.amount_by_status),
+			"purchase_chart_status_amount",
+			"Amount by Status",
+			true
+		),
+
+
+		// -- spend -----------------------------------------------------
+
+		() => generateLineChart(
+			byMonth(data.spend.count_by_month),
+			"purchase_chart_requests_by_month",
+			"Requests Over Time",
+			false
+		),
+
+		() => generateShadedLineChart(
+			byMonth(data.spend.amount_by_month),
+			"purchase_chart_spend_by_month",
+			"Total Spend Over Time",
+			false
+		),
+
+		() => generateHorizontalBarChart(
+			objTo2D(data.spend.amount_by_department),
+			"purchase_chart_spend_by_department",
+			"Spend by Department",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		() => generateVerticalBarChart(
+			objTo2D(data.spend.amount_by_company),
+			"purchase_chart_spend_by_company",
+			"Spend by Company",
+			false
+		),
+
+		() => generateVerticalBarChart(
+			objTo2D(data.spend.avg_amount_by_department),
+			"purchase_chart_avg_amount_department",
+			"Average Request Amount by Department",
+			false
+		),
+
+		// -- turnaround ------------------------------------------------
+
+		() => generateVerticalBarChart(
+			objTo2D(data.turnaround.avg_approval_lag_by_department),
+			"purchase_chart_approval_lag",
+			"Avg. Days: Created to Approved",
+			false
+		),
+
+		() => generateVerticalBarChart(
+			objTo2D(data.turnaround.avg_completion_lag_by_department),
+			"purchase_chart_completion_lag",
+			"Avg. Days: Approved to Processed",
+			false
+		),
+
+		() => generateMultiBarChart(
+			overdueSets,
+			"purchase_chart_overdue_by_department",
+			false
+		),
+
+		() => generateVerticalBarChart(
+			objTo2D(data.turnaround.aging_pending_buckets),
+			"purchase_chart_aging_pending",
+			"Aging Pending Requests (Days)",
+			false
+		),
+
+		// -- comparative -----------------------------------------------
+
+		() => generateMultiLineChart(
+			deptTrend,
+			"purchase_chart_department_spend_trend",
+			false
+		),
+
+		// -- items -----------------------------------------------------
+
+		() => generateHorizontalBarChart(
+			data.items.top_by_count,
+			"purchase_chart_items_by_count",
+			"Most Requested Items",
+			materialColors,
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.items.top_by_spend,
+			"purchase_chart_items_by_spend",
+			"Top Items by Spend",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		// -- people ----------------------------------------------------
+
+		() => generateHorizontalBarChart(
+			data.people.top_requesters_by_count,
+			"purchase_chart_requesters_count",
+			"Top Requesters by Count",
+			materialColors,
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.people.top_requesters_by_amount,
+			"purchase_chart_requesters_amount",
+			"Top Requesters by Amount",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		() => generateHorizontalBarChart(
+			data.people.approver_workload_count,
+			"purchase_chart_approver_count",
+			"Approver Workload (Count)",
+			materialColors,
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.people.approver_workload_amount,
+			"purchase_chart_approver_amount",
+			"Approver Workload (Amount)",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+
+
+		// -- approval funnel -------------------------------------------
+
+		() => generateMultiBarChart(
+			statusSets,
+			"purchase_chart_status_by_department",
+			false
+		),
+
+		// -- seasonality -----------------------------------------------
+
+		() => generateVerticalBarChart(
+			momData,
+			"purchase_chart_mom_change",
+			"Month-over-Month Spend Change (%)",
+			false
+		),
+
+		() => generateLineChart(
+			weekdayData,
+			"purchase_chart_weekday_pattern",
+			"Requests by Day of Week",
+			false
+		),
+
+	];
 
     tasks.forEach((task, i) => {
         setTimeout(task, i * 30);
