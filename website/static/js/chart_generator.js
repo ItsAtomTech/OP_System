@@ -115,7 +115,7 @@ function deselectAll(el) {
 }
 
 
-function saveSelection(){
+async function saveSelection(){
 	let allChecked = getAllCheckedPrograms();
 	
 	program_filter = allChecked;
@@ -124,6 +124,10 @@ function saveSelection(){
 	
 	try{	
 		showToast("Selections Applied");	
+		showSelectionOnButton();
+		populateTabItems();
+		await sleep(200);
+		preLoadSelectTab();
 	}catch{
 		//----
 	}
@@ -161,7 +165,18 @@ function loadSavedSelections(){
 		renderSelection();
 		
 	}
-	
+			
+	if(program_filter.length <= 0){
+		let allChecks = Array.from(document.querySelectorAll('.check_options_input:not(#check_all_)'));
+		
+		if(allChecks.length >= 1){
+			allChecks[0].checked = true;
+		};
+		
+		saveSelection();
+		
+	}
+
 	showSelectionOnButton();
 }
 
@@ -171,9 +186,9 @@ function showSelectionOnButton(){
 	let elm = _("probation-filter-program");
 	
 	if(program_filter == null || program_filter.length == 0 || (program_filter[0] == "all" && program_filter.length <= 1)){
-		elm.value = "Selected Programs (All)"
+		elm.value = "Selected Categories (All)"
 	}else{
-		elm.value = "Selected Programs ("+program_filter.length+")"
+		elm.value = "Selected Categories ("+program_filter.length+")"
 	}
 	
 }
@@ -202,6 +217,35 @@ function randomizeLoadout(counts = 10) {
 loadSavedSelections();
 
 
+//Empty out the options
+function initCategoriesOptions(){
+	let main = _("group_text_3_");
+	let all_button  = _("choice_all").content.cloneNode(true);
+
+	main.innerHTML = "";
+	
+	main.appendChild(all_button);
+
+	
+}
+
+function addOptions(data){
+	let main = _("group_text_3_");
+	let choice_pill  = _("choice_pill").content.cloneNode(true);
+	
+	let input = tag("input", choice_pill)[0];
+	let label = tag("label", choice_pill)[0];
+	
+		label.innerText = data.file_name;
+		label.setAttribute("for","_cc_"+data.link);
+		
+		input.value = data.link;
+		input.id = "_cc_"+data.link;
+
+	main.appendChild(choice_pill);
+}
+
+
 // =================================
 // Tab buttons Section
 // =================================
@@ -215,7 +259,8 @@ function populateTabItems(item) {
     let template = _("tab_button");
 
     container.innerHTML = "";
-
+	initCategoriesOptions();
+	
     items.forEach(item => {
 		if(!item.filed){
 			return;
@@ -228,7 +273,6 @@ function populateTabItems(item) {
         let clone = template.content.cloneNode(true);
         let button = clone.querySelector(".tab_button");
 		
-		
 		tag("tab_icon", clone)[0].classList.add(item.tab_icon || "fa-file-text-o");
         tag("tab_text", clone)[0].textContent = charLimit(item.file_name, 40);
 
@@ -238,16 +282,32 @@ function populateTabItems(item) {
         button.dataset.link = item.link;
         button.dataset.formId = item.form_id;
         button.dataset.companyId = item.company_id;
-
-        container.appendChild(clone);
+		
+		if(includeForRequest(item.link)){
+			 container.appendChild(clone);
+		}
+		
+		try{
+			addOptions(item);
+		}catch(e){
+			console.error(e);
+			//-- 
+		}
     });
 }
 
 //trying this instead of a direct call
 window.addEventListener("load", function () {
-    populateTabItems();
+    initCategoriesOptions();
+	populateTabItems();
+	
 	//-----------------
 	preLoadSelectTab();
+	loadSavedSelections();
+	
+	//----------------- 
+
+	
 });
 
 
@@ -283,6 +343,11 @@ function preLoadSelectTab() {
     }
 
     let tabItems = tag("tab_button", _("category_tabs"));
+	if(tabItems.length == 1){
+		tabItems[0].click();
+		return;
+	}
+	
     for (let each of tabItems) {
         if (each.getAttribute("name") == selectedTab) {
             each.click();

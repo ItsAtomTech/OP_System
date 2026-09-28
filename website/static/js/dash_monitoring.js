@@ -112,10 +112,30 @@ let fetchDashboardStats = async function () {
 		{"name":"year_ranges", value: year_ranges},
 	];
 	
-	let stats = await qBuilder.sendPromise(getFuelRequisitionStats, "get_fuel_requisition_stats",custom_param, errorHandler);	
+	
+	TOTAL_APPROVED = 0;
+	PENDING_TOTAL = 0;
+	TOTAL_PROCESSED = 0;
+	
+
+
+	if(includeForRequest("fuel_requisition")){
+		
+			let stats = await qBuilder.sendPromise(getFuelRequisitionStats, "get_fuel_requisition_stats",custom_param, errorHandler);	
+	}
 	
 	
-	let stats_2 = await qBuilder.sendPromise(getPurchaseRequestStats, "get_purchase_request_stats",custom_param, errorHandler);
+	if(includeForRequest("purchase_request")){
+
+			let stats_2 = await qBuilder.sendPromise(getPurchaseRequestStats, "get_purchase_request_stats",custom_param, errorHandler);
+	}
+	
+
+	
+	
+
+	
+	
 	
 	
 	if(firstRun){
@@ -128,9 +148,7 @@ let fetchDashboardStats = async function () {
 	
 	//Fuel Requesition Files
 	function getFuelRequisitionStats(data){
-			TOTAL_APPROVED = 0;
-			PENDING_TOTAL = 0;
-			TOTAL_PROCESSED = 0;
+
 		
 		let resData = (JSON.parse(data.responseText));
 		let forms = resData;
@@ -203,6 +221,14 @@ let fetchDashboardStats = async function () {
 };
   
   
+function includeForRequest(name,allAllowed=true){
+	if(program_filter.indexOf(name) >= 0 || (program_filter[0] == "all" && allAllowed)){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 
 function errorHandler(data){
 	console.log(data);
@@ -247,7 +273,8 @@ function errorHandler(data){
   // ========================================
   updateGreeting();
   applyFilterRange();
-  fetchDashboardStats();
+  
+  window.setTimeout(fetchDashboardStats, 1000);
 	
   // Per chart fetching
   

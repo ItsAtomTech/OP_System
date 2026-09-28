@@ -94,3 +94,39 @@
 </div>
 
 
+<template id="choice_all">
+  <div class="check_options check_box_button">
+	<input
+	  type="checkbox"
+	  value="all"
+	  class="check_options_input custom_check_hidden"
+	  id="check_all_"
+	  oninput=""
+	  onclick="selectAllProgram(this)"
+	/>
+	<label for="check_all_" class="custom_check_button small"
+	  >All</label
+	>
+  </div>
+</template>
+
+
+<template id="choice_pill">
+
+  <div class="check_options check_box_button">
+	<input
+	  type="checkbox"
+	  tag="input"
+	  value=""
+	  class="check_options_input custom_check_hidden "
+	  id="_"
+	  onclick="deselectAll(this)"
+	/>
+	<label
+	  tag="label"
+	  for="_"
+	  class="custom_check_button small"
+	  ></label>
+  </div>
+
+</template>
