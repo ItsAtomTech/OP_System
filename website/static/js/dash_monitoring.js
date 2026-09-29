@@ -190,6 +190,10 @@ let fetchDashboardStats = async function () {
 		
 		if(unknown != undefined || approved != undefined || pending != undefined || processed != undefined){
 			PENDING[1] = Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
+			
+			
+			//Adds the Pending and Unknown
+			PENDING[1] = PENDING[1] + (Number.isNaN(Number(pending))  ? 0 : (pending  || 0));
 			PROCESSED[1] = Number.isNaN(Number(processed))  ? 0 : (processed  || 0);
 			APPROVED[1] = Number.isNaN(Number(approved)) ? 0 : (approved || 0);
 			
@@ -217,8 +221,7 @@ let fetchDashboardStats = async function () {
 	
 	
 	proccessChartEvents();
-	await sleep(3000);
-	fetchDashboardStats();// We use Recursion to prevent unsynced calls of apis.
+	
 
 };
   
@@ -277,8 +280,8 @@ function errorHandler(data){
   applyFilterRange();
   
   window.setTimeout(fetchDashboardStats, 1000);
-	
   // Per chart fetching
+  window.setInterval(fetchDashboardStats, 5000);
   
 
 
