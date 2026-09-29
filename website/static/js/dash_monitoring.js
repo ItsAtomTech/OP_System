@@ -106,12 +106,20 @@ let PENDING = [];
 let PROCESSED = [];
 let TOTAL = [];
 
+let hasFilterChanges = false;
 
 
 let fetchDashboardStats = async function () {
 	
 	if(!_("stat_grid").checkVisibility()){
 		return;
+	}
+	
+	if(hasFilterChanges){
+		APPROVED.length = 0;
+		PENDING.length = 0;
+		PROCESSED.length = 0;
+		TOTAL.length = 0;
 	}
 	
 	//applyFilterRange();
@@ -133,7 +141,7 @@ let fetchDashboardStats = async function () {
 	}
 	
 
-	
+	lastFilterLen = program_filter.length;
 	
 	if(firstRun){
 		applyFilterRange();
@@ -190,6 +198,10 @@ let fetchDashboardStats = async function () {
 		
 		if(unknown != undefined || approved != undefined || pending != undefined || processed != undefined){
 			PENDING[1] = Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
+			
+			
+			//Adds the Pending and Unknown
+			PENDING[1] = PENDING[1] + (Number.isNaN(Number(pending))  ? 0 : (pending  || 0));
 			PROCESSED[1] = Number.isNaN(Number(processed))  ? 0 : (processed  || 0);
 			APPROVED[1] = Number.isNaN(Number(approved)) ? 0 : (approved || 0);
 			
@@ -213,12 +225,13 @@ let fetchDashboardStats = async function () {
 		updateStatNumber("stat_pending",PENDING_TOTAL);
 		updateStatNumber("stat_processed",TOTAL_PROCESSED);
 		
+		hasFilterChanges = false;
+		
 	}
 	
 	
 	proccessChartEvents();
-	await sleep(3000);
-	fetchDashboardStats();// We use Recursion to prevent unsynced calls of apis.
+	
 
 };
   
@@ -277,8 +290,8 @@ function errorHandler(data){
   applyFilterRange();
   
   window.setTimeout(fetchDashboardStats, 1000);
-	
   // Per chart fetching
+  window.setInterval(fetchDashboardStats, 5000);
   
 
 
