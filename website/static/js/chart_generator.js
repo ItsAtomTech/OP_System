@@ -134,7 +134,14 @@ async function saveSelection(){
 
 		
 	try{
+		
+		APPROVED.length = 0;
+		PENDING.length = 0;
+		PROCESSED.length = 0;
+		TOTAL.length = 0;
+
 		fetchDashboardStats();
+		renderSelection();
 	}catch(e){
 		//
 	}

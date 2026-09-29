@@ -100,6 +100,14 @@ let TOTAL_PROCESSED = 0;
 let firstRun = true;
 let collectedDatas = {};
 
+// --------------- consolidator ---
+let APPROVED = [];
+let PENDING = [];
+let PROCESSED = [];
+let TOTAL = [];
+
+
+
 let fetchDashboardStats = async function () {
 	
 	if(!_("stat_grid").checkVisibility()){
@@ -112,12 +120,6 @@ let fetchDashboardStats = async function () {
 		{"name":"year_ranges", value: year_ranges},
 	];
 	
-	
-	TOTAL_APPROVED = 0;
-	PENDING_TOTAL = 0;
-	TOTAL_PROCESSED = 0;
-	
-
 
 	if(includeForRequest("fuel_requisition")){
 		
@@ -131,11 +133,6 @@ let fetchDashboardStats = async function () {
 	}
 	
 
-	
-	
-
-	
-	
 	
 	
 	if(firstRun){
@@ -161,8 +158,10 @@ let fetchDashboardStats = async function () {
 		
 				
 		if(unknown != undefined || approved != undefined){
-			PENDING_TOTAL  += Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
-			TOTAL_APPROVED += Number.isNaN(Number(approved)) ? 0 : (approved || 0);
+			
+			PENDING[0] = Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
+			APPROVED[0] = Number.isNaN(Number(approved)) ? 0 : (approved || 0);
+			
 		}
 				
 		
@@ -190,11 +189,10 @@ let fetchDashboardStats = async function () {
 			
 		
 		if(unknown != undefined || approved != undefined || pending != undefined || processed != undefined){
-			PENDING_TOTAL  += Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
-			PENDING_TOTAL  += Number.isNaN(Number(pending))  ? 0 : (pending  || 0);
-			TOTAL_PROCESSED  += Number.isNaN(Number(processed))  ? 0 : (processed  || 0);
+			PENDING[1] = Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
+			PROCESSED[1] = Number.isNaN(Number(processed))  ? 0 : (processed  || 0);
+			APPROVED[1] = Number.isNaN(Number(approved)) ? 0 : (approved || 0);
 			
-			TOTAL_APPROVED += Number.isNaN(Number(approved)) ? 0 : (approved || 0);
 		}
 				
 		
@@ -203,7 +201,11 @@ let fetchDashboardStats = async function () {
 	
 	
 	function processTotals(){
-			
+		
+		TOTAL_APPROVED = APPROVED.reduce((total, n) => total + (n ?? 0), 0);
+		PENDING_TOTAL = PENDING.reduce((total, n) => total + (n ?? 0), 0);
+		TOTAL_PROCESSED = PROCESSED.reduce((total, n) => total + (n ?? 0), 0);
+
 		TOTAL_RECORDS = TOTAL_APPROVED + PENDING_TOTAL + TOTAL_PROCESSED;
 		
 		updateStatNumber("stat_total",TOTAL_RECORDS);
@@ -215,8 +217,8 @@ let fetchDashboardStats = async function () {
 	
 	
 	proccessChartEvents();
-	
-	//To-Do: Fetch Dashboard Data here
+	await sleep(3000);
+	fetchDashboardStats();// We use Recursion to prevent unsynced calls of apis.
 
 };
   
@@ -283,8 +285,7 @@ function errorHandler(data){
   // Refresh greeting every 5 seconds
   window.setInterval(updateGreeting, 5000);
   
-  // Refresh stats every 5 seconds
-  window.setInterval(fetchDashboardStats, 3000);
+
   
   
   
