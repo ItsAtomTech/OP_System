@@ -700,6 +700,7 @@ def purchase_request_list():
                 PurchaseRequests.misc.ilike(search_term),
                 PurchaseRequests.items.ilike(search_term),
                 PurchaseRequests.status.ilike(search_term),
+                PurchaseRequests.requested_by.ilike(search_term),
                 Users.username.ilike(search_term),
                 Department.name.ilike(search_term),
             )
