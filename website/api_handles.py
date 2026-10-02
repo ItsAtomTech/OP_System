@@ -405,6 +405,7 @@ def save_purchase_request():
         
         request_type  = "purchase_request"
         items         = data.get("items")
+        status         = data.get("status", "pending")
         purpose       = data.get("purpose_of_request")
         approved_by   = data.get("approved_by")
         requested_by   = data.get("requested_by")
@@ -449,6 +450,7 @@ def save_purchase_request():
             date_required      = date_required,
             department_id      = department_id,
             company_id         = company_id,
+            status             = status,
             misc               = json.dumps(misc_data),
         )
 
