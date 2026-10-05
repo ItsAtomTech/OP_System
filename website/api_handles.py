@@ -24,6 +24,7 @@ from .models import Users, Department, PurchaseRequests, Notification, Vehicles,
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
+from openpyxl.utils.cell import coordinate_from_string
 
 
 plt = ""  # empty this var when on live website
@@ -2863,7 +2864,34 @@ def get_fuel_monitoring_report_file():
             "excess_savings_php", "consumption_status"
         ]
         _write_sheet(ws1, daily_headers, report_data, daily_keys)
+        
 
+        title_lines = [
+            "LEYTENET POWERED BY CONVERGE",
+            "FUEL MONITORING",
+            f"FOR THE PERIOD {format_period_label(date_from, date_to)}"
+        ]
+        offset = len(title_lines) + 1
+        header_row = offset + 1
+
+        ws1.insert_rows(1, amount=offset)
+        for i, line in enumerate(title_lines, start=1):
+            ws1.cell(row=i, column=1, value=line)
+
+        if ws1.freeze_panes:
+            col, row = coordinate_from_string(ws1.freeze_panes)
+            ws1.freeze_panes = f"{col}{row + offset}"
+        else:
+            ws1.freeze_panes = f"A{header_row + 1}"
+
+        if ws1.auto_filter.ref:
+            ws1.auto_filter.ref = f"A{header_row}:{get_column_letter(ws1.max_column)}{ws1.max_row}"
+
+        for merged in ws1.merged_cells.ranges:
+            merged.shift(row_shift=offset)
+                
+        
+        
         ws2 = wb.create_sheet("Monthly Summary")
         summary_headers = [
             "Plate No.", "Driver", "Total KM", "Actual Fuel Used (L)",
@@ -2894,6 +2922,22 @@ def get_fuel_monitoring_report_file():
         db.session.rollback()
         return {"type": "error", "message": str(e)}
  
+
+def format_period_label(date_from, date_to):
+    months = {
+        1: "JAN.", 2: "FEB.", 3: "MAR.", 4: "APR.", 5: "MAY", 6: "JUNE",
+        7: "JULY", 8: "AUG.", 9: "SEPT.", 10: "OCT.", 11: "NOV.", 12: "DEC."
+    }
+    m1 = months[date_from.month]
+    m2 = months[date_to.month]
+
+    if date_from.date() == date_to.date():
+        return f"{m1} {date_from.day}, {date_from.year}"
+    if date_from.year != date_to.year:
+        return f"{m1} {date_from.day}, {date_from.year} - {m2} {date_to.day}, {date_to.year}"
+    if date_from.month != date_to.month:
+        return f"{m1} {date_from.day} - {m2} {date_to.day}, {date_to.year}"
+    return f"{m1} {date_from.day}-{date_to.day}, {date_to.year}"
 # ================================
 # Fuel Requisition Section End
 # ================================
