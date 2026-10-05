@@ -36,7 +36,7 @@ let tableFormat = [
 		label: "Date Added",
 		data_path: "date",
 		sort: true,
-		// parser:parseBranch,
+		parser:formatDate,
 		
 	},
 
