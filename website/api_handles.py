@@ -2811,10 +2811,16 @@ def get_fuel_monitoring_report_file():
             excess_savings_php = excess_savings_l * fuel_rate
 
             consumption_status = get_consumption_status(excess_savings_l, has_data=True)
-
+            
+            
+            date_str = record.date.strftime("%m/%d/%Y") if record.date else None
+            plate_no_value = str(vehicle_plate_no).replace(" ", "") if vehicle_plate_no else None
+            
+            account_title = f"FUEL-{plate_no_value}"
+            
             report_data.append({
-                "date": record.date.strftime("%Y-%m-%d") if record.date else None,
-                "plate_no": vehicle_plate_no,
+                "date": date_str,
+                "plate_no": plate_no_value,
                 "driver": driver_name,
                 "sli_slr": parse_sli_slr(record.crewoccupants1, record.crewoccupants2),
                 "activity": record.activity_type,
@@ -2838,7 +2844,8 @@ def get_fuel_monitoring_report_file():
                 "excess_savings_php": round(excess_savings_php, 2),
                 "status": record.status,
                 "consumption_status": consumption_status,
-                "file_no": record.fuel_requisition_no
+                "file_no": record.fuel_requisition_no,
+                "account_title": account_title,
             })
 
         summary_data = _build_monthly_summary(report_data)
@@ -2853,7 +2860,7 @@ def get_fuel_monitoring_report_file():
             "Actual Fuel Used (L)", "Fuel Rate", "Fuel Purchase Amount", "Invoice No.", 
             "Beg. Odometer", "End. Odometer", "Total KM", "Standard Km/L",
             "Expected Fuel Used (L)", "Actual Km/L", "Excess/(Savings) L",
-            "Excess/(Savings) ₱", "Status"
+            "Excess/(Savings) ₱", "Status", "Account Title"
         ]
         daily_keys = [
             "date", "plate_no", "driver", "sli_slr", "activity", "origin", "destination",
@@ -2861,7 +2868,7 @@ def get_fuel_monitoring_report_file():
             "actual_fuel_used_l", "fuel_rate", "fuel_purchase_amount", "invoice_no", 
             "beg_odometer", "end_odometer", "total_km", "standard_kml",
             "expected_fuel_used_l", "actual_kml", "excess_savings_l",
-            "excess_savings_php", "consumption_status"
+            "excess_savings_php", "consumption_status", "account_title"
         ]
         _write_sheet(ws1, daily_headers, report_data, daily_keys)
         
