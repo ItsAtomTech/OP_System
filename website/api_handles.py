@@ -2816,7 +2816,7 @@ def get_fuel_monitoring_report_file():
             date_str = record.date.strftime("%m/%d/%Y") if record.date else None
             plate_no_value = str(vehicle_plate_no).replace(" ", "") if vehicle_plate_no else None
             
-            account_title = f"FUEL-{plate_no_value}"
+            account_title = f"FUEL - {plate_no_value}"
             
             report_data.append({
                 "date": date_str,
