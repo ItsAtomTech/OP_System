@@ -318,6 +318,248 @@
   border: none;
 }
 
+
+/* ============================================================
+   PURCHASE ORDER FORM — appended styles
+   Reuses: .pr-wrapper .pr-page .pr-header* .pr-logo .pr-title
+           .pr-company-* .pr-meta-* .pr-subheader .pr-purpose*
+           .pr-grand-total-* .pr-no-border .item_headers .hidden
+   Only PO-specific rules live below (po- prefix).
+   ============================================================ */
+
+/* ── Supplier + Payment Terms ── */
+.po-supplier-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 18px 0 18px;
+}
+
+.po-supplier-info {
+  flex: 1 1 60%;
+}
+
+.po-terms {
+  flex: 0 0 34%;
+}
+
+.po-field {
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.po-field-label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.po-field-value {
+  font-weight: bold;
+  flex: 1 1 auto;
+}
+
+.po-terms-title {
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+.po-term {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.po-checkbox {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #111;
+  box-sizing: border-box;
+}
+
+.po-checkbox.checked::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  left: 1px;
+  background: #111;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ── PO No. / Date row (extends .pr-meta-row) ── */
+.po-meta-row {
+  justify-content: space-between;
+}
+
+.po-meta-row .pr-meta-table {
+  flex: 0 0 auto;
+  width: 30%;
+}
+
+.po-meta-row .pr-meta-label {
+  width: auto;
+  white-space: nowrap;
+}
+
+.po-meta-row .pr-meta-table:first-child .pr-meta-label {
+  background-color: #dfdfdf;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ── Items table (4 columns: Description / Quantity / Unit Price / Total) ── */
+.po-items-table {
+  table-layout: fixed;
+}
+
+.po-items-table th:nth-child(1),
+.po-items-table td:nth-child(1) {
+  width: 46%;
+  text-align: left;
+}
+
+.po-items-table th:nth-child(2),
+.po-items-table td:nth-child(2) {
+  width: 14%;
+  text-align: center;
+}
+
+.po-items-table th:nth-child(3),
+.po-items-table td:nth-child(3),
+.po-items-table th:nth-child(4),
+.po-items-table td:nth-child(4) {
+  width: 20%;
+  text-align: right;
+}
+
+.po-items-table thead th {
+  text-align: center;
+}
+
+.po-items-table tbody td {
+  height: 24px;
+  font-weight: bold;
+}
+
+.po-items-table tfoot td {
+  border: 1px solid #111;
+}
+
+.po-items-table tfoot td.pr-no-border {
+  border: none;
+}
+
+.po-items-table .pr-grand-total-label {
+  text-align: center;
+  background-color: #dfdfdf;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ── Remarks (reuses .pr-subheader + .pr-purpose-box) ── */
+.po-remarks-box {
+  min-height: 48px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ── Signatures ── */
+.po-signatures {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: 18px;
+}
+
+.po-sign-block {
+  flex: 1 1 50%;
+  text-align: center;
+}
+
+.po-sign-label {
+  text-align: left;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.po-sign-space {
+  position: relative;
+  height: 60px;
+}
+
+.po-sign-image {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  max-width: 70%;
+  max-height: 64px;
+  object-fit: contain;
+}
+
+.po-sign-image:not([src]),
+.po-sign-image[src=""] {
+  display: none;
+}
+
+.po-sign-name {
+  display: inline-block;
+  min-width: 70%;
+  padding: 0 10px 1px;
+  border-bottom: 1px solid #111;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.po-sign-role {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+@media print {
+  .po-items-table,
+  .po-signatures,
+  .po-supplier-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .po-items-table {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .po-items-table thead {
+    display: table-header-group;
+  }
+
+  .po-items-table tfoot {
+    display: table-footer-group;
+  }
+
+  .po-items-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+
+
+
+
+
+
+
 /* ============================================================
    PRINT MEDIA
    ============================================================ */

@@ -1,0 +1,160 @@
+{% extends "base_headless.html" %}
+{% block title %} Purchase Order Form {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/print_templates/print_purchase_request.css') }}" />
+{% endblock %}
+
+{% block contents %}
+<div class="pr-wrapper" id="wrapper_doc">
+  <div class="pr-page">
+
+    <!-- ===== HEADER ===== -->
+    <div class="pr-header">
+      <div class="pr-header-left">
+        <!-- placeholder: company logo (.png) is set dynamically via JS -->
+        <img
+          src=""
+          alt="Company Logo"
+          class="pr-logo"
+          id="company_logo"
+          tag="logo_src"
+        />
+      </div>
+
+      <div class="pr-header-right">
+        <h1 class="pr-title">PURCHASE ORDER FORM</h1>
+        <div class="pr-company-name" id="company_name"> --- </div>
+        <div class="pr-company-address" id="company_address"> --- </div>
+      </div>
+    </div>
+
+    <!-- ===== META ROW ===== -->
+    <div class="pr-section pr-meta-row po-meta-row">
+      <table class="pr-meta-table bordered">
+        <tbody>
+          <tr>
+            <td class="pr-meta-label">PO No.</td>
+            <td class="pr-meta-value bold" id="po_number">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="pr-meta-table bordered">
+        <tbody>
+          <tr>
+            <td class="pr-meta-label">Date:</td>
+            <td class="pr-meta-value bold" id="po_date">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== SUPPLIER / PAYMENT TERMS ===== -->
+    <div class="pr-section po-supplier-row">
+      <div class="po-supplier-info">
+        <div class="po-field">
+          <span class="po-field-label">Supplier Name:</span>
+          <span class="po-field-value" id="supplier_name">&nbsp;</span>
+        </div>
+        <div class="po-field">
+          <span class="po-field-label">Address:</span>
+          <span class="po-field-value" id="supplier_address">&nbsp;</span>
+        </div>
+        <div class="po-field">
+          <span class="po-field-label">Contact Person:</span>
+          <span class="po-field-value" id="supplier_contact_person">&nbsp;</span>
+        </div>
+        <div class="po-field">
+          <span class="po-field-label">Contact Number:</span>
+          <span class="po-field-value" id="supplier_contact_number">&nbsp;</span>
+        </div>
+      </div>
+
+      <div class="po-terms">
+        <div class="po-terms-title">Payment Terms</div>
+        <div class="po-term"><span class="po-checkbox" id="term_credit"></span>Credit</div>
+        <div class="po-term"><span class="po-checkbox" id="term_cash"></span>Cash</div>
+        <div class="po-term"><span class="po-checkbox" id="term_check"></span>Check</div>
+      </div>
+    </div>
+
+    <!-- ===== ITEMS TABLE ===== -->
+    <div class="pr-section pr-items">
+      <table class="po-items-table bordered">
+        <thead>
+          <tr class="item_headers">
+            <th>Item Description</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Amount</th>
+          </tr>
+        </thead>
+        <tbody id="items_tbody">
+          <!-- rows inserted dynamically via parseItems() / make() -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="pr-no-border"></td>
+            <td colspan="2" class="pr-grand-total-label">Total Amount</td>
+            <td class="pr-grand-total-value" id="grand_total">0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- ===== REMARKS ===== -->
+    <div class="pr-section pr-purpose">
+      <div class="pr-subheader">Remarks</div>
+      <div class="pr-purpose-box po-remarks-box" id="remarks">&nbsp;</div>
+    </div>
+
+    <!-- ===== PREPARED BY / APPROVED BY ===== -->
+    <div class="pr-section po-signatures">
+      <div class="po-sign-block">
+        <div class="po-sign-label">Prepared By:</div>
+        <div class="po-sign-space">
+          <img src="" alt="" class="po-sign-image" id="prepared_signature" />
+        </div>
+        <div class="po-sign-name" id="prepared_by">&nbsp;</div>
+        <div class="po-sign-role" id="prepared_position">&nbsp;</div>
+      </div>
+
+      <div class="po-sign-block">
+        <div class="po-sign-label">Approved By:</div>
+        <div class="po-sign-space">
+          <img src="" alt="" class="po-sign-image" id="approved_signature" />
+        </div>
+        <div class="po-sign-name" id="approved_by">&nbsp;</div>
+        <div class="po-sign-role" id="approved_position">&nbsp;</div>
+      </div>
+    </div>
+
+  </div>
+  <!-- end pr-page -->
+</div>
+<!-- end pr-wrapper -->
+
+<!-- Row Template (for JS dynamic fill) -->
+<template id="po_row_template">
+  <tr>
+    <td tag="item_desc"></td>
+    <td tag="quantity"></td>
+    <td tag="unit_price"></td>
+    <td tag="amount"></td>
+  </tr>
+</template>
+
+<script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+	css_elm.href = static_link+themes[0]+".css";
+
+	let STATIC_IMAGE_LINK = "{{ url_for('static', filename='images') }}";
+
+</script>
+
+<script src="{{ url_for('static', filename='js/purchase_order_printing_handles.js') }}"></script>
+{% endblock %}

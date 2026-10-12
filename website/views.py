@@ -311,6 +311,15 @@ def purchase_request_slip_():
 
 
 
+@views.route('/purchase_order_print', methods=['GET', 'POST'])
+def purchase_order_slip_():
+    page = 'purchase_order_slip_'
+
+    return render_template("print_templates/purchase_order_slip.html", user=current_user, page=page)
+        
+
+
+
 
 # =======================
 # Print Templates Section End
