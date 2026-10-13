@@ -383,16 +383,13 @@ function loadItemToEdit(id){
 	let item_id = parseInt(id);	
 	let params = [{"name":"id", "value": item_id}];
 	
-
-	
 	console.log(id);
 	
 	if(inIframe()){
 		postMessageToParent('openModal:{"link":"update_purchase_req_editor?id='+id+'","custom_class":"no_close_button,blurred"}');
 	}else{
-		open_modal('update_fuelfile_editor?id='+id,'no_close_button,blurred');
+		open_modal('update_purchase_req_editor?id='+id,'no_close_button,blurred');
 	}
-	
 	
 }
 
@@ -690,13 +687,21 @@ function toggleSelectOption(visible=false){
 //Check Functions End
 
 let targetID;
+let orderData = {};
+
 
 function clickedOnRow(elm){
-	let ev = event;
-	let parent_attrib = (ev.target.parentNode);
-	if(!parent_attrib.getAttribute('data_id')){
+	if(elm && elm.target){
+		elm = elm.target;
+	}
+	if(!elm || typeof elm.closest !== 'function'){
+		elm = window.event ? window.event.target : null;
+	}
+	let parent_attrib = elm ? elm.closest('[data_id]') : null;
+	if(!parent_attrib){
 		return;
-	};
+	}
+	
 	
 	targetID = parent_attrib.getAttribute('data_id');
 	
@@ -754,7 +759,9 @@ function clickedOnRow(elm){
 		} catch(e) {
 			items_list = [];
 		}
-
+		
+		orderData = purchase.purchase_order;
+		
 		// Requestor Info
 		tag('requestor',      _('view_purchase_1'))[0].innerText = purchase.requested_by || purchase.requestor_name || purchase.user_id || '--';
 		tag('department',     _('view_purchase_1'))[0].innerText = purchase.department_name || purchase.department_id || '--';
@@ -785,6 +792,9 @@ function clickedOnRow(elm){
 	orderButtonState();
 	
 	showModalContent("view_purchase_1");
+	
+	monitorChanges("shouldReloadPurchaseReqModal", reloadModalView);
+	
 }
 
 
@@ -885,13 +895,36 @@ function orderButtonState(){
 
 // Purchase Order Handles ================================
 
-function popOrderActions(){
+async function popOrderActions(){
 	
+	if(orderData.hasOrder){
+		
+		// --- open the modal for Order Details if existing --
+		showModalContent("view_purchase_order_1");
+		
+	}else{
+		showToast("No P.O. detected, opening editor...");
+		await sleep(2000);
+		openEditorPO(targetID);
+	}
 	
-	
-	// --- open the modal for Order Details if existing --
-	showModalContent("view_purchase_order_1");
 }
+
+function openEditorPO(id){
+	
+	let item_id = parseInt(id);	
+	let params = [{"name":"id", "value": item_id}];
+	
+	console.log(id);
+	
+	if(inIframe()){
+		postMessageToParent('openModal:{"link":"purchase_order?id='+id+'","custom_class":"no_close_button,blurred"}');
+	}else{
+		open_modal('purchase_order?id='+id,'no_close_button,blurred');
+	}
+	
+}
+
 
 
 function generatePurchaseOrderDataView(data) {
@@ -917,8 +950,24 @@ function generatePurchaseOrderDataView(data) {
 	_('view_order_approved_by').value = order.approved_by || '--';
 
 	addFancyPlaceholder();
+	
+
 }
 
+
+
+
+
+function reloadModalView(){
+	let targetElm =  document.querySelector('[data_id="' + targetID + '"]');
+	
+	console.log(targetElm);
+	
+	if(targetElm){
+		clickedOnRow(targetElm);
+	}
+
+}
 
 
 // Refresh handler =========================

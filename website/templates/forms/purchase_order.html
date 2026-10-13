@@ -139,7 +139,18 @@ loadEvents();//Force Pre-load Events of each form fields, if neccesary
 
 {% block extra_js %}
 <script>
-
+	if (pageType != "update_purchase_order_editor") {
+		let attempts = 0;
+		let poWait = setInterval(function() {
+			attempts++;
+			if (_("po_no")) {
+				clearInterval(poWait);
+				makeLatestPoId();
+			} else if (attempts >= 100) {
+				clearInterval(poWait);
+			}
+		}, 100);
+	}
 </script>
 {% endblock %}
 

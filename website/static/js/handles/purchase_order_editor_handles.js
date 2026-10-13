@@ -3,9 +3,13 @@
 //For Saving User
 function submitForm(confirmed){
 	let values = formMaker.retriveFormInput(true);
+	
+	values["purchase_id"] = getparam('id');
+
+	
 	let params = [
 		{
-		"name": "purchase_data",
+		"name": "order_data",
 		"value": JSON.stringify(values),
 		}
 	
@@ -28,10 +32,10 @@ function submitForm(confirmed){
 	
 	
 	//for updating
-	if(pageType == "update_purchase_req_editor"){
+	if(pageType == "update_purchase_order_editor"){
 		let custom_params = {
-		"name": "purchase_id",
-		"value": getparam('id'),
+		"name": "order_id",
+		"value": getparam('order_id'),
 		}
 		
 		params.push(custom_params);
@@ -43,7 +47,8 @@ function submitForm(confirmed){
 	
 	console.log(params);
 	
-	qBuilder.sendQuery(feedBackSaving,"save_purchase_request", params);
+	qBuilder.sendQuery(feedBackSaving,"save_purchase_order", params);
+	localStorage.setItem("shouldReloadPurchaseReqModal","true");
 	createDialogue("wait");
 
 }
@@ -55,7 +60,7 @@ let nextFormID = undefined;
 function feedBackSaving(){
 	let res_data = (JSON.parse(event.target.responseText));
 	createDialogue("info", res_data.message);
-	if(res_data.type == "success" && pageType != "update_purchase_req_editor"){
+	if(res_data.type == "success" && pageType != "update_purchase_order_editor"){
 		window.setTimeout(close, 1000);
 	}
 	function close(){
@@ -90,6 +95,17 @@ async function askForPrint(confirmed = undefined){
 }
 
 
+
+async function makeLatestPoId(){
+	await qBuilder.sendPromise(makePO,"get_lastest_order_id");
+	
+	function makePO(data){
+		let setdata = JSON.parse(data.responseText);
+		_("po_no").value = utility.addZeros(parseInt(setdata.id) + 1, 5);
+		
+		addFancyPlaceholder(["po_no"])
+	}
+}
 
 
 
@@ -179,7 +195,7 @@ function loadIntoForms(){
 }
 
 
-if(pageType == "update_purchase_req_editor"){
+if(pageType == "update_purchase_order_editor"){
 	loadForEdit();
 }else{
 	qBuilder.sendQuery(proccessDataForCustomLogo,"get_logo_assets");
@@ -212,7 +228,7 @@ async function printDoc(){
 	showToast("Preparing Document filters ... ");
 	await sleep(500);
 	
-	window.open('/purchase_request_print', 'printFuelRequest');
+	window.open('/purchase_order_print', 'printFuelRequest');
 }
 
 
