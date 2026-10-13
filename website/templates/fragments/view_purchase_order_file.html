@@ -1,0 +1,78 @@
+<div class="modal_main_backdrop padded" id="view_purchase_order_1" inert>
+	<div class="modal_container_box larger_">
+
+		<!-- Modal Header -->
+		<div class="top_header">
+			<div class="title_form_top">Purchase Order Details</div>
+			<div class="close_modal_tright" tabindex='1' onclick="closeModalContent('view_purchase_order_1')">&times;</div>
+		</div>
+
+		<!-- Modal Contents Container -->
+		<div class="option_main_container">
+			<br />
+
+			<!-- Order Info -->
+			<div class="normal info_items"><span class="fa fa-hashtag"></span> PO No.: <span class="bold" tag="po_no"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-truck"></span> Supplier Name: <span class="bold" tag="supplier_name"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-map-marker"></span> Supplier Address: <span class="bold" tag="supplier_address"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-user"></span> Contact Person: <span class="bold" tag="contact_person"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-phone"></span> Supplier Contact Number: <span class="bold" tag="supplier_contact_number"> -- </span></div>
+			<div class="normal info_items"><span class="fa fa-credit-card"></span> Payment Terms: <span class="bold" tag="payment_terms"> -- </span></div>
+
+
+
+			<!-- Items -->
+			<div class="normal centered main_table_container mini_table">
+				<table id="purchase_order_items_table">
+					<thead>
+						<tr class="small sticky_header padded_header primary_color_invert secondary_background">
+							<th class="minimum_width">Item Name</th>
+							<th class="minimum_width">Quantity</th>
+							<th class="minimum_width">Item Description</th>
+							<th class="minimum_width">Unit Cost</th>
+							<th class="sticky_column_right secondary_background">Total Amount</th>
+						</tr>
+					</thead>
+					<tbody id="purchase_order_items_table_body">
+					</tbody>
+				</table>
+			</div>
+
+			<hr class="line_2">
+
+			<!-- Total -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_order_total_amount">Total Amount</label>
+					<input type="text" id="view_order_total_amount" tag="total_amount" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<!-- Remarks -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_order_remarks">Remarks</label>
+					<textarea id="view_order_remarks" tag="remarks" class="fancy_form_df form_display" rows="3" readonly></textarea>
+				</div>
+			</div>
+
+			<!-- Prepared By / Approved By -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_order_prepared_by">Prepared By</label>
+					<input type="text" id="view_order_prepared_by" tag="prepared_by" class="fancy_form_df form_display" readonly />
+				</div>
+				<div class="cols_con_ padded_input full_width">
+					<label class="df_label_con placeholder_label" for="view_order_approved_by">Approved By</label>
+					<input type="text" id="view_order_approved_by" tag="approved_by" class="fancy_form_df form_display" readonly />
+				</div>
+			</div>
+
+			<!-- Print Button -->
+			<div class="floating_print" onclick="printDocOrder();">
+				<span class="fa fa-print fa-2x"></span>
+			</div>
+
+		</div>
+	</div>
+</div>

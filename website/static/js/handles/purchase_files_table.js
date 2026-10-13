@@ -778,6 +778,8 @@ function clickedOnRow(elm){
 		_("status_option_").value = (purchase.status ? purchase.status : "pending");
 
 		addFancyPlaceholder();
+		
+		orderButtonState();
 	}
 	
 	orderButtonState();
@@ -872,8 +874,6 @@ function orderButtonState(){
 	let button = _("order_floating");
 	let inputval = _("status_option_");
 	
-	console.log(inputval);
-	
 	if(inputval.value == "approved" || inputval.value == "processed" ){
 		button.classList.remove("hidden");
 	}else{
@@ -882,6 +882,46 @@ function orderButtonState(){
 	
 }
 
+
+// Purchase Order Handles ================================
+
+function popOrderActions(){
+	
+	
+	
+	// --- open the modal for Order Details if existing --
+	showModalContent("view_purchase_order_1");
+}
+
+
+function generatePurchaseOrderDataView(data) {
+	let res_data = JSON.parse(data.responseText);
+	let order = res_data.order;
+	let modal = _('view_purchase_order_1');
+
+	tag('po_no',                   modal)[0].innerText = order.po_no || '--';
+	tag('supplier_name',           modal)[0].innerText = order.supplier_name || '--';
+	tag('supplier_address',        modal)[0].innerText = order.supplier_address || '--';
+	tag('contact_person',          modal)[0].innerText = order.contact_person || '--';
+	tag('supplier_contact_number', modal)[0].innerText = order.supplier_contact_number || '--';
+	tag('payment_terms',           modal)[0].innerText = order.payment_terms || '--';
+
+	let total = order.total_amount;
+	if (total === undefined || total === null) {
+		total = res_data.purchase ? res_data.purchase.total_amount : undefined;
+	}
+	_('view_order_total_amount').value = (total !== undefined && total !== null) ? total : '--';
+
+	_('view_order_remarks').value = order.remarks || '';
+	_('view_order_prepared_by').value = order.prepared_by || order.user_id || '--';
+	_('view_order_approved_by').value = order.approved_by || '--';
+
+	addFancyPlaceholder();
+}
+
+
+
+// Refresh handler =========================
 
 REFRESH_HANDLER = function(){
 	

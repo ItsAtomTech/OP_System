@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 
 from . import db
 from datetime import datetime, timedelta
-from .models import Users, Department, PurchaseRequests, Notification, Vehicles, DriverCrew, FuelRequisitionRecords, Company
+from .models import Users, Department, PurchaseRequests, PurchaseOrder, Notification, Vehicles, DriverCrew, FuelRequisitionRecords, Company
 
 #for openExel
 from openpyxl import Workbook
@@ -504,6 +504,12 @@ def get_purchase_request_by_id():
 
         purchase, requestor_name, department_name = result
 
+        latest_order = PurchaseOrder.query.filter(
+            PurchaseOrder.purchase_id == purchase.purchase_id
+        ).order_by(
+            PurchaseOrder.order_id.desc()
+        ).first()
+
         purchase_data = {
             "purchase_id":          purchase.purchase_id,
             "user_id":              purchase.user_id,
@@ -522,6 +528,11 @@ def get_purchase_request_by_id():
             "misc":                 purchase.misc,
             "date_required":        purchase.date_required,
             "date":                 purchase.date.strftime("%Y-%m-%d %H:%M:%S") if purchase.date else None,
+            "purchase_order": {
+                "hasOrder": latest_order is not None,
+                "order_id": latest_order.order_id if latest_order else None,
+                "po_no":    latest_order.po_no if latest_order else None,
+            },
         }
         
 
@@ -541,6 +552,8 @@ def get_purchase_request_by_id():
         return {"type": "success", "purchase": purchase_data}
     except Exception as e:
         return {"type": "error", "message": str(e)}
+        
+        
 
 
 #Updating data in the purchase request
@@ -649,7 +662,6 @@ def remove_purchase_request_file():
 
 
 
-
 @api_handles.route('/purchase_request_list', methods=['POST', 'GET'])
 @login_required
 def purchase_request_list():
@@ -660,15 +672,25 @@ def purchase_request_list():
 
     per_page = post_per_page
 
-    # Join Users and Department
+    latest_order = db.session.query(
+        PurchaseOrder.purchase_id.label("purchase_id"),
+        db.func.max(PurchaseOrder.order_id).label("order_id"),
+    ).group_by(PurchaseOrder.purchase_id).subquery()
+
     query = db.session.query(
         PurchaseRequests,
         Users.username.label("requestor_name"),
         Department.name.label("department_name"),
+        PurchaseOrder.order_id.label("order_id"),
+        PurchaseOrder.po_no.label("po_no"),
     ).outerjoin(
         Users, PurchaseRequests.user_id == Users.user_id
     ).outerjoin(
         Department, PurchaseRequests.department_id == Department.id
+    ).outerjoin(
+        latest_order, latest_order.c.purchase_id == PurchaseRequests.purchase_id
+    ).outerjoin(
+        PurchaseOrder, PurchaseOrder.order_id == latest_order.c.order_id
     )
 
     # Filters
@@ -744,7 +766,7 @@ def purchase_request_list():
 
     purchase_req_list = []
 
-    for record, requestor_name, department_name in results:
+    for record, requestor_name, department_name, order_id, po_no in results:
         try:
             items = json.loads(record.items) if record.items else []
         except (json.JSONDecodeError, TypeError):
@@ -763,7 +785,12 @@ def purchase_request_list():
             "misc": record.misc,
             "status": record.status,
             "date_required": record.date_required,
-            "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None
+            "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None,
+            "purchase_order": {
+                "hasOrder": order_id is not None,
+                "order_id": order_id,
+                "po_no": po_no,
+            },
         })
 
     return {
@@ -775,8 +802,6 @@ def purchase_request_list():
             "total_results": total_results
         }
     }
-    
-
 
 @api_handles.route('/updatePurchaseReqStatus', methods=['POST'])
 @login_required
@@ -3379,6 +3404,7 @@ def is_admin(*allowed_types):
     return current_user.type in types
 
 
+
 @api_handles.route('/get_common_approver_names', methods=['POST','GET'])
 def get_common_approver_names(min_occurrences=1, limit=50):
 
@@ -3388,11 +3414,20 @@ def get_common_approver_names(min_occurrences=1, limit=50):
         PurchaseRequests.purchase_id.desc()
     ).limit(limit).all()
 
+    recent_orders = PurchaseOrder.query.filter(
+        PurchaseOrder.approved_by.isnot(None)
+    ).order_by(
+        PurchaseOrder.order_id.desc()
+    ).limit(limit).all()
+
+    approved_by_values = [p.approved_by for p in recent_purchases]
+    approved_by_values += [o.approved_by for o in recent_orders]
+
     name_counter = Counter()
 
-    for purchase in recent_purchases:
+    for raw_value in approved_by_values:
         try:
-            approvers = json.loads(purchase.approved_by)
+            approvers = json.loads(raw_value)
         except (json.JSONDecodeError, TypeError):
             continue
 
@@ -3410,6 +3445,8 @@ def get_common_approver_names(min_occurrences=1, limit=50):
     ]
 
     return common_names
+    
+    
 
 
 @api_handles.route('/get_logo_assets', methods=['GET','POST'])

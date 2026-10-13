@@ -172,6 +172,7 @@
 
 
 {% include "fragments/view_purchase_request_file_modal.html" %}
+{% include "fragments/view_purchase_order_file.html" %}
 
 
 <script src="{{ url_for('static', filename='js/request_builder.js') }}"></script>
@@ -203,6 +204,8 @@ function findById(arr, id) {
 }
 
 
+
+
 </script>
 
 
@@ -215,6 +218,8 @@ function findById(arr, id) {
 <script src="{{ url_for('static', filename='js/lib/daimofuu_fancylabel.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/daimofuu_titlebar.js') }}"> </script>
+
+
 
 
 {% endblock %}
