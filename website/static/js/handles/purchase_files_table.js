@@ -67,7 +67,7 @@ let tableFormat = [
 let hiddenColumns = [];
 let page = 1;
 
-let userList;
+let dataList;
 
 let saveMode = "new";
 
@@ -76,7 +76,7 @@ function tableLoader(data){
 	let forms = resData.purchase_req_list;
 
 	
-	userList = forms;
+	dataList = forms;
 	
 	let tableHeader = generateTableHeaders(false);
 	_("data_generative").innerHTML = "";
@@ -779,7 +779,9 @@ function clickedOnRow(elm){
 
 		addFancyPlaceholder();
 	}
-
+	
+	orderButtonState();
+	
 	showModalContent("view_purchase_1");
 }
 
@@ -854,12 +856,28 @@ async function assignedPurchaseReqStatus(elm){
 	await qBuilder.sendPromise(updateListen,"updatePurchaseReqStatus",itemvalue);
 	destroy_dia();
 	
+
+	
 	function updateListen(data){
 			let res_data = (JSON.parse(data.responseText));
 			showToast(res_data.message);
 			
-			
-		
+				orderButtonState();
+	}
+	
+}
+
+
+function orderButtonState(){
+	let button = _("order_floating");
+	let inputval = _("status_option_");
+	
+	console.log(inputval);
+	
+	if(inputval.value == "approved" || inputval.value == "processed" ){
+		button.classList.remove("hidden");
+	}else{
+		button.classList.add("hidden");
 	}
 	
 }

@@ -128,9 +128,10 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": true,
-            "id": "remarks_6",
+            "id": "remarks",
             "index": 6
-        },        {
+        },
+		{
             "type": "header",
             "events": {},
             "value": "",
@@ -188,6 +189,7 @@ let formStructure = {
             "row_span": null,
             "col_span": null,
             "span_column": false,
+			"list":"common_names",
             "id": "approved_by",
             "index": 11
         },

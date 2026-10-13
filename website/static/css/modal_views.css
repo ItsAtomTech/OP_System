@@ -98,6 +98,8 @@ select.form_display[readonly] {
     user-select: text;      /* allows text selection */
 }
 
+
+
 textarea.form_display[readonly] {
     appearance: none;
     -webkit-appearance: none;
@@ -108,6 +110,8 @@ textarea.form_display[readonly] {
     pointer-events: none;   /* prevents dropdown */
     user-select: text;      /* allows text selection */
 }
+
+
 
 .no_backdrop{
 	background-color:transparent;
@@ -138,9 +142,35 @@ textarea.form_display[readonly] {
 	transition:0.2s;
 }
 
+
+.floating_order{
+	position:sticky;
+	bottom:5px;
+	right:2px;
+	left:0;
+	float:right;
+	cursor:pointer;
+	margin-right:10px;
+	width:50px;
+	border-radius:10px;
+	background:var(--primary_background);
+	padding:10px;
+	box-shadow:0px 0px 2px 2px rgba(0,0,0,0.2);
+	text-align:center;
+	display:flex;
+	align-items:center;
+	z-index:3;
+	justify-content:center;
+	aspect-ratio:1/1;
+	-webkit-transition:0.2s;
+	transition:0.2s;
+}
+
+.floating_order:hover,
 .floating_print:hover{
 	opacity:0.7;
 }
+.floating_order:active,
 .floating_print:active{
 	-webkit-transform:scale(0.9);
 	transform:scale(0.9);
@@ -149,5 +179,11 @@ textarea.form_display[readonly] {
 
 .larger_{
 	max-width:1024px !important;
+	
+}
+
+
+.floating_order.hidden{
+	display:none;
 	
 }

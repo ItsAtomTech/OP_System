@@ -56,6 +56,26 @@ class PurchaseRequests(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
     
     
+class PurchaseOrder(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    order_id = db.Column(db.Integer, primary_key=True)
+    purchase_id = db.Column(db.Integer, db.ForeignKey('purchase_requests.purchase_id'))
+    po_no = db.Column(db.String(50)) 
+    type = db.Column(db.String(50)) 
+    supplier_name = db.Column(db.String(150)) 
+    supplier_address = db.Column(db.String(150)) 
+    contact_person = db.Column(db.String(150)) 
+    payment_terms = db.Column(db.String(50)) 
+    supplier_contact_number = db.Column(db.String(50)) 
+    
+    remarks = db.Column(db.String(2000))
+    approved_by = db.Column(db.String(1024))
+    prepared_by = db.Column(db.String(1024), default=None)
+    misc = db.Column(db.String(1024))
+    json_data = db.Column(db.String(10000))
+    date = db.Column(db.DateTime(timezone=True), default=manila_time)
+    
+    
 class FuelRequisitionRecords(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
