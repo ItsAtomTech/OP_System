@@ -128,8 +128,6 @@ function tableLoader(data){
 						tabTh.setAttribute("order",each.order);
 					}
 					
-					
-					
 				}
 				
 				
@@ -793,11 +791,12 @@ function clickedOnRow(elm){
 	
 	showModalContent("view_purchase_1");
 	
-	monitorChanges("shouldReloadPurchaseReqModal", reloadModalView);
+	
 	
 }
 
-
+monitorChanges("shouldReloadPurchaseReqModal", reloadModalView);
+monitorChanges("shouldReloadPurchaseOrderModal", reloadOrderModalView);
 
 
 
@@ -847,6 +846,24 @@ async function printDoc(){
 	
 	window.open('/purchase_request_print', 'printPurchaseRequest');
 }
+
+
+async function printDocOrder (){
+
+	//Extract the Filters to pass onto the overall printing	
+	let filters_to_pass = {
+		"id": targetID,//purhcase_request id
+		"order_id": orderData.order_id,
+	}
+	
+	localStorage.setItem("printPurchaseOrder", JSON.stringify(filters_to_pass));
+	
+	showToast("Preparing Document filters ... ");
+	await sleep(1200);
+	
+	window.open('/purchase_order_print', 'printPurchaseOrder');
+}
+
 
 async function assignedPurchaseReqStatus(elm){
 	if (targetID == undefined){
@@ -900,6 +917,16 @@ async function popOrderActions(){
 	if(orderData.hasOrder){
 		
 		// --- open the modal for Order Details if existing --
+		
+		console.log(orderData);
+		
+		let params = [
+		{"name":"purchase_order_id", "value":orderData.order_id}
+			
+		]
+		
+		await qBuilder.sendPromise(generatePurchaseOrderDataView,"get_order_by_id",params);
+		
 		showModalContent("view_purchase_order_1");
 		
 	}else{
@@ -929,15 +956,21 @@ function openEditorPO(id){
 
 function generatePurchaseOrderDataView(data) {
 	let res_data = JSON.parse(data.responseText);
+	
+	console.log(res_data);	
+
 	let order = res_data.order;
 	let modal = _('view_purchase_order_1');
-
+	
+	let payment_terms = JSON.parse(order.payment_terms).join(",");
+	
+	
 	tag('po_no',                   modal)[0].innerText = order.po_no || '--';
 	tag('supplier_name',           modal)[0].innerText = order.supplier_name || '--';
 	tag('supplier_address',        modal)[0].innerText = order.supplier_address || '--';
 	tag('contact_person',          modal)[0].innerText = order.contact_person || '--';
 	tag('supplier_contact_number', modal)[0].innerText = order.supplier_contact_number || '--';
-	tag('payment_terms',           modal)[0].innerText = order.payment_terms || '--';
+	tag('payment_terms',           modal)[0].innerText = payment_terms || '--';
 
 	let total = order.total_amount;
 	if (total === undefined || total === null) {
@@ -948,10 +981,41 @@ function generatePurchaseOrderDataView(data) {
 	_('view_order_remarks').value = order.remarks || '';
 	_('view_order_prepared_by').value = order.prepared_by || order.user_id || '--';
 	_('view_order_approved_by').value = order.approved_by || '--';
-
+	
+	_("order_floating_edit").setAttribute("order_id", res_data.order.order_id);
+	_("order_floating_edit").setAttribute("purchase_id", res_data.purchase.purchase_id);
+	
+	
+	
 	addFancyPlaceholder();
 	
+}
 
+
+
+function editOrderActions(elm){
+	
+	
+	let purchase_id = elm.getAttribute("purchase_id");
+	let order_id = elm.getAttribute("order_id");
+	
+	
+	console.log(purchase_id, order_id);
+	
+	
+	let params = [
+		{"name":"id", "value": purchase_id}, 
+		{"name":"order_id", "value": order_id}, 
+	];
+	
+	console.log(params);
+	
+	if(inIframe()){
+		postMessageToParent('openModal:{"link":"purchase_order_edit?id='+purchase_id+'&order_id='+order_id+'","custom_class":"no_close_button,blurred"}');
+	}else{
+		open_modal('purchase_order_edit?id='+purchase_id+'&order_id='+order_id,'no_close_button,blurred');
+	}
+	
 }
 
 
@@ -962,11 +1026,15 @@ function reloadModalView(){
 	let targetElm =  document.querySelector('[data_id="' + targetID + '"]');
 	
 	console.log(targetElm);
-	
 	if(targetElm){
 		clickedOnRow(targetElm);
 	}
 
+}
+
+
+function reloadOrderModalView(){
+	popOrderActions();
 }
 
 

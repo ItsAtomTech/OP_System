@@ -32,14 +32,15 @@ function submitForm(confirmed){
 	
 	
 	//for updating
-	if(pageType == "update_purchase_order_editor"){
+	if(pageType == "purchase_order_edit"){
 		let custom_params = {
-		"name": "order_id",
+		"name": "purchase_order_id",
 		"value": getparam('order_id'),
 		}
 		
 		params.push(custom_params);
-		qBuilder.sendQuery(feedBackSaving,"update_purchase_request", params);
+		qBuilder.sendQuery(feedBackSaving,"update_purchase_order", params);
+		localStorage.setItem("shouldReloadPurchaseOrderModal","true");
 		createDialogue("wait");
 		return;
 	}
@@ -60,7 +61,7 @@ let nextFormID = undefined;
 function feedBackSaving(){
 	let res_data = (JSON.parse(event.target.responseText));
 	createDialogue("info", res_data.message);
-	if(res_data.type == "success" && pageType != "update_purchase_order_editor"){
+	if(res_data.type == "success" && pageType != "purchase_order_edit"){
 		window.setTimeout(close, 1000);
 	}
 	function close(){
@@ -114,11 +115,15 @@ async function loadForEdit(){
 		{
 		"name": "purchase_id",
 		"data": getparam('id'),
-		}
+		},		
+		{
+		"name": "purchase_order_id",
+		"data": getparam('order_id'),
+		},
 	];
 	
 	await qBuilder.sendPromise(proccessDataForCustomLogo,"get_logo_assets");
-	qBuilder.sendQuery(loadIntoForms,"get_purchase_request_by_id", params);
+	qBuilder.sendQuery(loadIntoForms,"get_order_by_id", params);
 	
 	//_("_0").value = "Update On Probation Student";
 	
@@ -129,6 +134,7 @@ let userID = undefined;
 function loadIntoForms(){
 	let setdata = JSON.parse(event.target.responseText);
 
+	console.log(setdata);
 	
 	if(setdata.type != "success"){
 		return;
@@ -138,7 +144,8 @@ function loadIntoForms(){
 	
 	loadEvents();	
 	let datajs = setdata.purchase;
-	
+	let datajs_order = setdata.order;
+	let raw_json = JSON.parse(setdata.order.json_data);
 	
 	let custom_logo = datajs.misc;
 	
@@ -149,23 +156,29 @@ function loadIntoForms(){
 		custom_logo = undefined;
 	}
 	
-	
 		
-	if(setdata.purchase.status == "approved" || setdata.purchase.status == "processed"){
-		loadForms(1,0,1,1);
-		
+	if(setdata.purchase.status == "processed"){
+		loadForms(1,0,1,1);	
 		showToast("The form is now readonly!");
-		
 	}
-	
-	
 	
 	
 	let converted = {
 		
-		"date_required": datajs.date_required,
+		"po_no": datajs_order.po_no,
+		"supplier_name": datajs_order.supplier_name,
+		"supplier_address": datajs_order.supplier_address,
+		"contact_person": datajs_order.contact_person,
+		"payment_terms": datajs_order.payment_terms,
+		"supplier_contact_number": datajs_order.supplier_contact_number,
+		"remarks": datajs_order.remarks,
+		"prepared_by": datajs_order.prepared_by,
+		"approved_by": datajs_order.approved_by,
+		"position_prepared_by": raw_json.position_prepared_by,
+		"position_approved_by": raw_json.position_approved_by,
+		
+		
 		"department_id": datajs.department_id,
-		"approved_by": datajs.approved_by,
 		"items": datajs.items,
 		"requested_by": datajs.requested_by,
 		"purpose_of_request": datajs.purpose_of_request,
@@ -195,7 +208,8 @@ function loadIntoForms(){
 }
 
 
-if(pageType == "update_purchase_order_editor"){
+
+if(pageType == "purchase_order_edit"){
 	loadForEdit();
 }else{
 	qBuilder.sendQuery(proccessDataForCustomLogo,"get_logo_assets");
@@ -218,18 +232,24 @@ function cancelEditor(){
 
 
 //Printing Logics
-async function printDoc(){
+
+async function printDoc (){
 
 	//Extract the Filters to pass onto the overall printing	
 	let filters_to_pass = {
-		"id": nextFormID,
+		"id": getparam('id'),  //purhcase_request id
+		"order_id":nextFormID,
 	}
-	localStorage.setItem("printPurchaseRequest", JSON.stringify(filters_to_pass));
-	showToast("Preparing Document filters ... ");
-	await sleep(500);
 	
-	window.open('/purchase_order_print', 'printFuelRequest');
+	localStorage.setItem("printPurchaseOrder", JSON.stringify(filters_to_pass));
+	
+	showToast("Preparing Document filters ... ");
+	await sleep(1200);
+	
+	window.open('/purchase_order_print', 'printPurchaseOrder');
 }
+
+
 
 
 // Handlers and Parsers
@@ -299,7 +319,7 @@ function proccessCustom_image_previewPatch(){
 	console.log(prev_container);
 
 }	
-proccessCustom_image_previewPatch();
+//proccessCustom_image_previewPatch();
 
 
 

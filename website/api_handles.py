@@ -636,6 +636,64 @@ def update_purchase_request():
 
 
 
+@api_handles.route('/update_purchase_order', methods=['POST'])
+@login_required
+def update_purchase_order():
+    try:
+        order_data = request.form.get("order_data")
+        order_id   = request.form.get("purchase_order_id")
+
+        if not order_data:
+            return {"type": "error", "message": "Missing order_data"}
+
+        if not order_id:
+            return {"type": "error", "message": "Missing purchase_order_id"}
+
+        data = json.loads(order_data)
+
+        po_no                   = (data.get("po_no") or "").strip()
+        supplier_name           = data.get("supplier_name")
+        supplier_address        = data.get("supplier_address")
+        contact_person          = data.get("contact_person")
+        supplier_contact_number = data.get("supplier_contact_number")
+        payment_terms           = data.get("payment_terms")
+        remarks                 = data.get("remarks")
+        prepared_by             = data.get("prepared_by")
+        approved_by             = data.get("approved_by")
+
+        if not all([po_no, supplier_name]):
+            return {"type": "error", "message": "Incomplete purchase order data"}
+
+        order = db.session.get(PurchaseOrder, int(order_id))
+        if not order:
+            return {"type": "error", "message": "Purchase order not found"}
+
+        duplicate = PurchaseOrder.query.filter(
+            PurchaseOrder.po_no == po_no,
+            PurchaseOrder.order_id != order.order_id
+        ).first()
+        if duplicate:
+            return {"type": "error", "message": f"PO No. {po_no} already exists"}
+
+        order.po_no                   = po_no
+        order.supplier_name           = supplier_name
+        order.supplier_address        = supplier_address
+        order.contact_person          = contact_person
+        order.supplier_contact_number = supplier_contact_number
+        order.payment_terms           = payment_terms
+        order.remarks                 = remarks
+        order.prepared_by             = prepared_by
+        order.approved_by             = approved_by
+        order.json_data               = order_data
+
+        db.session.commit()
+        return {"type": "success", "message": "Purchase order updated successfully", "id": order.order_id}
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+
+
 #Removing a purchase request
 @api_handles.route('/remove_purchase_request_file', methods=['POST'])
 @login_required
@@ -865,6 +923,98 @@ def get_lastest_order_id():
 
     except Exception as e:
         return {"type": "error", "message": str(e)}
+
+
+
+@api_handles.route('/get_order_by_id', methods=['GET','POST'])
+@login_required
+def get_order_by_id():
+    try:
+        order_id = request.form.get("purchase_order_id") or request.args.get("purchase_order_id")
+        includeCompany = request.form.get("include_company") or request.args.get("include_company")
+
+        if not order_id:
+            return {"type": "error", "message": "Missing purchase_order_id"}
+
+        if not includeCompany or includeCompany == "0":
+            includeCompany = False
+
+        result = db.session.query(
+            PurchaseOrder,
+            PurchaseRequests,
+            Users.username.label("requestor_name"),
+            Department.name.label("department_name"),
+        ).outerjoin(
+            PurchaseRequests, PurchaseOrder.purchase_id == PurchaseRequests.purchase_id
+        ).outerjoin(
+            Users, PurchaseRequests.user_id == Users.user_id
+        ).outerjoin(
+            Department, PurchaseRequests.department_id == Department.id
+        ).filter(
+            PurchaseOrder.order_id == int(order_id)
+        ).first()
+
+        if not result:
+            return {"type": "error", "message": "Purchase order not found"}
+
+        order, purchase, requestor_name, department_name = result
+
+        order_data = {
+            "order_id":                order.order_id,
+            "purchase_id":             order.purchase_id,
+            "user_id":                 order.user_id,
+            "po_no":                   order.po_no,
+            "type":                    order.type,
+            "supplier_name":           order.supplier_name,
+            "supplier_address":        order.supplier_address,
+            "contact_person":          order.contact_person,
+            "supplier_contact_number": order.supplier_contact_number,
+            "payment_terms":           order.payment_terms,
+            "remarks":                 order.remarks,
+            "prepared_by":             order.prepared_by,
+            "approved_by":             order.approved_by,
+            "misc":                    order.misc,
+            "json_data":               order.json_data,
+            "date":                    order.date.strftime("%Y-%m-%d %H:%M:%S") if order.date else None,
+        }
+
+        purchase_data = None
+        if purchase:
+            purchase_data = {
+                "purchase_id":        purchase.purchase_id,
+                "user_id":            purchase.user_id,
+                "requestor_name":     requestor_name,
+                "requested_by":       purchase.requested_by,
+                "type":               purchase.type,
+                "items":              purchase.items,
+                "purpose_of_request": purchase.purpose_of_request,
+                "department_id":      purchase.department_id,
+                "department_name":    department_name,
+                "approved_by":        purchase.approved_by,
+                "total_amount":       purchase.total_amount,
+                "company_id":         purchase.company_id,
+                "status":             purchase.status,
+                "misc":               purchase.misc,
+                "date_required":      purchase.date_required,
+                "date":               purchase.date.strftime("%Y-%m-%d %H:%M:%S") if purchase.date else None,
+            }
+
+            if includeCompany:
+                company_data = Company.query.get(purchase.company_id)
+
+                if company_data:
+                    purchase_data["company_data"] = {
+                        "name":      company_data.name,
+                        "logo_link": company_data.logo_link,
+                        "address":   company_data.address,
+                    }
+
+        return {"type": "success", "order": order_data, "purchase": purchase_data}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
+
 
 
 @api_handles.route('/save_purchase_order', methods=['POST'])

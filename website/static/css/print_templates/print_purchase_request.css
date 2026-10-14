@@ -2,7 +2,7 @@
    PURCHASE REQUEST FORM — Print Stylesheet
    Target paper: 8.5in x 13in (Legal/Long)
    Font: Arial (clean formal document standard)
-   Conventions mirrored from print_fuel_requisition.css
+   
    ============================================================ */
 
 /* ── Wrapper (screen only) ── */
@@ -346,7 +346,7 @@
 .po-field {
   display: flex;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -361,7 +361,7 @@
 }
 
 .po-terms-title {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   line-height: 1.5;
 }
@@ -370,7 +370,7 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -378,8 +378,8 @@
   position: relative;
   display: inline-block;
   flex: 0 0 auto;
-  width: 11px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
   border: 1px solid #111;
   box-sizing: border-box;
 }
@@ -494,7 +494,7 @@
 
 .po-sign-space {
   position: relative;
-  height: 60px;
+  height: 55px;
 }
 
 .po-sign-image {
@@ -517,12 +517,12 @@
   min-width: 70%;
   padding: 0 10px 1px;
   border-bottom: 1px solid #111;
-  font-size: 13px;
+  font-size: 1.2em;
   font-weight: bold;
 }
 
 .po-sign-role {
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 2px;
 }
 

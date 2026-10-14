@@ -268,6 +268,19 @@ def update_purchase_req_editor_():
     
     
 
+# Purchase Order Edit ============
+        
+@views.route('/purchase_order_edit', methods=['GET', 'POST'])
+def update_purchase_order_edit():
+    page = 'purchase_order_edit'
+    
+    common_names = get_common_approver_names()
+    
+    return render_template("forms/purchase_order.html", user=current_user, page=page,common_names=common_names)
+    
+
+
+
 # =======================
 # Admin Section End
 # =======================

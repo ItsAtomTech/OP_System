@@ -56,6 +56,11 @@
 
 
 
+<datalist id="use_custom_logo">
+
+</datalist>
+
+
 <datalist id="positions">
 	<option>   </option>
 	<option> Cluster Manager </option>
@@ -139,7 +144,7 @@ loadEvents();//Force Pre-load Events of each form fields, if neccesary
 
 {% block extra_js %}
 <script>
-	if (pageType != "update_purchase_order_editor") {
+	if (pageType != "purchase_order_edit") {
 		let attempts = 0;
 		let poWait = setInterval(function() {
 			attempts++;
