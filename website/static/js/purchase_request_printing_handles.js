@@ -10,7 +10,7 @@ async function getPrintableData(){
 	qBuilder.server_address = "_";
 	_("wrapper_doc").classList.add("blur_docs");
 	await sleep(800);
-	let data = localStorage.getItem("printPurchaseOrder");
+	let data = localStorage.getItem("printPurchaseRequest");
 	
 	if(!data){
 		return showToast("There was no data provided!"); 
