@@ -61,7 +61,6 @@ let tableFormat = [
 	},
 	
 
-
 ];
 
 let hiddenColumns = [];
@@ -235,11 +234,11 @@ function tableLoader(data){
 					remove_action.setAttribute("onclick","moveToTrashHelper('"+forms[index].purchase_id+"')");
 					action_div.appendChild(remove_action);
 					
-			}
+				}
 					
 	
 					
-				}
+			}
 					
 				
 			tabAc.appendChild(action_div);
@@ -393,8 +392,6 @@ function loadItemToEdit(id){
 
 
 function saveItem(){
-	
-	
 	//
 	
 }
@@ -660,7 +657,6 @@ function selectHandle(){
 		}
 	}
 	
-	
 	toggleSelectOption(hasChecks);
 }
 
@@ -703,7 +699,7 @@ function clickedOnRow(elm){
 	
 	targetID = parent_attrib.getAttribute('data_id');
 	
-	console.log(targetID);
+	// console.log(targetID);
 	
 	let params = [
 		{"name": "purchase_id", "value": targetID},
@@ -806,8 +802,6 @@ function itemNotifyUpdate(data){
 	if(!data.responseText){
 		return createDialogue("error","Server Response error");
 	}
-	
-	
 	
 	data = JSON.parse(data.responseText);
 	
@@ -916,14 +910,11 @@ async function popOrderActions(){
 	
 	if(orderData.hasOrder){
 		
-		// --- open the modal for Order Details if existing --
-		
-		console.log(orderData);
-		
+		// --- open the modal for Order Details if existing --	
 		let params = [
-		{"name":"purchase_order_id", "value":orderData.order_id}
+			{"name":"purchase_order_id", "value":orderData.order_id}
 			
-		]
+		];
 		
 		await qBuilder.sendPromise(generatePurchaseOrderDataView,"get_order_by_id",params);
 		
@@ -957,8 +948,6 @@ function openEditorPO(id){
 function generatePurchaseOrderDataView(data) {
 	let res_data = JSON.parse(data.responseText);
 	
-	console.log(res_data);	
-
 	let order = res_data.order;
 	let modal = _('view_purchase_order_1');
 	
@@ -985,8 +974,6 @@ function generatePurchaseOrderDataView(data) {
 	_("order_floating_edit").setAttribute("order_id", res_data.order.order_id);
 	_("order_floating_edit").setAttribute("purchase_id", res_data.purchase.purchase_id);
 	
-	
-	
 	addFancyPlaceholder();
 	
 }
@@ -995,12 +982,8 @@ function generatePurchaseOrderDataView(data) {
 
 function editOrderActions(elm){
 	
-	
 	let purchase_id = elm.getAttribute("purchase_id");
 	let order_id = elm.getAttribute("order_id");
-	
-	
-	console.log(purchase_id, order_id);
 	
 	
 	let params = [
@@ -1021,11 +1004,10 @@ function editOrderActions(elm){
 
 
 
-
 function reloadModalView(){
 	let targetElm =  document.querySelector('[data_id="' + targetID + '"]');
 	
-	console.log(targetElm);
+	// console.log(targetElm);
 	if(targetElm){
 		clickedOnRow(targetElm);
 	}

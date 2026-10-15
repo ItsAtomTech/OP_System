@@ -126,15 +126,31 @@ async function loadForEdit(){
 	qBuilder.sendQuery(loadIntoForms,"get_order_by_id", params);
 	
 	//_("_0").value = "Update On Probation Student";
-	
 }
 
 
+function monitorPOValue(elm){
+	let elmVal = elm.value;
+	
+	
+	if(elm.value.trim().length <= 0){
+		
+		if(pageType == "purchase_order_edit"){
+			elm.value = loadedPO;
+			// elm.disabled = true;
+		}else{
+			makeLatestPoId();
+		}
+		
+	};
+	
+}
+
 let userID = undefined;
+let loadedPO = undefined;
 function loadIntoForms(){
 	let setdata = JSON.parse(event.target.responseText);
 
-	console.log(setdata);
 	
 	if(setdata.type != "success"){
 		return;
@@ -160,8 +176,12 @@ function loadIntoForms(){
 	if(setdata.purchase.status == "processed"){
 		loadForms(1,0,1,1);	
 		showToast("The form is now readonly!");
+		
+		_("submitButton").remove();
+		
 	}
 	
+	if (datajs_order.po_no) loadedPO = datajs_order.po_no;
 	
 	let converted = {
 		

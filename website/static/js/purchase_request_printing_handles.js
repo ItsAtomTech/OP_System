@@ -151,10 +151,6 @@ function generateApprovefBy(data){
 }
 
 
-
-
-
-
 // ========================================================
 //Populate the header fields and other none Item Stuffs ===
 
