@@ -206,17 +206,26 @@ function tableLoader(data){
 			let action_div = make("div");
 				action_div.innerHTML = "";
 		
-				
+		
 			if(current_role == "admin"){
-										
+						
+					
+				if(forms[index].purchase_order.hasOrder){
 							
+				let order_action = make("div");
+					order_action.classList.add("fa","fa-book","flexed","df_button_flat","df_small","medium","modify","buttonize");
+					order_action.setAttribute("onclick",'openFileofOrder("'+index+'")');
+					order_action.title = "Open Purchase Order.";
+					action_div.appendChild(order_action);
+					
+				};		
+				
+				
 				let edit_action = make("div");
 					edit_action.classList.add("fa","fa-edit","flexed","df_button_flat","df_small","medium","modify","buttonize");
 					edit_action.setAttribute("onclick",'loadItemToEdit("'+forms[index].purchase_id+'")');
-				
-					
-					action_div.appendChild(edit_action);
-					
+						
+					action_div.appendChild(edit_action);		
 					
 			if(pageType == "trash"){
 				
@@ -691,10 +700,16 @@ function clickedOnRow(elm){
 	if(!elm || typeof elm.closest !== 'function'){
 		elm = window.event ? window.event.target : null;
 	}
+	
+	if(elm.classList.contains("buttonize")){
+		return; 
+	}
+	
 	let parent_attrib = elm ? elm.closest('[data_id]') : null;
 	if(!parent_attrib){
 		return;
 	}
+
 	
 	
 	targetID = parent_attrib.getAttribute('data_id');
@@ -1002,6 +1017,14 @@ function editOrderActions(elm){
 }
 
 
+
+function openFileofOrder(id){
+	
+	let selected = dataList[id];
+		orderData = selected.purchase_order;
+	
+	popOrderActions();	
+}
 
 
 function reloadModalView(){
