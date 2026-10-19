@@ -1,3 +1,5 @@
+let common_designations = [];
+
 
 
 //For Saving User
@@ -29,6 +31,10 @@ function submitForm(confirmed){
 	if(confirmed != "pass"){
 		return;
 	}
+	
+	//add to common desigs
+	addCommonDesig(_("position_prepared_by").value);
+	addCommonDesig(_("position_approved_by").value);
 	
 	
 	//for updating
@@ -351,3 +357,77 @@ function change_image_preview(elm){
 	_("custom_image_preview").src = STATIC_IMAGE_LINK + "/logos/" + value;
 	
 }
+
+
+
+// Load and save logic for Common Designations on local storage
+function loadCommonDesig(){
+	let com = localStorage.getItem("COMMON_DESIG");
+	if(!com){
+		return;
+	}
+	try{
+		common_designations = JSON.parse(localStorage.getItem("COMMON_DESIG"));
+		return;
+	}catch(e){
+		//--
+	}
+	common_designations = [];
+}
+
+loadCommonDesig();
+
+
+
+function addCommonDesig(str) {
+    if (!str || str.length <= 1) {
+        return console.warn("Empty value was ignored");
+    }
+
+    let index = common_designations.indexOf(str);
+    if (index !== -1) {
+        common_designations.splice(index, 1);
+    }
+    common_designations.push(str);
+
+    if (common_designations.length > 50) {
+        common_designations.shift();
+    }
+    localStorage.setItem("COMMON_DESIG", JSON.stringify(common_designations));
+}
+
+
+
+function loadToDatalist() {
+  if (!_("positions")) {
+    return;
+  }
+
+  for (let each of common_designations) {
+
+    if (isStringInDatalist(each)) {
+      continue;
+    }
+
+    let options = make("option");
+    options.innerText = each;
+    _("positions").appendChild(options);
+  }
+}
+
+
+function isStringInDatalist(inputString) {
+  let datalist = _("positions");
+
+  if (datalist) {
+    let options = datalist.getElementsByTagName('option');
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].innerText === inputString) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+loadToDatalist();
