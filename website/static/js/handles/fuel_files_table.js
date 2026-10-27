@@ -46,6 +46,13 @@ let tableFormat = [
 		
 	},
 	{	
+		label: "Status",
+		data_path: "status",
+		sort: true,
+		parser:parseStatusText,
+		
+	},
+	{	
 		label: "Date",
 		data_path: "date",
 		sort: true,
@@ -264,13 +271,12 @@ function tableLoader(data){
 
 
 
-
 function loadAllItems(dataOnly=false){
 	// qBuilder.filters.status = _("status_input").value;
 
-	
 
 	qBuilder.search = _("search_input").value;
+	qBuilder.filters.status = _("status_filter").value;
 	
 	qBuilder.sendQuery(process);
 	

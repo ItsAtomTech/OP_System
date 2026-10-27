@@ -2157,8 +2157,19 @@ def list_fuel_req_files():
             if 'vehicle_id' in filters and filters['vehicle_id']:
                 query = query.filter(FuelRequisitionRecords.vehicle_id == int(filters['vehicle_id']))
                 
-            if 'status' in filters and filters['status']:
-                query = query.filter(FuelRequisitionRecords.status == filters['status'])
+            if filters.get("status"):
+                if filters["status"] == "pending":
+                    query = query.filter(
+                        db.or_(
+                            FuelRequisitionRecords.status == 'pending',
+                            FuelRequisitionRecords.status.is_(None),
+                            FuelRequisitionRecords.status == ''
+                        )
+                    )
+                    
+                else:
+                    query = query.filter(FuelRequisitionRecords.status == filters['status'])
+            
 
             if 'requested_by' in filters and filters['requested_by']:
                 query = query.filter(FuelRequisitionRecords.requested_by == int(filters['requested_by']))
@@ -2197,6 +2208,7 @@ def list_fuel_req_files():
         "no_of_ltrs": FuelRequisitionRecords.no_of_ltrs,
         "date": FuelRequisitionRecords.date,
         "vehicle": Vehicles.plate_no,
+        "status": FuelRequisitionRecords.status,
         "vehicle_plate_no": Vehicles.plate_no,
         "driver": DriverCrew.name,
         "driver_name": DriverCrew.name,
@@ -2233,6 +2245,7 @@ def list_fuel_req_files():
             "driver_name": driver_name,
             "driver_position": driver_position,
             "type": record.type,
+            "status": record.status,
             "branch_id": record.branch_id,
             "actual_fuel_beg_l": record.actual_fuel_beg_l,
             "actual_fuel_endl": record.actual_fuel_endl,
