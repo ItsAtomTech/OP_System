@@ -72,6 +72,10 @@ class PurchaseOrder(db.Model):
     approved_by = db.Column(db.String(1024))
     prepared_by = db.Column(db.String(1024), default=None)
     misc = db.Column(db.String(1024))
+    items = db.Column(db.String(10000))
+    
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))   
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     json_data = db.Column(db.String(10000))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
     
