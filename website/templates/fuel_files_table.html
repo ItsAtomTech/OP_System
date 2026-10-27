@@ -57,6 +57,16 @@
 				<input class="small primary_color_invert" id="search_input" type="text" placeholder="Name, No etc.." onblur="delayedQuerry()" onchange="delayedQuerry()" oninput="delayedQuerry()">
 			 </div>   
 
+						
+			<div class="input_class_rounded">
+				<label class="small primary_color_invert"> Status: </label>
+				<select class="small primary_color_invert primary_background_darker" oninput="delayedQuerry()" id="status_filter">
+					<option value="" > All </option>
+					<option class="primary_background_darker primary_color" value="pending" > Pending </option>
+					<option class="primary_background_darker primary_color" value="approved" > Approved </option>
+					<option class="primary_background_darker primary_color" value="processed" > Processed </option>
+				</select>
+			</div>
 			
 			
 			
@@ -67,6 +77,8 @@
 				
 			</div>
 			
+			
+
 			
 			 
 			</div>

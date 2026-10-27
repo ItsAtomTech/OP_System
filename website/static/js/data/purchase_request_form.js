@@ -105,7 +105,7 @@ let formStructure = {
                     "Quantity",
                     "Item Description",
                     "Unit Cost",
-                    "Total Ammount"
+                    "Total Amount"
                 ],
                 "itemsConfig": [
                     {
