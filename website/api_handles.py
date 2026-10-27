@@ -707,6 +707,9 @@ def remove_purchase_request_file():
         if not purchase:
             return {"type": "error", "message": "Purchase request not found"}
 
+        if not is_admin() and purchase.user_id != current_user.user_id:
+            return jsonify({"type": "error", "message": "No permission to perform this action"})
+
         if purchase.status == "approved" or purchase.status == "processed":
             return {"type": "error", "message": "Cannot remove an approved or processed purchase request"}
 
@@ -717,7 +720,6 @@ def remove_purchase_request_file():
     except Exception as e:
         db.session.rollback()
         return {"type": "error", "message": str(e)}
-
 
 
 @api_handles.route('/purchase_request_list', methods=['POST', 'GET'])
@@ -771,7 +773,12 @@ def purchase_request_list():
 
         except json.JSONDecodeError:
             pass
-
+    
+    
+    # User Filters
+    if is_admin(3):
+        query = query.filter(PurchaseRequests.user_id == current_user.user_id)
+    
     # Search
     search = request.form.get("search")
     if search:
