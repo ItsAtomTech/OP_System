@@ -760,6 +760,7 @@ async function assignedReqStatus(elm){
 	function updateListen(data){
 			let res_data = (JSON.parse(data.responseText));
 			showToast(res_data.message);
+			localStorage.setItem("shouldReloadFuel","true");
 			
 			
 		
