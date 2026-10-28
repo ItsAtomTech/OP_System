@@ -1048,13 +1048,20 @@ def get_order_by_id_standalone():
         if not order_id:
             return {"type": "error", "message": "Missing order_id"}
 
-        order = PurchaseOrder.query.filter(
+        result = db.session.query(
+            PurchaseOrder,
+            Department.name.label("department_name"),
+        ).outerjoin(
+            Department, PurchaseOrder.department_id == Department.id
+        ).filter(
             PurchaseOrder.order_id == int(order_id),
             PurchaseOrder.type == "standalone"
         ).first()
 
-        if not order:
+        if not result:
             return {"type": "error", "message": "Standalone purchase order not found"}
+
+        order, department_name = result
 
         order_data = {
             "order_id":                order.order_id,
@@ -1072,8 +1079,10 @@ def get_order_by_id_standalone():
             "approved_by":             order.approved_by,
             "items":                   order.items,
             "department_id":           order.department_id,
+            "department_name":         department_name,
             "company_id":              order.company_id,
-            "items":                   order.items,
+            "total_amount":            order.total_amount,
+            "status":                  order.status,
             "misc":                    order.misc,
             "json_data":               order.json_data,
             "date":                    order.date.strftime("%Y-%m-%d %H:%M:%S") if order.date else None,
@@ -1083,7 +1092,6 @@ def get_order_by_id_standalone():
 
     except Exception as e:
         return {"type": "error", "message": str(e)}
-
 
 
 @api_handles.route('/save_purchase_order', methods=['POST'])
@@ -1158,7 +1166,7 @@ def save_purchase_order():
         return {"type": "error", "message": str(e)}
 
 
-
+#APIs for Standalone Purchase Orders
 
 @api_handles.route('/save_purchase_order_standalone', methods=['POST'])
 @login_required
@@ -1254,6 +1262,141 @@ def save_purchase_order_standalone():
         db.session.rollback()
         return {"type": "error", "message": str(e)}
 
+
+@api_handles.route('/purchase_order_list', methods=['POST', 'GET'])
+@login_required
+def purchase_order_list():
+    try:
+        current_page = int(request.form.get("page") or 1)
+    except ValueError:
+        current_page = 1
+
+    per_page = post_per_page
+
+    query = db.session.query(
+        PurchaseOrder,
+        Users.username.label("creator_name"),
+        Department.name.label("department_name"),
+    ).outerjoin(
+        Users, PurchaseOrder.user_id == Users.user_id
+    ).outerjoin(
+        Department, PurchaseOrder.department_id == Department.id
+    ).filter(
+        PurchaseOrder.type == "standalone"
+    )
+
+    filters_raw = request.form.get("filters")
+    if filters_raw:
+        try:
+            filters = json.loads(filters_raw)
+
+            if 'status' in filters and filters['status']:
+                query = query.filter(PurchaseOrder.status == filters['status'])
+
+            if 'department_id' in filters and filters['department_id']:
+                query = query.filter(PurchaseOrder.department_id == int(filters['department_id']))
+
+            if 'user_id' in filters and filters['user_id']:
+                query = query.filter(PurchaseOrder.user_id == int(filters['user_id']))
+
+        except (json.JSONDecodeError, ValueError, TypeError):
+            pass
+
+    if not is_admin():
+        query = query.filter(PurchaseOrder.user_id == current_user.user_id)
+
+    search = request.form.get("search")
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                PurchaseOrder.po_no.ilike(search_term),
+                PurchaseOrder.supplier_name.ilike(search_term),
+                PurchaseOrder.supplier_address.ilike(search_term),
+                PurchaseOrder.contact_person.ilike(search_term),
+                PurchaseOrder.supplier_contact_number.ilike(search_term),
+                PurchaseOrder.remarks.ilike(search_term),
+                PurchaseOrder.prepared_by.ilike(search_term),
+                PurchaseOrder.approved_by.ilike(search_term),
+                PurchaseOrder.items.ilike(search_term),
+                PurchaseOrder.status.ilike(search_term),
+                Users.username.ilike(search_term),
+                Department.name.ilike(search_term),
+            )
+        )
+
+    sortby = request.form.get("sort")
+    order = request.form.get("order_by", "asc").lower()
+
+    sortable_columns = {
+        "order_id": PurchaseOrder.order_id,
+        "po_no": PurchaseOrder.po_no,
+        "supplier_name": PurchaseOrder.supplier_name,
+        "total_amount": PurchaseOrder.total_amount,
+        "status": PurchaseOrder.status,
+        "date": PurchaseOrder.date,
+        "department_id": PurchaseOrder.department_id,
+        "user_id": PurchaseOrder.user_id,
+        "creator_name": Users.username,
+        "department_name": Department.name,
+    }
+
+    if sortby in sortable_columns:
+        sort_column = sortable_columns[sortby]
+        if order == "desc":
+            query = query.order_by(desc(sort_column))
+        else:
+            query = query.order_by(asc(sort_column))
+    else:
+        query = query.order_by(PurchaseOrder.order_id.desc())
+
+    pagination = query.paginate(page=current_page, per_page=per_page, error_out=False)
+
+    results = pagination.items
+    total_pages = pagination.pages
+    total_results = pagination.total
+
+    purchase_order_list = []
+
+    for record, creator_name, department_name in results:
+        try:
+            items = json.loads(record.items) if record.items else []
+        except (json.JSONDecodeError, TypeError):
+            items = []
+
+        purchase_order_list.append({
+            "order_id": record.order_id,
+            "po_no": record.po_no,
+            "type": record.type,
+            "user_id": record.user_id,
+            "creator_name": creator_name,
+            "department_id": record.department_id,
+            "department_name": department_name,
+            "company_id": record.company_id,
+            "supplier_name": record.supplier_name,
+            "supplier_address": record.supplier_address,
+            "contact_person": record.contact_person,
+            "supplier_contact_number": record.supplier_contact_number,
+            "payment_terms": record.payment_terms,
+            "remarks": record.remarks,
+            "prepared_by": record.prepared_by,
+            "approved_by": record.approved_by,
+            "items": items,
+            "total_amount": record.total_amount,
+            "status": record.status,
+            "misc": record.misc,
+            "date": record.date.strftime("%Y-%m-%d %H:%M:%S") if record.date else None,
+        })
+
+    return {
+        "type": "success",
+        "purchase_order_list": purchase_order_list,
+        "pagination_data": {
+            "current_page": current_page,
+            "total_pages": total_pages,
+            "total_results": total_results
+        }
+    }
 
 
 @api_handles.route('/update_purchase_order_standalone', methods=['POST'])

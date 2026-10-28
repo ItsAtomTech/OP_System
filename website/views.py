@@ -196,7 +196,6 @@ def update_fuelfile_editor_():
     
     
 
-
 #Main page that list all records of Forms files available    
 @views.route('/request_files', methods=['GET', 'POST'])
 def file_records_page():
@@ -263,6 +262,15 @@ def purchase_files_table_():
     page = 'purchase_files_table'
 
     return render_template("purchase_files_table.html", user=current_user, page=page)   
+
+
+# Purchase Order ============
+
+@views.route('/purchase_orders_table', methods=['GET', 'POST'])
+def purchase_orders_table_():
+    page = 'purchase_orders_table'
+
+    return render_template("order_files_table.html", user=current_user, page=page)   
 
 
 
