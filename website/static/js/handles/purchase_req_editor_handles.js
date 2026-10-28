@@ -223,7 +223,7 @@ function calculateTotal(elm){
 	
 	let el = elm.parentNode.parentNode;
 	
-	let totalAmmount = (el.querySelectorAll("[column_name='Total Ammount']"));
+	let totalAmmount = (el.querySelectorAll("[column_name='Total Amount']"));
 	let cost = (el.querySelectorAll("[column_name='Unit Cost']"));
 	let quantity = (el.querySelectorAll("[column_name='Quantity']"));
 	
