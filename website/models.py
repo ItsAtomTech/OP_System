@@ -76,6 +76,9 @@ class PurchaseOrder(db.Model):
     
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'))   
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
+    total_amount = db.Column(db.Float)
+    status = db.Column(db.String(50))
+    
     json_data = db.Column(db.String(10000))
     date = db.Column(db.DateTime(timezone=True), default=manila_time)
     

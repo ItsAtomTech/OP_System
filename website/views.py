@@ -289,6 +289,16 @@ def update_purchase_order_edit():
     return render_template("forms/purchase_order.html", user=current_user, page=page,common_names=common_names)
     
 
+        
+@views.route('/purchase_order_edit_standalone', methods=['GET', 'POST'])
+def update_purchase_order_standalone_edit():
+    page = 'purchase_order_edit_standalone'
+    
+    common_names = get_common_approver_names()
+    
+    return render_template("forms/purchase_order_standalone.html", user=current_user, page=page,common_names=common_names)
+    
+
 
 
 # =======================

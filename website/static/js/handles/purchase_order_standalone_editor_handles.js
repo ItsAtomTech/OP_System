@@ -6,7 +6,7 @@ let common_designations = [];
 function submitForm(confirmed){
 	let values = formMaker.retriveFormInput(true);
 	
-	values["purchase_id"] = getparam('id');
+	values["order_id"] = getparam('order_id');
 
 	
 	let params = [
@@ -38,9 +38,9 @@ function submitForm(confirmed){
 	
 	
 	//for updating
-	if(pageType == "purchase_order_edit"){
+	if(pageType == "purchase_order_edit_standalone"){
 		let custom_params = {
-		"name": "purchase_order_id",
+		"name": "order_id",
 		"value": getparam('order_id'),
 		}
 		
@@ -67,7 +67,7 @@ let nextFormID = undefined;
 function feedBackSaving(){
 	let res_data = (JSON.parse(event.target.responseText));
 	createDialogue("info", res_data.message);
-	if(res_data.type == "success" && pageType != "purchase_order_edit"){
+	if(res_data.type == "success" && pageType != "purchase_order_edit_standalone"){
 		window.setTimeout(close, 1000);
 	}
 	function close(){
@@ -117,19 +117,16 @@ async function makeLatestPoId(){
 
 
 async function loadForEdit(){
-	let params = [
+	let params = [	
 		{
-		"name": "purchase_id",
-		"data": getparam('id'),
-		},		
-		{
-		"name": "purchase_order_id",
+		"name": "order_id",
 		"data": getparam('order_id'),
 		},
 	];
 	
+	
 	await qBuilder.sendPromise(proccessDataForCustomLogo,"get_logo_assets");
-	qBuilder.sendQuery(loadIntoForms,"get_order_by_id", params);
+	qBuilder.sendQuery(loadIntoForms,"get_order_by_id_standalone", params);
 	
 	//_("_0").value = "Update On Probation Student";
 }
@@ -141,7 +138,7 @@ function monitorPOValue(elm){
 	
 	if(elm.value.trim().length <= 0){
 		
-		if(pageType == "purchase_order_edit"){
+		if(pageType == "purchase_order_edit_standalone"){
 			elm.value = loadedPO;
 			// elm.disabled = true;
 		}else{
@@ -162,6 +159,7 @@ function loadIntoForms(){
 		return;
 	}
 	
+
 	userID = current_user_id;
 	
 	loadEvents();	
@@ -169,7 +167,7 @@ function loadIntoForms(){
 	let datajs_order = setdata.order;
 	let raw_json = JSON.parse(setdata.order.json_data);
 	
-	let custom_logo = datajs.misc;
+	let custom_logo = setdata.order['misc'];
 	
 	try{
 		custom_logo = JSON.parse(custom_logo);
@@ -179,7 +177,7 @@ function loadIntoForms(){
 	}
 	
 		
-	if(setdata.purchase.status == "processed"){
+	if(setdata.order.status == "processed"){
 		loadForms(1,0,1,1);	
 		showToast("The form is now readonly!");
 		
@@ -188,6 +186,7 @@ function loadIntoForms(){
 	}
 	
 	if (datajs_order.po_no) loadedPO = datajs_order.po_no;
+
 	
 	let converted = {
 		
@@ -204,12 +203,12 @@ function loadIntoForms(){
 		"position_approved_by": raw_json.position_approved_by,
 		
 		
-		"department_id": datajs.department_id,
-		"items": datajs.items,
-		"requested_by": datajs.requested_by,
-		"purpose_of_request": datajs.purpose_of_request,
-		"date_requested": datajs.date,
-		"company_id": datajs.company_id,
+		"department_id": datajs_order.department_id,
+		"items": datajs_order.items,
+		"requested_by": datajs_order.requested_by,
+		"purpose_of_request": datajs_order.purpose_of_request,
+		"date_requested": datajs_order.date,
+		"company_id": datajs_order.company_id,
 		"use_custom_logo": custom_logo,
 	}
 	
@@ -235,7 +234,7 @@ function loadIntoForms(){
 
 
 
-if(pageType == "purchase_order_edit"){
+if(pageType == "purchase_order_edit_standalone"){
 	loadForEdit();
 }else{
 	qBuilder.sendQuery(proccessDataForCustomLogo,"get_logo_assets");

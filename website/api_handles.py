@@ -1038,6 +1038,52 @@ def get_order_by_id():
         return {"type": "error", "message": str(e)}
 
 
+#get an item from only the standalone types
+@api_handles.route('/get_order_by_id_standalone', methods=['GET','POST'])
+@login_required
+def get_order_by_id_standalone():
+    try:
+        order_id = request.form.get("order_id") or request.args.get("order_id")
+
+        if not order_id:
+            return {"type": "error", "message": "Missing order_id"}
+
+        order = PurchaseOrder.query.filter(
+            PurchaseOrder.order_id == int(order_id),
+            PurchaseOrder.type == "standalone"
+        ).first()
+
+        if not order:
+            return {"type": "error", "message": "Standalone purchase order not found"}
+
+        order_data = {
+            "order_id":                order.order_id,
+            "purchase_id":             order.purchase_id,
+            "user_id":                 order.user_id,
+            "po_no":                   order.po_no,
+            "type":                    order.type,
+            "supplier_name":           order.supplier_name,
+            "supplier_address":        order.supplier_address,
+            "contact_person":          order.contact_person,
+            "supplier_contact_number": order.supplier_contact_number,
+            "payment_terms":           order.payment_terms,
+            "remarks":                 order.remarks,
+            "prepared_by":             order.prepared_by,
+            "approved_by":             order.approved_by,
+            "items":                   order.items,
+            "department_id":           order.department_id,
+            "company_id":              order.company_id,
+            "items":                   order.items,
+            "misc":                    order.misc,
+            "json_data":               order.json_data,
+            "date":                    order.date.strftime("%Y-%m-%d %H:%M:%S") if order.date else None,
+        }
+
+        return {"type": "success", "order": order_data, "purchase": None}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+
 
 
 @api_handles.route('/save_purchase_order', methods=['POST'])
@@ -1157,7 +1203,20 @@ def save_purchase_order_standalone():
         
         if not all([order_type, po_no, supplier_name, approved_by]):
             return {"type": "error", "message": "Incomplete purchase order data"}
+        
+        
+        # Compute total_amount from the 5th column (or at index 4) of each item
+        try:
+            items_list = json.loads(items) if isinstance(items, str) else items
+        except (json.JSONDecodeError, TypeError):
+            items_list = []
 
+        total_amount = 0.0
+        for row in items_list:
+            try:
+                total_amount += float(row[4])
+            except (IndexError, ValueError, TypeError):
+                pass
 
         new_order = PurchaseOrder(
             user_id                 = current_user.user_id,
@@ -1176,6 +1235,7 @@ def save_purchase_order_standalone():
             misc                    = json.dumps(misc_data),
             json_data               = order_data,
             
+            total_amount = total_amount,
             department_id = department_id,
             company_id = company_id
         )
@@ -1189,6 +1249,105 @@ def save_purchase_order_standalone():
         db.session.commit()
 
         return {"type": "success", "message": "Purchase order saved successfully", "id": new_order.order_id}
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+
+
+
+@api_handles.route('/update_purchase_order_standalone', methods=['POST'])
+@login_required
+def update_purchase_order_standalone():
+    try:
+        order_data = request.form.get("order_data")
+        order_id   = request.form.get("order_id")
+
+        if not order_data:
+            return {"type": "error", "message": "Missing order_data"}
+
+        if not order_id:
+            return {"type": "error", "message": "Missing order_id"}
+
+        data = json.loads(order_data)
+
+        po_no                   = (data.get("po_no") or "").strip()
+        supplier_name           = data.get("supplier_name")
+        supplier_address        = data.get("supplier_address")
+        contact_person          = data.get("contact_person")
+        supplier_contact_number = data.get("supplier_contact_number")
+        payment_terms           = data.get("payment_terms")
+        remarks                 = data.get("remarks")
+        prepared_by             = data.get("prepared_by")
+        approved_by             = data.get("approved_by")
+        items                   = data.get("items")
+        department_id           = data.get("department_id")
+        company_id              = data.get("company_id")
+        status                  = data.get("status")
+        date_ordered            = data.get("date", None)
+
+        if not company_id:
+            company_id = current_user.company_id or None
+
+        if not all([po_no, supplier_name, approved_by, items]):
+            return {"type": "error", "message": "Incomplete purchase order data"}
+
+        order = PurchaseOrder.query.filter(
+            PurchaseOrder.order_id == int(order_id),
+            PurchaseOrder.type == "standalone"
+        ).first()
+        if not order:
+            return {"type": "error", "message": "Standalone purchase order not found"}
+
+        duplicate = PurchaseOrder.query.filter(
+            PurchaseOrder.po_no == po_no,
+            PurchaseOrder.order_id != order.order_id
+        ).first()
+        if duplicate:
+            return {"type": "error", "message": f"PO No. {po_no} already exists"}
+
+        try:
+            items_list = json.loads(items) if isinstance(items, str) else items
+        except (json.JSONDecodeError, TypeError):
+            items_list = []
+
+        total_amount = 0.0
+        for row in items_list:
+            try:
+                total_amount += float(row[4])
+            except (IndexError, ValueError, TypeError):
+                pass
+        
+        
+        
+        order.po_no                   = po_no
+        order.supplier_name           = supplier_name
+        order.supplier_address        = supplier_address
+        order.contact_person          = contact_person
+        order.supplier_contact_number = supplier_contact_number
+        order.payment_terms           = payment_terms
+        order.remarks                 = remarks
+        order.prepared_by             = prepared_by
+        order.approved_by             = approved_by
+        order.items                   = items if isinstance(items, str) else json.dumps(items)
+        order.department_id           = department_id
+        order.company_id              = company_id
+        order.total_amount            = total_amount
+        order.json_data               = order_data
+
+        if status:
+            order.status = status
+
+        if "use_custom_logo" in data:
+            order.misc = json.dumps({"custom_logo": data.get("use_custom_logo")})
+
+        if date_ordered:
+            parsed_date = parse_date_string(date_ordered)
+            if parsed_date:
+                order.date = parsed_date
+
+        db.session.commit()
+        return {"type": "success", "message": "Standalone purchase order updated successfully", "id": order.order_id}
 
     except Exception as e:
         db.session.rollback()
