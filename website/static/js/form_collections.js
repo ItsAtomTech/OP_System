@@ -17,6 +17,21 @@ const formCollections =  [
 		
 	},
 	{
+		"name":"Purchase Order Form",
+		"small_description": "A blank standalone form for POF.",
+		"link":"purchase_order_standalone",
+		"form_id": 3,
+		"filed": true, //Indicates Wheter this item also shows as File on Request Files
+		
+		"file_name": "Purchase Order Files",
+		"file_link": "purchase_orders_table",
+		"file_description": "Request files of POF.",
+		"company_id": "2",
+		
+		"tab_icon": "fa-shopping-cart",
+		
+	},
+	{
 		"name":"Fuel Requisition Form",
 		"small_description": "A blank request form for FRF.",
 		"link":"fuel_requisition",

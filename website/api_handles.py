@@ -868,6 +868,8 @@ def purchase_request_list():
         }
     }
 
+
+
 @api_handles.route('/updatePurchaseReqStatus', methods=['POST'])
 @login_required
 def updatePurchaseReqStatus():
@@ -932,6 +934,20 @@ def get_lastest_order_id():
         return {"type": "error", "message": str(e)}
 
 
+@api_handles.route('/get_lastest_standalone_order_id', methods=['GET','POST'])
+@login_required
+def get_lastest_standalone_order_id():
+    try:
+        total = db.session.query(func.count(PurchaseOrder.order_id)).filter(
+            
+        ).scalar() or 0
+
+        return {"type": "success", "message": "order count", "count": total}
+
+    except Exception as e:
+        return {"type": "error", "message": str(e)}
+        
+        
 
 @api_handles.route('/get_order_by_id', methods=['GET','POST'])
 @login_required
@@ -1079,6 +1095,89 @@ def save_purchase_order():
             approved_by             = approved_by,
             misc                    = json.dumps(misc_data),
             json_data               = order_data,
+        )
+
+        if date_ordered:
+            parsed_date = parse_date_string(date_ordered)
+            if parsed_date:
+                new_order.date = parsed_date
+
+        db.session.add(new_order)
+        db.session.commit()
+
+        return {"type": "success", "message": "Purchase order saved successfully", "id": new_order.order_id}
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}
+
+
+
+
+@api_handles.route('/save_purchase_order_standalone', methods=['POST'])
+@login_required
+def save_purchase_order_standalone():
+    try:
+        order_data = request.form.get("order_data")
+        if not order_data:
+            return {"type": "error", "message": "Missing order_data"}
+
+        data = json.loads(order_data)
+
+        order_type              = "standalone"
+        purchase_id             = data.get("purchase_id")
+        po_no                   = data.get("po_no")
+        supplier_name           = data.get("supplier_name")
+        supplier_address        = data.get("supplier_address")
+        contact_person          = data.get("contact_person")
+        supplier_contact_number = data.get("supplier_contact_number")
+        payment_terms           = data.get("payment_terms")
+        remarks                 = data.get("remarks")
+        items                   = data.get("items")
+        prepared_by             = data.get("prepared_by")
+        approved_by             = data.get("approved_by")
+        date_ordered            = data.get("date", None)
+        
+        department_id  = data.get("department_id")
+        company_id     = data.get("company_id")
+
+        misc_data = {
+            "custom_logo": data.get("use_custom_logo", None)
+        }
+        
+                
+        if len(company_id) <= 0:
+            company_id = current_user.company_id or None
+        
+        po_no = po_no.strip()
+
+        existing_order = PurchaseOrder.query.filter_by(po_no=po_no).first()
+        if existing_order:
+            return {"type": "error", "message": f"PO No. {po_no} already exists"}
+        
+        if not all([order_type, po_no, supplier_name, approved_by]):
+            return {"type": "error", "message": "Incomplete purchase order data"}
+
+
+        new_order = PurchaseOrder(
+            user_id                 = current_user.user_id,
+
+            po_no                   = po_no,
+            type                    = order_type,
+            supplier_name           = supplier_name,
+            supplier_address        = supplier_address,
+            contact_person          = contact_person,
+            supplier_contact_number = supplier_contact_number,
+            payment_terms           = payment_terms,
+            remarks                 = remarks,
+            prepared_by             = prepared_by,
+            approved_by             = approved_by,
+            items                   = items,
+            misc                    = json.dumps(misc_data),
+            json_data               = order_data,
+            
+            department_id = department_id,
+            company_id = company_id
         )
 
         if date_ordered:

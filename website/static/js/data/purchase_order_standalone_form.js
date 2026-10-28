@@ -29,6 +29,38 @@ let formStructure = {
             "span_column": true,
             "id": "po_no",
             "index": 1
+        }
+		,
+		{
+            "type": "select",
+            "events": {},
+            "value": "",
+            "label": "Company",
+            "fancy": true,
+            "required": false,
+            "description": "If not Specified, defaults to Current User's company assigned",
+            "group": "g_c6956005-08ba-420a-9cbc-2548a045033b",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+			"list": "company_list",
+            "id": "company_id",
+            "index": 6
+        },
+        {
+            "type": "select",
+            "value": "",
+            "label": "Requesting Department",
+            "fancy": true,
+            "required": false,
+            "description": "Please Specify which department this PO is for.",
+            "group": "g_c6956005-08ba-420a-9cbc-2548a045033b",
+            "row_span": null,
+            "col_span": null,
+            "span_column": false,
+			"list":"departments",
+            "id": "department_id",
+            "index": 4
         },
         {
             "type": "text",
@@ -275,7 +307,7 @@ let formStructure = {
             "span_column": false,
             "id": "position_approved_by",
             "index": 12
-        },,
+        },
 		{
             "type": "select",
             "events": {},

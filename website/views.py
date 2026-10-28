@@ -165,6 +165,16 @@ def purchase_order():
 
     return render_template("forms/purchase_order.html", user=current_user, page=page, common_names=common_names)  
     
+     
+    
+@views.route('/purchase_order_standalone', methods=['GET', 'POST'])
+def purchase_order_standalone():
+    page = 'purchase_order'
+    common_names = get_common_approver_names()
+    
+
+    return render_template("forms/purchase_order_standalone.html", user=current_user, page=page, common_names=common_names)  
+    
   
   
 @views.route('/fuel_requisition', methods=['GET', 'POST'])
