@@ -1044,9 +1044,13 @@ def get_order_by_id():
 def get_order_by_id_standalone():
     try:
         order_id = request.form.get("order_id") or request.args.get("order_id")
+        includeCompany = request.form.get("include_company") or request.args.get("include_company")
 
         if not order_id:
             return {"type": "error", "message": "Missing order_id"}
+
+        if not includeCompany or includeCompany == "0":
+            includeCompany = False
 
         result = db.session.query(
             PurchaseOrder,
@@ -1087,6 +1091,16 @@ def get_order_by_id_standalone():
             "json_data":               order.json_data,
             "date":                    order.date.strftime("%Y-%m-%d %H:%M:%S") if order.date else None,
         }
+
+        if includeCompany and order.company_id:
+            company_data = Company.query.get(order.company_id)
+
+            if company_data:
+                order_data["company_data"] = {
+                    "name":      company_data.name,
+                    "logo_link": company_data.logo_link,
+                    "address":   company_data.address,
+                }
 
         return {"type": "success", "order": order_data, "purchase": None}
 
@@ -1191,6 +1205,7 @@ def save_purchase_order_standalone():
         prepared_by             = data.get("prepared_by")
         approved_by             = data.get("approved_by")
         date_ordered            = data.get("date", None)
+        status                  = data.get("status", 'pending')
         
         department_id  = data.get("department_id")
         company_id     = data.get("company_id")

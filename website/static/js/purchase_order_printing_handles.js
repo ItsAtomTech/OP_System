@@ -28,10 +28,18 @@ async function getPrintableData(){
 async function getInformationData(data){
 	let params = [
 		{"name": "purchase_order_id", "value": data.order_id},
+		{"name": "order_id", "value": data.order_id},
 		{"name": "include_company", "value": 1}
 	];
-
-	await qBuilder.sendPromise(generateDataOnDoc, '/get_order_by_id', params);
+	
+	
+	if(data.type == "standalone"){
+		await qBuilder.sendPromise(generateDataOnDocStandalone, '/get_order_by_id_standalone', params);
+	}else{
+		await qBuilder.sendPromise(generateDataOnDoc, '/get_order_by_id', params);
+	}
+	
+	
 
 	if(!orderLoaded){
 		return;
@@ -85,6 +93,72 @@ function generateDataOnDoc(dataraw){
 	_('approved_position').innerText = extra.position_approved_by || '--';
 
 	generateHeaderTitles(res_data, order);
+
+	orderLoaded = true;
+}
+
+// For standalone records
+function generateDataOnDocStandalone(dataraw){
+	let res_data = parseJSON(dataraw.responseText, {});
+
+	if(res_data.type !== "success"){
+		return showToast(res_data.message || "Unable to load the purchase order!");
+	}
+
+	let order = res_data.order;
+	let extra = parseJSON(order.json_data, {});
+	let items = parseJSON(order.items, parseJSON(extra.items, []));
+
+	if(!Array.isArray(items)){
+		items = [];
+	}
+
+	let total = order.total_amount;
+	if(total === undefined || total === null){
+		total = 0;
+		items.forEach(row => {
+			let amount = parseFloat(row[4]);
+			if(!isNaN(amount)){
+				total += amount;
+			}
+		});
+	}
+
+	_('po_number').innerText = order.po_no || '--';
+	_('po_date').innerText   = order.date ? utility.formatDate(order.date) : '--';
+
+	_('supplier_name').innerText           = order.supplier_name || '--';
+	_('supplier_address').innerText        = order.supplier_address || '--';
+	_('supplier_contact_person').innerText = order.contact_person || '--';
+	_('supplier_contact_number').innerText = order.supplier_contact_number || '--';
+
+	generatePaymentTerms(order.payment_terms);
+
+	renderItems(items);
+
+	_('grand_total').innerText = formatPeso(total);
+
+	_('remarks').innerText = order.remarks || '--';
+
+	_('prepared_by').innerText       = order.prepared_by || extra.prepared_by || '--';
+	_('prepared_position').innerText = extra.position_prepared_by || '--';
+	_('approved_by').innerText       = order.approved_by || extra.approved_by || '--';
+	_('approved_position').innerText = extra.position_approved_by || '--';
+	
+	
+	function headerDataFromOrder(order){
+		let companyData = order.company_data || {};
+
+			return {
+				purchase: {
+					company_data: companyData,
+					misc: order.misc
+				},
+				company_data: companyData
+			};
+	}
+	
+	generateHeaderTitles(headerDataFromOrder(order), order);
 
 	orderLoaded = true;
 }
