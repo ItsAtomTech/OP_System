@@ -140,6 +140,7 @@
 	gap:2px;
 	align-items:flex-end;	
 	padding-left:10px;
+	z-index:2;
 }
 
 
@@ -181,10 +182,49 @@
 }
 
 
+
+.decoration_con{
+	position:absolute;
+	/* border:solid red 1px; */
+	opacity:0.95;
+	width:100%;
+	min-height:40px;
+	bottom:0px;
+	right:0;
+	left:0;
+	z-index:0;
+	border-bottom:solid var(--secondary_background) 3px;
+	border-radius:10px;
+	
+}
+
+
+.decoration_con > .decorative_box{
+	/* border:solid red 1px; */
+
+	width:45px;
+	height:40px;
+	position:absolute;
+	border-radius:10px 12px 5px 0;
+	top:0;
+	bottom:0px;
+	right:0px;
+	background-color:var(--secondary_background);
+	pointer-events:none;
+	
+}
+
+
 .top_container{
 	position:relative;
 	
 }
+
+
+
+
+
+
 
 
 /* Schedule Setup ======================= */
@@ -468,6 +508,11 @@ List Section
     box-shadow:2px 2px 3px -3px var(--primary_color_faded);
     opacity:1;
 }
+
+
+
+
+
 
 
 
