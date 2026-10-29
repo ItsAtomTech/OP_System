@@ -46,7 +46,7 @@ function submitForm(confirmed){
 		
 		params.push(custom_params);
 		qBuilder.sendQuery(feedBackSaving,"update_purchase_order_standalone", params);
-		localStorage.setItem("shouldReloadPurchaseOrderModal","true");
+		localStorage.setItem("shouldReloadPurchaseOrder","true");
 		createDialogue("wait");
 		return;
 	}
@@ -55,7 +55,7 @@ function submitForm(confirmed){
 	console.log(params);
 	
 	qBuilder.sendQuery(feedBackSaving,"save_purchase_order_standalone", params);
-	localStorage.setItem("shouldReloadPurchaseOrderModal","true");
+	localStorage.setItem("shouldReloadPurchaseOrder","true");
 	createDialogue("wait");
 
 }
@@ -177,7 +177,7 @@ function loadIntoForms(){
 	}
 	
 		
-	if(setdata.order.status == "processed"){
+	if(setdata.order.status == "processed" || setdata.order.status == "approved"){
 		loadForms(1,0,1,1);	
 		showToast("The form is now readonly!");
 		
@@ -264,6 +264,7 @@ async function printDoc (){
 	let filters_to_pass = {
 		"id": getparam('id'),  //purhcase_request id
 		"order_id":nextFormID,
+		"type":"standalone",
 	}
 	
 	localStorage.setItem("printPurchaseOrder", JSON.stringify(filters_to_pass));

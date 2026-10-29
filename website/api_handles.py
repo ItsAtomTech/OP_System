@@ -1511,6 +1511,76 @@ def update_purchase_order_standalone():
         db.session.rollback()
         return {"type": "error", "message": str(e)}
 
+
+#For updating purchase request status
+@api_handles.route('/updatePurchaseOrderStatus', methods=['POST'])
+@login_required
+def updatePurchaseOrderStatus_():
+
+    accepted_status = ["approved", "pending", "processed"]
+
+    try:
+        if not is_admin():
+            return jsonify({'type': 'error', 'message': 'Unauthorized'})
+
+        order_id = request.form.get("order_id")
+        status = request.form.get("status")
+
+        if not all([order_id, status]):
+            return jsonify({'type': 'error', 'message': 'Missing a required field'})
+
+        if status not in accepted_status:
+            return jsonify({'type': 'error', 'message': 'Invalid Value for Status: ' + status})
+
+        record = PurchaseOrder.query.filter(
+            PurchaseOrder.order_id == int(order_id),
+            PurchaseOrder.type == "standalone"
+        ).first()
+        if not record:
+            return jsonify({'type': 'error', 'message': 'Record not found'})
+
+        record.status = status
+
+        db.session.commit()
+
+        return jsonify({'type': 'success', 'message': 'Status updated successfully'})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'type': 'error', 'message': str(e)})
+        
+
+        
+#Removing a standalone purchase a pending order
+@api_handles.route('/remove_purchase_order_standalone', methods=['POST'])
+@login_required
+def remove_purchase_order_standalone():
+    try:
+        order_id = request.form.get("order_id")
+        if not order_id:
+            return {"type": "error", "message": "Missing order_id"}
+
+        order = PurchaseOrder.query.filter(
+            PurchaseOrder.order_id == int(order_id),
+            PurchaseOrder.type == "standalone"
+        ).first()
+        if not order:
+            return {"type": "error", "message": "Standalone purchase order not found"}
+
+        if not is_admin() and order.user_id != current_user.user_id:
+            return {"type": "error", "message": "No permission to perform this action"}
+
+        if order.status == "approved" or order.status == "processed":
+            return {"type": "error", "message": "Cannot remove an approved or processed purchase order"}
+
+        db.session.delete(order)
+        db.session.commit()
+        return {"type": "success", "message": "Purchase order removed successfully"}
+
+    except Exception as e:
+        db.session.rollback()
+        return {"type": "error", "message": str(e)}  
+
 # ================================
 # Purchase Order End   ===========
 # ================================

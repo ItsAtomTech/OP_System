@@ -232,7 +232,7 @@ function tableLoader(data){
 				
 				let remove_action = make("div");
 					remove_action.classList.add("fa","fa-trash","flexed","df_button_flat","df_small","medium","remove", "buttonize");
-					remove_action.setAttribute("onclick","moveToTrashHelper('"+forms[index].purchase_id+"')");
+					remove_action.setAttribute("onclick","moveToTrashHelper('"+forms[index].order_id+"')");
 					action_div.appendChild(remove_action);
 					
 				}
@@ -459,7 +459,7 @@ function dateFormater(d){
 
 //Other functions
 loadRecords = loadAllItems;
-monitorChanges("shouldReloadPurchaseReq", loadAllItems);
+monitorChanges("shouldReloadPurchaseOrder", loadAllItems);
 
 
 
@@ -493,9 +493,10 @@ function feedBackRemoving(){
 	createDialogue(res_data.type, res_data.message);
 	
 	if(res_data.type == "success"){
-		localStorage.setItem("shouldReloadPurchaseReq","true");
+		localStorage.setItem("shouldReloadPurchaseOrder","true");
 	}	
 }
+
 
 function silentlyMovetoRemove(ids){
 	let itemvalue = [{"name":"request_id", "value": ids}];
@@ -530,10 +531,9 @@ function moveToTrash(confirmed = undefined,silent=false){
 	if(confirmed == 'fail'){
 		return;
 	}
-	let itemvalue = [{"name":"purchase_id", "value": idSelected}];
-	qBuilder.sendQuery(feedBackRemoving,"/remove_purchase_request_file",itemvalue);
+	let itemvalue = [{"name":"order_id", "value": idSelected}];
+	qBuilder.sendQuery(feedBackRemoving,"/remove_purchase_order_standalone",itemvalue);
 }
-
 
 
 
@@ -798,6 +798,9 @@ function clickedOnRow(elm){
 		_('view_order_remarks').value = order.remarks || '';
 		_('view_order_prepared_by').value = order.prepared_by || '--';
 		_('view_order_approved_by').value = order.approved_by || '--';
+		
+		
+		_('status_option_').value = order.status || 'pending';
 
 		addFancyPlaceholder();
 	}
@@ -872,37 +875,29 @@ async function assignedPurchaseReqStatus(elm){
 	let values = elm.value;
 	
 	let itemvalue = [
-		{"name":"purchase_id", "value": targetID},
+		{"name":"order_id", "value": targetID},
 		{"name":"status", "value": values},
 	];
 	
 	createDialogue("wait");
-	await qBuilder.sendPromise(updateListen,"updatePurchaseReqStatus",itemvalue);
+	await qBuilder.sendPromise(updateListen,"updatePurchaseOrderStatus",itemvalue);
 	destroy_dia();
+	
+	
 	
 
 	
 	function updateListen(data){
 			let res_data = (JSON.parse(data.responseText));
 			showToast(res_data.message);
-			
-				orderButtonState();
+			destroy_dia();
+			// orderButtonState();
+			localStorage.setItem("shouldReloadPurchaseOrder","true");	
 	}
 	
 }
 
 
-function orderButtonState(){
-	let button = _("order_floating");
-	let inputval = _("status_option_");
-	
-	if(inputval.value == "approved" || inputval.value == "processed" ){
-		button.classList.remove("hidden");
-	}else{
-		button.classList.add("hidden");
-	}
-	
-}
 
 
 // Purchase Order Handles ================================

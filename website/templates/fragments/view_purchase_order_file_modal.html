@@ -66,7 +66,20 @@
 					<input type="text" id="view_order_approved_by" tag="approved_by" class="fancy_form_df form_display" readonly />
 				</div>
 			</div>
-
+			
+						<!-- Status -->
+			<div class="flexed padded_gap">
+				<div class="cols_con_ padded_input">
+					<label class="df_label_con placeholder_label" for="status_option_">Status</label>
+					<select {% if current_user.type != 1 %}disabled {% endif %} id="status_option_" onchange="assignedPurchaseReqStatus(this)" tag="status_option" class="fancy_form_df form_display">
+						<option value="approved">Approved</option>
+						<option value="pending">Pending</option>
+						<option value="processed">Processed</option>
+					</select>
+				</div>
+			</div>
+			
+			
 			<div class="floating_print" onclick="printDoc();">
 				<span class="fa fa-print fa-2x"></span>
 			</div>
