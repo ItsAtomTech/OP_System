@@ -28,7 +28,18 @@ function loadAllFormsToView(){
 		let name = tag("name",clone)[0];
 		let text_details = tag("text_details",clone)[0];
 		let index = tag("index",clone)[0];
-
+		
+		
+				
+		if(each.card_logo){
+			let logo_img = make("img");
+				logo_img.src = STATIC_ASSETS + "images/" + each.card_logo;
+				logo_img.classList.add("card_decor_icon");
+				logo_img.setAttribute("innert","");
+				
+			index.appendChild(logo_img);
+		}
+		
 		
 		
 		name.innerText = each.file_name;

@@ -83,6 +83,7 @@
   animation-delay: calc(var(--i) * 0.2s);
   border-top:solid var(--primary_background) 1px;
   border-left:solid var(--primary_background) 1px;
+  position:relative;
   /* filter:brightness(1.05); */
   
 }
@@ -215,15 +216,25 @@
 }
 
 
-.top_container{
-	position:relative;
-	
+
+.card_decor_icon{
+	position:absolute;
+	aspect-ratio:auto;
+	opacity:0.7;
+	height:70px;
+	z-index:0;
+	right:0;
+	top:0;
+	margin-top:10px;
+	pointer-events:none;
 }
 
 
 
-
-
+.top_container{
+	position:relative;
+	
+}
 
 
 

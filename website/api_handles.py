@@ -926,14 +926,21 @@ def updatePurchaseReqStatus():
 @login_required
 def get_lastest_order_id():
     try:
-        latest_id = db.session.query(func.max(PurchaseOrder.order_id)).scalar() or 0
+        candidate = db.session.query(func.max(PurchaseOrder.order_id)).scalar() or 0
 
-        return {"type": "success", "message": "Last inserted id", "id": latest_id}
+        for attempt in range(10000):
+            taken = PurchaseOrder.query.filter(
+                PurchaseOrder.po_no.in_([str(candidate), str(candidate).zfill(5)])
+            ).first()
+
+            if not taken:
+                break
+
+        return {"type": "success", "message": "Last inserted id", "id": candidate}
 
     except Exception as e:
         return {"type": "error", "message": str(e)}
-
-
+        
 
 @api_handles.route('/get_lastest_standalone_order_id', methods=['GET','POST'])
 @login_required
@@ -949,7 +956,6 @@ def get_lastest_standalone_order_id():
             if not taken:
                 break
 
-            candidate += 1
 
         return {"type": "success", "message": "order count", "count": candidate}
 

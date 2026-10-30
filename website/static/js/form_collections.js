@@ -12,8 +12,10 @@ const formCollections =  [
 		"file_link": "purchase_files_table",
 		"file_description": "Request files of PRF.",
 		"company_id": "2",
+		"card_logo": "icons/prq.webp",
 		
 		"tab_icon": "fa-shopping-cart",
+		
 		
 	},
 	{
@@ -21,7 +23,8 @@ const formCollections =  [
 		"small_description": "A blank standalone form for POF.",
 		"link":"purchase_order_standalone",
 		"form_id": 3,
-		"filed": true, //Indicates Wheter this item also shows as File on Request Files
+		"filed": true, //Indicates Wether this item also shows as File on Request Files
+		"card_logo": "icons/poq.webp",
 		
 		"file_name": "Purchase Order Files",
 		"file_link": "purchase_orders_table",
@@ -38,6 +41,7 @@ const formCollections =  [
 		"form_id": 2,
 		"filed": true,
 		"company_id": "1",
+		"card_logo": "icons/frq.webp",
 		
 				
 		"file_name": "Fuel Requisition Files",

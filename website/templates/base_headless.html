@@ -85,6 +85,12 @@
 <script src="{{ url_for('static', filename='js/tooltip.js') }}"></script>
 <script src="{{ url_for('static', filename='js/context_menu.js') }}"></script>
 
+<script>
+let STATIC_ASSETS = "{{ url_for('static', filename='') }}";
+
+
+</script>
+
 {% if config.DEBUG %}
 <script defer src="{{ url_for('static', filename='js/smart_reload.js') }}"></script>
 {% endif %}
