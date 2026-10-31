@@ -2118,6 +2118,217 @@ def get_purchase_request_stats():
         return jsonify({'type': 'error', 'message': str(e)})
 
 
+# Dashboard stats for Purchase Order Data ================================
+@api_handles.route('/get_purchase_order_stats', methods=['POST', 'GET'])
+@login_required
+def get_purchase_order_stats():
+    try:
+        year_range = request.form.get("year_ranges") or "2000-01, 2027-01"
+        year_range = [y.strip() for y in year_range.split(",")]
+
+        query = db.session.query(
+            PurchaseOrder.order_id,
+            PurchaseOrder.po_no,
+            PurchaseOrder.items,
+            PurchaseOrder.supplier_name,
+            PurchaseOrder.payment_terms,
+            PurchaseOrder.prepared_by,
+            PurchaseOrder.approved_by,
+            PurchaseOrder.total_amount,
+            PurchaseOrder.status,
+            PurchaseOrder.date,
+            Company.name.label('company_name'),
+            Department.name.label('department_name'),
+        ).join(Company, PurchaseOrder.company_id == Company.id, isouter=True) \
+         .join(Department, PurchaseOrder.department_id == Department.id, isouter=True) \
+         .filter(PurchaseOrder.type == "standalone")
+
+        if not is_admin():
+            query = query.filter(PurchaseOrder.user_id == current_user.user_id)
+
+        if year_range and len(year_range) == 2:
+            start_year, start_month = map(int, year_range[0].split("-"))
+            end_year, end_month = map(int, year_range[1].split("-"))
+
+            start_date = datetime(start_year, start_month, 1)
+            last_day = calendar.monthrange(end_year, end_month)[1]
+            end_date = datetime(end_year, end_month, last_day, 23, 59, 59)
+
+            query = query.filter(
+                PurchaseOrder.date >= start_date,
+                PurchaseOrder.date <= end_date
+            )
+
+        records = query.all()
+
+        def to_amount(val):
+            try:
+                return float(val)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def parse_items(raw):
+            try:
+                items = json.loads(raw or '[]')
+                return items if isinstance(items, list) else []
+            except (TypeError, ValueError):
+                return []
+
+        def parse_terms(raw):
+            if not raw:
+                return []
+            try:
+                terms = json.loads(raw)
+                if isinstance(terms, list):
+                    return [str(t).strip() for t in terms if str(t).strip()]
+                return [str(terms).strip()]
+            except (TypeError, ValueError):
+                return [str(raw).strip()]
+
+        def top(d, n=10):
+            return [[k, round(v, 2)] for k, v in sorted(d.items(), key=lambda x: x[1], reverse=True)[:n]]
+
+        now = manila_time().replace(tzinfo=None)
+
+        total_records = len(records)
+        total_amount_sum = 0.0
+        count_by_status, amount_by_status = {}, {}
+        amount_by_month, count_by_month = {}, {}
+        amount_by_department, dept_counts = {}, {}
+        amount_by_company = {}
+        amount_by_month_department = {}
+        supplier_count, supplier_amount = {}, {}
+        terms_count = {}
+        item_count, item_spend = {}, {}
+        total_item_lines = 0
+        preparer_count, preparer_amount = {}, {}
+        approver_count, approver_amount = {}, {}
+        status_by_department = {}
+        count_by_weekday = {}
+        aging_buckets = {'0-3': 0, '4-7': 0, '8+': 0}
+
+        for r in records:
+            amt = to_amount(r.total_amount)
+            status = r.status or 'pending'
+            dept = r.department_name or 'Unknown'
+            comp = r.company_name or 'Unknown'
+            supplier = (r.supplier_name or '').strip() or 'Unknown'
+            preparer = (r.prepared_by or '').strip() or 'Unknown'
+            approver = (r.approved_by or '').strip() or 'Unassigned'
+
+            total_amount_sum += amt
+            count_by_status[status] = count_by_status.get(status, 0) + 1
+            amount_by_status[status] = amount_by_status.get(status, 0.0) + amt
+
+            amount_by_department[dept] = amount_by_department.get(dept, 0.0) + amt
+            dept_counts[dept] = dept_counts.get(dept, 0) + 1
+            amount_by_company[comp] = amount_by_company.get(comp, 0.0) + amt
+
+            status_by_department.setdefault(dept, {})
+            status_by_department[dept][status] = status_by_department[dept].get(status, 0) + 1
+
+            supplier_count[supplier] = supplier_count.get(supplier, 0) + 1
+            supplier_amount[supplier] = supplier_amount.get(supplier, 0.0) + amt
+
+            for term in parse_terms(r.payment_terms):
+                terms_count[term] = terms_count.get(term, 0) + 1
+
+            preparer_count[preparer] = preparer_count.get(preparer, 0) + 1
+            preparer_amount[preparer] = preparer_amount.get(preparer, 0.0) + amt
+            approver_count[approver] = approver_count.get(approver, 0) + 1
+            approver_amount[approver] = approver_amount.get(approver, 0.0) + amt
+
+            items = parse_items(r.items)
+            total_item_lines += len(items)
+            for it in items:
+                if not isinstance(it, list) or len(it) < 5:
+                    continue
+                name = it[0] or 'Unknown'
+                item_count[name] = item_count.get(name, 0) + 1
+                item_spend[name] = item_spend.get(name, 0.0) + to_amount(it[4])
+
+            if r.date:
+                created = r.date.replace(tzinfo=None)
+                month_key = r.date.strftime('%Y-%m')
+                amount_by_month[month_key] = amount_by_month.get(month_key, 0.0) + amt
+                count_by_month[month_key] = count_by_month.get(month_key, 0) + 1
+                amount_by_month_department.setdefault(dept, {})
+                amount_by_month_department[dept][month_key] = amount_by_month_department[dept].get(month_key, 0.0) + amt
+
+                weekday = r.date.strftime('%A')
+                count_by_weekday[weekday] = count_by_weekday.get(weekday, 0) + 1
+
+                if status != 'processed':
+                    days_open = (now - created).days
+                    key = '0-3' if days_open <= 3 else '4-7' if days_open <= 7 else '8+'
+                    aging_buckets[key] += 1
+
+        avg_amount_by_department = {k: round(amount_by_department[k] / dept_counts[k], 2) for k in amount_by_department}
+        for dept in amount_by_month_department:
+            amount_by_month_department[dept] = dict(sorted(amount_by_month_department[dept].items()))
+
+        sorted_months = sorted(amount_by_month.items())
+        mom_change_pct = {}
+        for i in range(1, len(sorted_months)):
+            prev_month, prev_amt = sorted_months[i - 1]
+            cur_month, cur_amt = sorted_months[i]
+            mom_change_pct[cur_month] = round(((cur_amt - prev_amt) / prev_amt) * 100, 2) if prev_amt else None
+
+        avg_order_value = round(total_amount_sum / total_records, 2) if total_records else 0
+        avg_items_per_order = round(total_item_lines / total_records, 2) if total_records else 0
+
+        return jsonify({
+            'type': 'success',
+            'data': {
+                'kpi': {
+                    'total_records': total_records,
+                    'total_amount': round(total_amount_sum, 2),
+                    'avg_order_value': avg_order_value,
+                    'count_by_status': count_by_status,
+                    'amount_by_status': {k: round(v, 2) for k, v in amount_by_status.items()},
+                },
+                'spend': {
+                    'amount_by_month': dict(sorted(amount_by_month.items())),
+                    'count_by_month': dict(sorted(count_by_month.items())),
+                    'amount_by_department': {k: round(v, 2) for k, v in amount_by_department.items()},
+                    'amount_by_company': {k: round(v, 2) for k, v in amount_by_company.items()},
+                    'avg_amount_by_department': avg_amount_by_department,
+                    'amount_by_month_department': amount_by_month_department,
+                },
+                'suppliers': {
+                    'unique_suppliers': len(supplier_count),
+                    'top_by_count': top(supplier_count),
+                    'top_by_spend': top(supplier_amount),
+                    'payment_terms_count': dict(sorted(terms_count.items(), key=lambda x: x[1], reverse=True)),
+                },
+                'items': {
+                    'top_by_count': top(item_count),
+                    'top_by_spend': top(item_spend),
+                    'avg_items_per_order': avg_items_per_order,
+                },
+                'people': {
+                    'top_preparers_by_count': top(preparer_count),
+                    'top_preparers_by_amount': top(preparer_amount),
+                    'approver_workload_count': top(approver_count),
+                    'approver_workload_amount': top(approver_amount),
+                },
+                'approval_funnel': {
+                    'status_by_department': status_by_department,
+                    'aging_open_buckets': aging_buckets,
+                },
+                'seasonality': {
+                    'mom_change_pct': mom_change_pct,
+                    'count_by_weekday': count_by_weekday,
+                },
+            }
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        print(str(e))
+        return jsonify({'type': 'error', 'message': str(e)})
+
+
 def parse_approvers(raw):
     try:
         approvers = json.loads(raw or '[]')

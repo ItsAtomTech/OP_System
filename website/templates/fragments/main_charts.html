@@ -412,6 +412,197 @@
 </div>
 
 
+<!-- Purchase Order Stats -->
+
+<div id="more_charts_2" class="grid_layout_expanded charts_parent" tag="purchase_order_charts" name="purchase_order_standalone">
+	<div class="flexed padded_container less_padding_top gap action_button">
+		<button class="df_button_flat primary_background primary_color" onclick="fetchPurchaseOrderStats();showToast('Refreshing Data...');" aria-label="Chart Refresh Button" tooltip="Refresh the Expanded Chart Views">
+			<span class="fa fa-refresh"></span>
+		</button>
+		<button class="df_button_flat primary_background primary_color" onclick="changeLayout('more_charts_2')" aria-label="Toggle Layout for Charts" tooltip="Toggle layout">
+			<span class="fa fa-columns"></span>
+		</button>
+	</div>
+
+	<div class="flexed padded_container less_padding_top gap medium primary_color action_button">
+		<div class="fuel-chart-title-wrap">
+			<span class="fuel-chart-title-icon fa fa-bar-chart"></span>
+			<div class="fuel-chart-title-text">
+				Purchase Order Dashboard
+				<div class="fuel-chart-title-sub">Standalone Purchase Order Analytics at a Glance</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Orders by Status</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_status_count"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Amount by Status</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_status_amount"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Orders Over Time</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_orders_by_month"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Total Spend Over Time</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_spend_by_month"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Spend by Department</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_spend_by_department"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Spend by Company</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_spend_by_company"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Average Order Amount by Department</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_avg_amount_department"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Department Spend Trend</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_department_spend_trend"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Top Suppliers by Orders</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_suppliers_count"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Top Suppliers by Spend</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_suppliers_spend"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Payment Terms Used</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_payment_terms"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Most Ordered Items</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_items_by_count"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Top Items by Spend</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_items_by_spend"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Top Preparers by Count</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_preparers_count"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Top Preparers by Amount</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_preparers_amount"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Approver Workload (Count)</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_approver_count"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Approver Workload (Amount)</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_approver_amount"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Status by Department</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_status_by_department"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Aging Open Orders (Days Open)</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_aging_open"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Month-over-Month Spend Change (%)</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_mom_change"></canvas>
+		</div>
+	</div>
+
+	<div class="padded_container less_padding_top">
+		<div class="primary_background chart_container probation_chart_con">
+			<div class="primary_color normal chart_title bold big centered">Orders by Day of Week</div>
+			<div class="chart_skeleton" tag="loading_skeleton"></div>
+			<canvas tag="fuel_req_charts" id="order_chart_weekday_pattern"></canvas>
+		</div>
+	</div>
+</div>
+
 <template id="tab_button">
 		<div class="tab_button small df_button_flat primary_color" tag="tab_button"> <span class="fa " tag="tab_icon"> </span> <span class="tab_text small" tag="tab_text"> Text Button </span>  </div>
 </template>

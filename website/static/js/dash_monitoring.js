@@ -138,6 +138,12 @@ let fetchDashboardStats = async function () {
 	if(includeForRequest("purchase_request")){
 
 			let stats_2 = await qBuilder.sendPromise(getPurchaseRequestStats, "get_purchase_request_stats",custom_param, errorHandler);
+	}	
+	
+	
+	if(includeForRequest("purchase_order_standalone")){
+
+			let stats_3 = await qBuilder.sendPromise(getPurchaseOrderStats, "get_purchase_order_stats",custom_param, errorHandler);
 	}
 	
 
@@ -204,6 +210,39 @@ let fetchDashboardStats = async function () {
 			PENDING[1] = PENDING[1] + (Number.isNaN(Number(pending))  ? 0 : (pending  || 0));
 			PROCESSED[1] = Number.isNaN(Number(processed))  ? 0 : (processed  || 0);
 			APPROVED[1] = Number.isNaN(Number(approved)) ? 0 : (approved || 0);
+			
+		}
+				
+		
+	}
+		
+	
+	//Purchase Order Files
+	function getPurchaseOrderStats(data){
+
+		
+		let resData = (JSON.parse(data.responseText));
+		let forms = resData;
+			collectedDatas["purchase_order_standalone"] = forms;
+			
+		
+		let kpi_data = forms.data.kpi;
+		
+		let unknown = kpi_data.count_by_status["Unknown"];
+		let approved = kpi_data.count_by_status["approved"];
+		let pending = kpi_data.count_by_status["pending"];
+		let processed = kpi_data.count_by_status["processed"];
+		
+	
+		
+		if(unknown != undefined || approved != undefined || pending != undefined || processed != undefined){
+			PENDING[2] = Number.isNaN(Number(unknown))  ? 0 : (unknown  || 0);
+			
+			
+			//Adds the Pending and Unknown
+			PENDING[2] = PENDING[2] + (Number.isNaN(Number(pending))  ? 0 : (pending  || 0));
+			PROCESSED[2] = Number.isNaN(Number(processed))  ? 0 : (processed  || 0);
+			APPROVED[2] = Number.isNaN(Number(approved)) ? 0 : (approved || 0);
 			
 		}
 				
@@ -572,7 +611,10 @@ function proccessChartEvents(){
 	if (tag("fuel_requisition_charts")[0].checkVisibility())generateFuelRequisitionCharts(collectedDatas["fuel_requisition"].data);
 	
 	
-	if (tag("purchase_request_charts")[0].checkVisibility())generatePurchaseRequestCharts(collectedDatas["purchase_request"].data);
+	if (tag("purchase_request_charts")[0].checkVisibility())generatePurchaseRequestCharts(collectedDatas["purchase_request"].data);	
+	
+	
+	if (tag("purchase_order_charts")[0].checkVisibility())generatePurchaseOrderCharts(collectedDatas["purchase_order_standalone"].data);
 		
 }
 
@@ -982,3 +1024,209 @@ async function generatePurchaseRequestCharts(data) {
     });
 }
 
+
+// Purchase Order Stat Task
+async function generatePurchaseOrderCharts(data) {
+	if(data == undefined){
+		return console.warn("generatePurchaseOrderCharts: didn't got a valid data");
+	}
+
+	let allLoadingSkeletons = tag("loading_skeleton", _("more_charts_2"));
+
+	for (let each of allLoadingSkeletons){
+		each.remove();
+	}
+
+	let objTo2D = (obj) => Object.entries(obj).map(([k, v]) => [k, v]);
+	let fmtNum = (v) => abbreviateNumber(v).abbreviated;
+
+	let months = Object.keys(data.spend.amount_by_month).sort();
+	let byMonth = (obj) => months.map(m => [m, obj[m] || 0]);
+
+	let deptTrend = Object.entries(data.spend.amount_by_month_department).map(([dept, obj]) => ({
+		label: dept,
+		data: byMonth(obj)
+	}));
+
+	let statusDepts = Object.keys(data.approval_funnel.status_by_department);
+	let statusNames = [...new Set(
+		Object.values(data.approval_funnel.status_by_department).flatMap(o => Object.keys(o))
+	)];
+
+	let statusSets = statusNames.map(s => ({
+		label: s,
+		data: statusDepts.map(d => [d, data.approval_funnel.status_by_department[d][s] || 0])
+	}));
+
+	let weekdayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+	let weekdayData = weekdayOrder.map(d => [d, data.seasonality.count_by_weekday[d] || 0]);
+
+	let momData = objTo2D(data.seasonality.mom_change_pct).map(([k, v]) => [k, v === null ? 0 : v]);
+
+	let tasks = [
+
+		() => generatePieChart(
+			objTo2D(data.kpi.count_by_status),
+			"order_chart_status_count",
+			"Orders by Status",
+			true
+		),
+
+		() => generatePieChart(
+			objTo2D(data.kpi.amount_by_status),
+			"order_chart_status_amount",
+			"Amount by Status",
+			false
+		),
+
+		() => generateLineChart(
+			byMonth(data.spend.count_by_month),
+			"order_chart_orders_by_month",
+			"Orders Over Time",
+			false
+		),
+
+		() => generateShadedLineChart(
+			byMonth(data.spend.amount_by_month),
+			"order_chart_spend_by_month",
+			"Total Spend Over Time",
+			false
+		),
+
+		() => generateHorizontalBarChart(
+			objTo2D(data.spend.amount_by_department),
+			"order_chart_spend_by_department",
+			"Spend by Department",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		() => generateVerticalBarChart(
+			objTo2D(data.spend.amount_by_company),
+			"order_chart_spend_by_company",
+			"Spend by Company",
+			false
+		),
+
+		() => generateVerticalBarChart(
+			objTo2D(data.spend.avg_amount_by_department),
+			"order_chart_avg_amount_department",
+			"Average Order Amount by Department",
+			false
+		),
+
+		() => generateMultiLineChart(
+			deptTrend,
+			"order_chart_department_spend_trend",
+			false
+		),
+
+		() => generateHorizontalBarChart(
+			data.suppliers.top_by_count,
+			"order_chart_suppliers_count",
+			"Top Suppliers by Orders",
+			materialColors,
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.suppliers.top_by_spend,
+			"order_chart_suppliers_spend",
+			"Top Suppliers by Spend",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		() => generatePieChart(
+			objTo2D(data.suppliers.payment_terms_count),
+			"order_chart_payment_terms",
+			"Payment Terms Used",
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.items.top_by_count,
+			"order_chart_items_by_count",
+			"Most Ordered Items",
+			materialColors,
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.items.top_by_spend,
+			"order_chart_items_by_spend",
+			"Top Items by Spend",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		() => generateHorizontalBarChart(
+			data.people.top_preparers_by_count,
+			"order_chart_preparers_count",
+			"Top Preparers by Count",
+			materialColors,
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.people.top_preparers_by_amount,
+			"order_chart_preparers_amount",
+			"Top Preparers by Amount",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		() => generateHorizontalBarChart(
+			data.people.approver_workload_count,
+			"order_chart_approver_count",
+			"Approver Workload (Count)",
+			materialColors,
+			true
+		),
+
+		() => generateHorizontalBarChart(
+			data.people.approver_workload_amount,
+			"order_chart_approver_amount",
+			"Approver Workload (Amount)",
+			materialColors,
+			false,
+			fmtNum
+		),
+
+		() => generateMultiBarChart(
+			statusSets,
+			"order_chart_status_by_department",
+			false
+		),
+
+		() => generateVerticalBarChart(
+			objTo2D(data.approval_funnel.aging_open_buckets),
+			"order_chart_aging_open",
+			"Aging Open Orders (Days)",
+			false
+		),
+
+		() => generateVerticalBarChart(
+			momData,
+			"order_chart_mom_change",
+			"Month-over-Month Spend Change (%)",
+			false
+		),
+
+		() => generateLineChart(
+			weekdayData,
+			"order_chart_weekday_pattern",
+			"Orders by Day of Week",
+			false
+		),
+
+	];
+
+	tasks.forEach((task, i) => {
+		setTimeout(task, i * 30);
+	});
+}
