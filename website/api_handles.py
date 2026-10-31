@@ -2143,7 +2143,7 @@ def get_purchase_order_stats():
          .join(Department, PurchaseOrder.department_id == Department.id, isouter=True) \
          .filter(PurchaseOrder.type == "standalone")
 
-        if not is_admin():
+        if not is_admin(1,2): #Filter out if not admin or super admin
             query = query.filter(PurchaseOrder.user_id == current_user.user_id)
 
         if year_range and len(year_range) == 2:
