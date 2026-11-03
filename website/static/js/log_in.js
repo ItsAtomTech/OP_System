@@ -14,7 +14,22 @@ function toggle_pass(slf, input){
 		s = false;
 		
 	}
-	
-	
-	
+		
 }
+
+//---- Autoload last typed name
+
+function rememberLastName(){
+	let name = _("user_email").value;
+	sessionStorage.setItem("TEMP_NAME", name);
+}
+
+
+function loadPrev(){
+	let tempSave = sessionStorage.getItem("TEMP_NAME", name);
+	if(tempSave){
+		_("user_email").value = tempSave;
+	}
+}
+
+loadPrev();
