@@ -192,7 +192,7 @@ function renderItems(items){
 	items.forEach(item => {
 		let row = document.importNode(template.content, true);
 
-		tag('item_desc', row)[0].innerText  = item[0] || item[2] || '--';
+		tag('item_desc', row)[0].innerText  = mergeChunks(item[0], item[2]) || '--';
 		tag('quantity', row)[0].innerText   = item[1] || '--';
 		tag('unit_price', row)[0].innerText = item[3] ? formatPeso(item[3]) : '--';
 		tag('amount', row)[0].innerText     = item[4] ? formatPeso(item[4]) : '--';
@@ -250,5 +250,31 @@ function generateHeaderTitles(res_data, order){
 function formatPeso(data){
 	return formatToPHP(data, "₱");
 }
+
+
+function mergeChunks(a = '', b = '') {
+    let chunksA = a.trim().split(/\s+/).filter(Boolean);
+    let chunksB = b.trim().split(/\s+/).filter(Boolean);
+
+    let i = 0;
+    while (i < chunksA.length && i < chunksB.length && chunksA[i] === chunksB[i]) {
+        i++;
+    }
+
+    if (i === 0) {
+        return [chunksA.join(' '), chunksB.join(' ')].filter(Boolean).join(' - ');
+    }
+
+    let commonPart = chunksA.slice(0, i).join(' ');
+    let uniquePart = [
+        ...chunksA.slice(i),
+        ...chunksB.slice(i)
+    ].join(' ');
+
+    return [commonPart, uniquePart].filter(Boolean).join(' - ');
+}
+
+
+
 
 getPrintableData();
