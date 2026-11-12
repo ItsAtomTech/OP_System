@@ -74,6 +74,8 @@ function feedBackSaving(){
 		nextFormID = res_data.id;
 		askForPrint();
 	}
+	
+	clearDraft();
 	localStorage.setItem("shouldReloadPurchaseReq","true");
 	hasChanges = false;
 }
@@ -229,6 +231,8 @@ function loadIntoForms(){
 			}
         }
     }
+	
+	
 	addFancyPlaceholder();
 }
 
@@ -241,7 +245,11 @@ if(pageType == "purchase_order_edit_standalone"){
 }
 
 
-function cancelEditor(){
+async function cancelEditor(){
+	saveDraftData();
+	
+	await sleep(1000);
+	
 	if(!hasChanges){
 		postMessageToParent("close");
 		return;
@@ -429,3 +437,69 @@ function isStringInDatalist(inputString) {
 }
 
 loadToDatalist();
+
+
+
+
+
+//Draft Saving And Loading Logic  ====================
+function saveDraftData(){
+	let data = JSON.stringify(formMaker.retriveFormInput(true));
+	let DRAFT_SAVE = localStorage.setItem("DRAFT_SAVE",data);
+	
+	if(pageType == "purchase_order_edit_standalone"){
+		return;
+	}
+	
+	showToast("Draft have been saved!");
+	
+	
+}
+
+function clearDraft(){
+	localStorage.removeItem("DRAFT_SAVE");
+	console.log("Draft have been removed");
+}
+
+
+
+function loadDraft(){
+	let DRAFT_SAVE = localStorage.getItem("DRAFT_SAVE");	
+	let converted = undefined;
+	
+
+	
+	if(DRAFT_SAVE){
+		converted = JSON.parse(DRAFT_SAVE);
+	}else{
+		return "No saved draft found!";
+	}
+	
+	
+	for (let key in converted) {
+        if (converted.hasOwnProperty(key)) {
+            let itemValue = converted[key];
+			
+			try{
+				let form = formDatas.forms[formIdCollections.indexOf(key)];
+					if(form.type == "date"){
+						itemValue = utility.dateNormalize(itemValue);
+					}
+				
+				setValues(key, itemValue,form);
+			}catch(e){
+			//	
+			}
+        }
+    }
+	addFancyPlaceholder();
+	clearDraft();
+}
+
+
+if(pageType != "purchase_order_edit_standalone"){
+	loadDraft();
+}
+
+
+//Draft End ==================
