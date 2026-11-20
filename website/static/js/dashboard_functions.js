@@ -151,6 +151,10 @@ function closeAllPages(exclude=undefined,retain_elements=false){
 	
 	let containment = _('general_container').getElementsByClassName('page_containment');
 	
+	if(!exclude){
+		setTimeout(SPY.finishLoader, 1000);
+	}
+	
 	try{
 		hideDashboardContents(false);
 	}catch(e){
