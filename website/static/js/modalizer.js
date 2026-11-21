@@ -24,6 +24,20 @@ function preventDefaultForScrollKeys(e) {
   }
 }
 
+
+
+if(typeof(getparam) == 'undefined'){
+	var getparam = function(h){     
+		get_param = window.location.href
+
+		var url = new URL(get_param)
+		var param_value = url.searchParams.get(h);
+		return param_value;
+	}
+}
+
+
+
 // modern Chrome requires { passive: false } when adding event
 var supportsPassive = false;
 try {
@@ -190,6 +204,7 @@ function open_modal(link, custom_class=undefined, targetElm=undefined, dialog=fa
 	opened_modal.push(pdata);
 
 	SPY.showLoader();
+	__PROGRESS_SPY_LOAD(true);
 	
 	//adds onremove Trigger if a function is passed
 	
@@ -406,6 +421,20 @@ if(typeof(zxf) == 'undefined'){
 	let zxf = window.setInterval(__MONITOR_UNLOADED_MODALFRAME, 1000);
 }
 
+
+//Auto click a Button/Link when ?m=page is found on the url Link
+try {
+    if (getparam("m")) {
+        _("_" + getparam("m").toLowerCase()).click();
+    }
+} catch (e) {
+    console.warn("'m' param was present, but failed to call function-click on an element with id: " + "_" + getparam("m").toLowerCase());
+
+    // Remove the 'm' param from the URL without reloading the page
+    const url = new URL(window.location.href);
+    url.searchParams.delete("m");
+    window.history.replaceState(null, "", url.toString());
+}
 
 
 //Auto close if modal failed to handshake
